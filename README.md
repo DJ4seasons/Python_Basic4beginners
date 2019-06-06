@@ -2,7 +2,9 @@
 Educational Code Examples for Getting Used to Python3 (Numpy and Matplotlib)
 
 Modules used in the codes
+---
 
+```
 import sys
 import numpy as np
 import os.path
@@ -26,3 +28,4 @@ from scipy.interpolate import griddata
 from sklearn import linear_model
 
 from scipy.stats import kde
+```
