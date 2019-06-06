@@ -1,5 +1,6 @@
 # Python_Basic4beginners
-Educational Code Examples for Getting Used to Python3 (Numpy and Matplotlib)
+Educational Code Examples for Getting Used to Python3 
+: Numpy and Matplotlib for Earth Science
 
 Modules used in the codes
 ---
