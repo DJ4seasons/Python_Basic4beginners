@@ -3,7 +3,6 @@ Read NC files of 4 variables, and write a NC file all together
 
 Input files:
 data/slp_wrfout_d01_2018-02-17_00-00-00.nc
-data/hgt_1000hPa_wrfout_d01_2018-02-17_00-00-00.nc
 data/hgt_500hPa_wrfout_d01_2018-02-17_00-00-00.nc
 data/hgt_200hPa_wrfout_d01_2018-02-17_00-00-00.nc
 
@@ -38,7 +37,7 @@ def daterange(start_date, end_date):
 start_date = date(2018,2,17)  ### Start Date
 end_date = date(2018,2,20)   ### Including this End Date
 
-vars = ['slp','hgt_1000hPa','hgt_500hPa','hgt_200hPa']
+vars = ['slp','hgt_500hPa','hgt_200hPa']
 dim_names = ['XLAT','XLONG']
 indir = './data/'
 outdir = indir
@@ -103,7 +102,7 @@ for oneday in daterange(start_date,end_date):
         ## Dimensions
         ln=ncfw.createDimension('lon',lons.shape[0])
         lt=ncfw.createDimension('lat',lats.shape[1])
-        lv=ncfw.createDimension('lev',3)
+        lv=ncfw.createDimension('lev',2)
         tm=ncfw.createDimension('time',len(times))
 
         lonsnc = ncfw.createVariable('lon','f4',('lon','lat',))
@@ -113,7 +112,7 @@ for oneday in daterange(start_date,end_date):
 
         lonsnc[:]=lons; latsnc[:]=lats
         lonsnc.units = 'degrees_east'; latsnc.units = 'degrees_north'
-        levsnc[:]=[1000,500,200]
+        levsnc[:]=[500,200]
         levsnc.units = 'hPa'
 
         timenc.units = 'hours since 0001-01-01 00:00:00.0'
