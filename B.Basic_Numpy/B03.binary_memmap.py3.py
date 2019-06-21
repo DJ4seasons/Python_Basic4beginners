@@ -47,6 +47,5 @@ nbyte=4 #<-- float32 = 4byte
 
 for i in range(int(nn/nchunk)):
     small_arr=np.memmap(fnout,dtype=np.float32,mode='r',shape=(nchunk,),offset=nchunk*nbyte*i)
-
+    small_arr=np.array(small_arr)
     print('i={}, error={}'.format(i,(arr[nchunk*i:nchunk*(i+1)]-small_arr).mean()))
-    del small_arr
