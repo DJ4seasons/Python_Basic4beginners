@@ -23,7 +23,7 @@ from matplotlib.ticker import AutoMinorLocator, FixedLocator, MultipleLocator
 import cartopy.crs as ccrs
 from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
 import cartopy.feature as cfeature
-import shapely.geometry as sgeom
+~~import shapely.geometry as sgeom~~
 
 from scipy.interpolate import griddata
 
