@@ -9,6 +9,7 @@ Modules used in the codes
 import sys
 import numpy as np
 import os.path
+import glob
 
 from subprocess import call
 from pyhdf.SD import SD, SDC
