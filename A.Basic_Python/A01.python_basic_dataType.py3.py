@@ -61,3 +61,5 @@ print("bool(-1) = {}, bool(0) = {}, bool(1) = {}, bool(2) = {}".format(bool(-1),
 print("bool(-0.1) = {}, bool(0.) = {}, bool(0.1) = {}".format(bool(-0.1),bool(0.),bool(0.1)))
 print("---> Value zero(0) is False, and all others are True")
 input("\nPress Enter to continue...\n")
+
+print("THE END")
