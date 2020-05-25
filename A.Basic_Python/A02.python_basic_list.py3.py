@@ -5,6 +5,13 @@ print("\n1. Define a list with []")
 print("a = [1, 'abc', 3.141592]  # Define a list" )
 a = [1, 'abc', 3.141592]
 print("a = {}:\ttype = {}".format(a,type(a)))
+print("\nMembership test")
+print("1 in a ?")
+print(1 in a)
+print("\nx, y, z = a  # Define variables from a list" )
+x, y, z = a
+print("x, y, z = {}, {}, {}".format(x,y,z))
+
 print("\n2. List operation")
 print("a+a = {}".format(a+a))
 print("a*2 = {}".format(a*2))
@@ -85,9 +92,11 @@ print("a = {}".format(a))
 print("---> Remove the first value")
 input("\nPress Enter to continue...\n")
 
-print("\n6. List method(3): slicing and sort")
-print("d = [1,5,2,4,3]  # Define a list")
-d = [1,5,2,4,3]
+print("\n6. List method(3): count, sort, and slicing")
+print("d = [1,5,2,4,3,1]  # Define a list")
+d = [1,5,2,4,3,1]
+print("d.count(1)  # How many the value occurs")
+print(d.count(1))
 print("d.sort()  # Working in-place")
 d.sort()
 print("d = {}".format(d))

@@ -27,6 +27,17 @@ print("\n2. Print format examples")
 format_test = '{},\t{:d},\t{:02d},\t{:03d},\t{:.2f},\t{:.3f}'
 print(format_test)
 print(format_test.format(a,a,a,a,a,c))
+format_test2 = '{1:d},\t{2:.2f},\t{0:.1f}'
+print('\n'+format_test2)
+print(format_test2.format(a,b,c))
+print("\nHow about multi-lines? Use tripple quote mark!")
+multi_lines='''
+Hello, my name is {name}.
+I am {age:d} years old.
+My favorite food is {food}
+'''
+keywords={"name":"Bob", "age":35, "food":"chococake"}  # This is dictionry!
+print(multi_lines.format(**keywords))  # two stars: distribute items of "key:value"
 input("\nPress Enter to continue...\n")
 
 ### String
