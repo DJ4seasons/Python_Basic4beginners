@@ -1,3 +1,10 @@
+'''
+Python Basic(3)
+: Tuple and Dictionary
+
+By Daeho Jin
+'''
+
 ###--- Tuple
 print("\n*** Tuple ***")
 print("\n1. Define a tuple with ()")
@@ -9,6 +16,7 @@ print("\n2. Tuple operation")
 print("a+a = {}".format(a+a))
 print("a*3 = {}".format(a*3))
 input("\nPress Enter to continue...\n")
+print("----------------------------------------\n")
 
 print("\n3. What makes tuple distinguished from list")
 try:
@@ -18,6 +26,7 @@ except Exception as err:
     print("Error message\n:",err)
 
 input("\nPress Enter to continue...\n")
+print("----------------------------------------\n")
 
 ###--- Dictionary
 print("\n*** Dictionary ***")
@@ -29,6 +38,7 @@ print("d = {}:\ttype = {}\n".format(d,type(d)))
 print('d["year"] = {}  # Access value by key'.format(d['year']))
 
 input("\nPress Enter to continue...\n")
+print("----------------------------------------\n")
 
 print("\n2. Add, change, and remove item")
 print("e = {}  # Empty dictionry")
@@ -48,6 +58,7 @@ e['model']='Sonata'
 print("e = {}\n".format(e))
 
 input("\nPress Enter to continue...\n")
+print("----------------------------------------\n")
 
 print("\n3. Define a dictionry with dict()")
 print("f = dict(brand='Ford', model='Mustang', year=2019)")
@@ -59,6 +70,7 @@ g = dict([('brand','Ford'), ('model','Mustang'), ('year',2019)])
 print("g = {}".format(g))
 
 input("\nPress Enter to continue...\n")
+print("----------------------------------------\n")
 
 print("\n4. Membership test")
 print("'Mustang' in g ?")
@@ -71,3 +83,4 @@ print("\n'Mustang' in g.values() ?")
 print('Mustang' in g.values())
 
 input("\nPress Enter to continue...\n")
+print("THE END")

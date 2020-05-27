@@ -1,7 +1,8 @@
 '''
 Python Basic(1)
-1. Data Type
-2. List, Tuple, Dictionary
+: Data Type
+
+By Daeho Jin
 '''
 
 ### Part1: Data Type
@@ -21,6 +22,7 @@ print("d = a//b")
 d=a//b
 print("d = {}:\ttype = {}".format(d,type(d)))
 input("\nPress Enter to continue...\n")
+print("----------------------------------------\n")
 
 ### Print format
 print("\n2. Print format examples")
@@ -39,6 +41,7 @@ My favorite food is {food}
 keywords={"name":"Bob", "age":35, "food":"chococake"}  # This is dictionry!
 print(multi_lines.format(**keywords))  # two stars: distribute items of "key:value"
 input("\nPress Enter to continue...\n")
+print("----------------------------------------\n")
 
 ### String
 print("\n3. String examples")
@@ -52,12 +55,14 @@ print("{} vs. {} vs. {}".format(c+c,d+d,d*2))
 print("len(d*2)")
 print(len(d*2))
 input("\nPress Enter to continue...\n")
+print("----------------------------------------\n")
 
 ### Printing unicode
 print("\n4. Unicode example")
 print("El Ni\u00F1o and La Ni\u00F1a")
 print("Delta: {}, epsilon: {}, degree: {}".format('\u0394','\u03B5','\u00B0'))
 input("\nPress Enter to continue...\n")
+print("----------------------------------------\n")
 
 ### Boolean
 print("\n5. Boolean type")
