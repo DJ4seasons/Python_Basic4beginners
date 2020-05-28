@@ -1,12 +1,12 @@
 '''
 Python Basic(1)
-: Data Type
+: Data Types
 
 By Daeho Jin
 '''
 
-### Part1: Data Type
-print("\n*** Data Type ***")
+### Part1: Data Types
+print("\n*** Data Types ***")
 
 ### Integer and float numbers
 print("\n1. Integer and float numbers")
@@ -78,4 +78,4 @@ print("bool(-0.1) = {}, bool(0.) = {}, bool(0.1) = {}".format(bool(-0.1),bool(0.
 print("---> Value zero(0) is False, and all others are True")
 input("\nPress Enter to continue...\n")
 
-print("THE END")
+print("THE END: Python Basic(1) - Data Types\n")
