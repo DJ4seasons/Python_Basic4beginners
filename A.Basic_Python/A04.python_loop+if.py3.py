@@ -174,5 +174,48 @@ while True:
         print("break"); break
     print("Return")
 print("---> Note that 'continue' and 'pass' are different!")
+
+input("\nPress Enter to continue...\n")
+print("----------------------------------------\n")
+
+print("\n3. Break out of multiple loops")
+print("""\nExample code of break:
+for i in range(3):
+    j=0
+    while j<3:
+        print(i,j)
+        if i==1:
+            print('break'); break
+        j+=1
+""")
+for i in range(3):
+    j=0
+    while j<3:
+        print(i,j)
+        if i==1:
+            print('break'); break
+        j+=1
+
+print("""\nExample code of StopIteration:
+try:
+    for i in range(3):
+        j=0
+        while j<3:
+            print(i,j)
+            if i==1:
+                print('StopIteration'); raise StopIteration
+            j+=1
+except StopIteration: pass
+""")
+try:
+    for i in range(3):
+        j=0
+        while j<3:
+            print(i,j)
+            if i==1:
+                print('StopIteration'); raise StopIteration
+            j+=1
+except StopIteration: pass
+
 input("\nPress Enter to continue...\n")
 print("THE END: Python Basic(4) - IF, FOR, and WHILE\n")

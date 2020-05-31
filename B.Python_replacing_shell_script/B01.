@@ -1,9 +1,0 @@
-import sys
-import os
-from subprocess import run
-
-if not os.path.isfile(fname):
-    sys.exit("File does not exist:"+fname)
-
-if not os.path.isdir(outdir):
-    os.mkdir(outdir)
