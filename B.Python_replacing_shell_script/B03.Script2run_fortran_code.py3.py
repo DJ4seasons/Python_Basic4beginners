@@ -8,7 +8,7 @@
 
 import sys
 import os
-from subprocess import run
+from subprocess import run, CalledProcessError
 
 fn0 = "estimate_pi"
 fn_x = "{}.x".format(fn0)
@@ -56,9 +56,9 @@ if os.path.isfile(fn_f90):
 
 print(f_program.format(**keywords),file=open(fn_f90,'w'))
 try:
-    run("gfortran -o {} {}".format(fn_x,fn_f90), shell=True)
-except Exception as err:
-    sys.exit("Error message\n:"+err)
+    run("gfortran -o {} {}".format(fn_x,fn_f90), shell=True, check=True)
+    run("./{}".format(fn_x), shell=True, check=True)
+except CalledProcessError:  # If problem(s) occur
+    sys.exit()  # End this python program
 
-run("./{}".format(fn_x), shell=True)
 run("rm {}*".format(fn0), shell=True)  # Be cautious not to delete other files

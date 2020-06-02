@@ -1,11 +1,19 @@
-"""
-Numpy - basic methods
-"""
+'''
+Numpy Basic(1)
+:
 
+By Daeho Jin
+'''
+
+print("\n0. Before Start")
+
+print("\nImport numpy package:\nimport numpy as np")
 import numpy as np
 
+print("\nFor convenience, define a function showoing numpy array information:")
+print('''
 def show_array_info(a,show_contents=True):
-   """ 
+   """
    Print information of numpy array
    """
    result="N_Dims={}, Shape={}, Data_Type={}".format(a.ndim, a.shape, a.dtype)
@@ -13,25 +21,76 @@ def show_array_info(a,show_contents=True):
    if show_contents:
       print(a)
    return
-   
+''')
+
+def show_array_info(a,show_contents=True):
+   """
+   Print information of numpy array
+   """
+   result="N_Dims={}, Shape={}, Data_Type={}".format(a.ndim, a.shape, a.dtype)
+   print(result)
+   if show_contents:
+      print(a)
+   return
+
+input("\nPress Enter to continue...\n")
+print("----------------------------------------\n")
+
 ### Make new array
-zeros = np.zeros([3,4]) 
-ones = np.ones([3,4],dtype=int)  
-empty = np.empty([3,4],dtype=np.float32)  
-full = np.full_like(zeros,-999.9)
-print('\nnp.zeros') ;show_array_info(zeros)
-print('\nnp.ones')  ;show_array_info(ones)
-print('\nnp.empty') ;show_array_info(empty)
-print('\nnp.full') ;show_array_info(full)
+print("\n1. How to create a numpy array")
+print("\n1-1. Using pre-defined template")
+print("array = np.function(dimension, dtype=dtype, ...)")
+print("array = np.function_like(other_array, dtype=dtype, ...)\n")
 
-a=[[0,1,2,3],[4,5,6,7],[8,9,10,11]]  ### A list
-b=np.array(a)  
-c=np.asarray(a) 
-d=np.asfarray(a) 
+print("zeros = np.zeros([2,3])")
+zeros = np.zeros([2,3])
+print("show_array_info of zeros:")
+show_array_info(zeros)
 
-print('\nnp.array') ;show_array_info(b)
-print('\nnp.asarray')  ;show_array_info(c,show_contents=False)
-print('\nnp.asfarray') ;show_array_info(d,show_contents=False)
+print("\nones = np.ones([2,3], dtype=int)")
+ones = np.ones([2,3], dtype=int)
+print("show_array_info of ones:")
+show_array_info(ones)
+
+print("\nempty = np.empty_like(ones, dtype=np.float32)")
+empty = np.empty_like(ones, dtype=np.float32)
+print("show_array_info of empty:")
+show_array_info(empty)
+
+print("\nfull = np.full_like(zeros, -999.9)")
+full = np.full_like(zeros, -999.9)
+print("show_array_info of full:")
+show_array_info(full)
+
+input("\nPress Enter to continue...\n")
+print("----------------------------------------\n")
+
+print("\n1-2. Transform to numpy array")
+print("Example: lsit to numpy array")
+print("a=[[0,1,2],[4,5,6]]  ### A list")
+a=[[0,1,2],[4,5,6]]  ### A list
+print('''
+Test 3 methods:
+b=np.array(a)
+c=np.asarray(a)
+d=np.asfarray(a)
+''')
+b=np.array(a)
+c=np.asarray(a)
+d=np.asfarray(a)
+
+print("show_array_info of np.array:")
+show_array_info(b)
+
+print('\nshow_array_info of np.asarray')
+show_array_info(c, show_contents=False)
+
+print('\nshow_array_info of np.asfarray')
+show_array_info(d, show_contents=False)
+
+input("\nPress Enter to continue...\n")
+print("----------------------------------------\n")
+print("\n1-3. 'arange' and 'linspace'")
 
 e=np.arange(12)  ### Similar to range()
 print('\nnp.arange(12)',e.shape)
