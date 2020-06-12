@@ -116,7 +116,7 @@ print("----------------------------------------\n")
 print("\n6. List method(3): count, sort, and slicing")
 print("d = [1,5,2,4,3,1]  # Define a list")
 d = [1,5,2,4,3,1]
-print("d.count(1)  # How many the value occurs")
+print("d.count(1)  # How many times the value occurs")
 print(d.count(1))
 print("d.sort()  # Working in-place")
 d.sort()
