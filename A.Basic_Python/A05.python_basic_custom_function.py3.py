@@ -108,7 +108,97 @@ print("sum_every_n(-1) = {}".format(sum_every_n(-1)))
 input("\nPress Enter to continue...\n")
 print("----------------------------------------\n")
 
-print("\n4. Function example1")
+print("\n4. Function inside function?")
+print('''Example:
+def function_odd_even(num):
+    """
+    Simple Function Example embeding another funnction
+    num: any number
+    """
+    def odd_even_tester(num):
+        """
+        True if even else False
+        """
+        if num%2==0:
+            return True
+        else:
+            return False
+
+    if odd_even_tester(num):
+        print("Even")
+    else:
+        print("Odd")
+    return\n''')
+def function_odd_even(num):
+    """
+    Simple Function Example embeding another funnction
+    num: any number
+    """
+    def odd_even_tester(num):
+        """
+        True if even else False
+        """
+        if num%2==0:
+            return True
+        else:
+            return False
+
+    if odd_even_tester(num):
+        print("Even")
+    else:
+        print("Odd")
+    return
+
+print("function_odd_even(4) = {}".format(function_odd_even(4)))
+print("function_odd_even(3.5) = {}".format(function_odd_even(3.5)))
+try:
+    print("odd_even_tester(3.5) = ")
+    print("{}".format(odd_even_tester(3.5)))
+except Exception as err:
+    print("Error message\n:",err)
+
+
+input("\nPress Enter to continue...\n")
+print("----------------------------------------\n")
+
+print("\n5. Recursive Function")
+print('''Example:
+def function_divide_by2(num,count=0,remainder=0):
+    """
+    Simple Example for recursive function
+    num: any number
+    """
+    if num%2==0:
+        num/=2
+        count+=1
+        return function_divide_by2(num,count)
+    elif num==1:
+        return count, remainder
+    else:
+        remainder=num
+        return count, remainder\n''')
+def function_divide_by2(num,count=0,remainder=0):
+    """
+    Simple Example for recursive function
+    num: any number
+    """
+    if num%2==0:
+        num/=2
+        count+=1
+        return function_divide_by2(num,count)
+    elif num==1:
+        return count, remainder
+    else:
+        remainder=num
+        return count, remainder
+
+print("function_divide_by2(8) = {} times + {}".format(*function_divide_by2(8)))
+print("function_divide_by2(20) = {} times + {}".format(*function_divide_by2(20)))
+
+input("\nPress Enter to continue...\n")
+print("----------------------------------------\n")
+
+print("\n6. Function example1")
 print("Functions to transform Lon/Lat to index\n")
 from math import ceil
 def lon_deg2x(lon,lon0,dlon):

@@ -172,7 +172,7 @@ while True:
         print("pass"); pass
     elif i==3:
         print("break"); break
-    print("Return")
+    print("End of while block")
 print("---> Note that 'continue' and 'pass' are different!")
 
 input("\nPress Enter to continue...\n")

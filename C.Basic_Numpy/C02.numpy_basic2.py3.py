@@ -1,26 +1,40 @@
-print("\n1-5. Array Operation")
+'''
+Numpy Basic(2)
+: Some characteristics of array and popular functions
 
-print("\n")
+By Daeho Jin
+'''
+
+print("\n2. characteristics of numpy array")
+print("\n2-1. Operation of array(s)")
+
 ### Simple operation
-print('\n Adding Array')
-tmp_plus= ones+ones
-show_array_info(tmp_plus)
+print('\nFirst define sample arrays')
+print('''ones= np.ones([2,2])
+fulls= np.full_like(ones,-1.5)''')
+ones= np.ones([2,2])
+fulls= np.full_like(ones,-1.5)
+print('\nAdd: twos = ones+ones')
+twos = ones+ones
+show_array_info(twos)
 
-print('\n Adding Int Array and Float Array')
-tmp_plus2= ones+full
-show_array_info(tmp_plus2)
+print('\nAdd: i_plus_f = ones(int)+fulls(float)')
+i_plus_f = ones+fulls
+show_array_info(i_plus_f)
 
-print('\n Array*Array')
-tmp_multiply= tmp_plus*tmp_plus
-show_array_info(tmp_multiply)
+print('\nMultiplication: mult1 = twos*fulls')
+mult1 = twos*fulls
+show_array_info(mult1)
 
-print('\n Array*number')
-tmp_multiply2= tmp_multiply*3
+print('\nMultiplication: mult2 = twos*3')
+mult2= twos*3
 show_array_info(tmp_multiply2)
 
-print('\n Array_2D*Array_1D')
-tmp_multiply3= tmp_multiply*f[None,:]
-show_array_info(tmp_multiply3)
+print('\nMulitplication: mult3 = twos(2D)*array_1d')
+print('array_1d = fulls[0,:]')
+array_1d = fulls[0,:]
+mult3= twos*array_1d
+show_array_info(mult3)
 
 input("\nPress Enter to continue...\n")
 print("----------------------------------------\n")

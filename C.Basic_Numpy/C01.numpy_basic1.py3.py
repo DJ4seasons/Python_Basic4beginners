@@ -1,6 +1,6 @@
 '''
 Numpy Basic(1)
-:
+: Make new array and change shape
 
 By Daeho Jin
 '''
