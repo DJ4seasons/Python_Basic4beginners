@@ -1,63 +1,148 @@
+'''
+Numpy Basic(3)
+2. characteristics of numpy array
+2-4. Concatenated application of numpy functions
+2-5. In-place operation
+
+By Daeho Jin
+'''
+
+import numpy as np
+
+def show_array_info(a,show_contents=True):
+   """
+   Print information of numpy array
+   """
+   result="N_Dims={}, Shape={}, Data_Type={}".format(a.ndim, a.shape, a.dtype)
+   print(result)
+   if show_contents:
+      print(a)
+   return
+
+###--- Start
+print("\n2. characteristics of numpy array")
+print("\n2-4. Concatenated application of numpy functions")
+
+print('\nFirst define sample array')
+print('''arr1= np.arange(24)
+arr1= np.reshape(arr1, [4,6]''')
+arr1= np.arange(24)
+arr1= np.reshape(arr1, [4,6])
+show_array_info(arr1)
+
+print("\n# We already saw that below two lines produce the same result.")
+print("# arr1= np.reshape(arr1, [4,6])")
+print("# arr1= arr1.reshape([4,6])")
+print('''
+# This is because 'reshape' is a numpy function as well as a method of numpy array class
+# In the case of method of array, multiple methods can be concatenated.''')
+
+print("\nExample: arr2= np.arange(24).reshape([4,6])")
+arr2= np.arange(24).reshape([4,6])
+print("Test if arr1 equals arr2 using 'np.array_equal()'")
+print("Result of 'np.array_equal(arr1,arr2)' = {}".format(np.array_equal(arr1,arr2)))
+
+print("\nExample of grid-degrading")
+print("c= arr1.reshape([2,2,3,2]).swapaxes(1,2).reshape([2,3,4]).mean(axis=2)")
+c= arr1.reshape([2,2,3,2]).swapaxes(1,2).reshape([2,3,4]).mean(axis=2)
+show_array_info(c)
+
+print("\nExample of calculating monthly anomaly")
+print("Define new array: d= np.arange(120)")
+d= np.arange(120)
+print("ano= (d.reshape([-1,12]) - d.reshape([-1,12]).mean(axis=0).reshape([1,12])).reshape(-1)")
+ano= (d.reshape([-1,12]) - d.reshape([-1,12]).mean(axis=0).reshape([1,12])).reshape(-1)
+print("ano[:12] = {}".format(ano[:12]))
+print("ano[-12:] = {}".format(ano[-12:]))
+
 input("\nPress Enter to continue...\n")
 print("----------------------------------------\n")
-print("\n2-4. Concatenated application of numpy functions")
+print("\n2-5. In-place operation")
+
+print("\nDefine new array: e= np.zeros([2,2])")
+e= np.zeros([2,2])
+show_array_info(e)
+
+### Copy or not
+print("""
+Test1:
+e2= e
+e2[0,0]= 1
+print(e)""")
+e2= e
+e2[0,0]= 1
+print(e)
+
+print("""
+Test2:
+e3= np.copy(e)
+e3[0,1]= 2
+print(e)""")
+e3=np.copy(e)
+e3[0,1]=2
+print(e)
+
+print("""
+Test3:
+e4= e[:]
+e4[1,0]= 3
+print(e)""")
+e4= e[:]
+e4[1,0]= 3
+print(e)
+
+print("""
+Test4:
+e4= e[1,:]
+e4[1]=4
+print(e)""")
+e4= e[1,:]
+e4[1]=4
+print(e)
+
+print("""
+Test5: Define a function
+def function1(arr):
+    arr[0]=-1
+    return
+function1(e)
+print(e)""")
+def function1(arr):
+    arr[0]=-1
+    return
+function1(e)
+print(e)
+
+print("""
+# Remember: The assignment in python is just creating a pointer to the memory location.
+# In numpy, please make sure that it is copied when necessary.
+# Particularly be cautious when passing array to function(s).
+#
+# It is also interesting that, in the case of 'List,' '[:]' plays a role of copy, but not in numpy.
+""")
+
+input("\nPress Enter to continue...\n")
+print("----------------------------------------\n")
+print("\n2-6. Array transformation") # hsatck, vstack, ...
+
+
 
 input("\nPress Enter to continue...\n")
 print("----------------------------------------\n")
 print("\n . Random module examples")
 
 
-input("\nPress Enter to continue...\n")
-print("----------------------------------------\n")
-
-print("\n2-3. In-place operation")
 
 input("\nPress Enter to continue...\n")
 print("----------------------------------------\n")
-
-print("\n2-4. Array transformation") # hsatck, vstack, ...
-
-input("\nPress Enter to continue...\n")
-print("----------------------------------------\n")
-
 print("\n NaN and Masked Array")
 
-### Copy or not copy
-ones2=ones
-ones2[0,0]=2
-print('\n Copy or not?')
-show_array_info(ones)
-
-ones3=np.copy(ones)
-ones3[0,0]=3
-print('\n Copy or not?')
-show_array_info(ones)
-
-ones4=ones[:]
-ones4[0,0]=4
-print('\n Copy or not?')
-show_array_info(ones)
 
 
-### Transform the array
-print('\n Starting Array before Transformation')
-show_array_info(e)
 
-print('\n Array.astype(np.int16)')
-e2=e.astype(np.int16)
-show_array_info(e2,show_contents=False)
 
-print('\n Partial sum of array')
-show_array_info(e2.reshape([3,2,2]).sum(axis=2))
 
-print('\n Swap Axes')
-e2=e2.reshape([-1,2,2]).swapaxes(1,2).reshape([-1,4]) ### "-1" in reshape means "all others"
-show_array_info(e2)
 
-loc=np.where(np.logical_and(e2>5,e2<10))
-print(type(loc),len(loc))
-for j,i in zip(*loc):
-  print("j={}, i={}, value={}".format(j,i,e2[j,i]))
 
 
 '''

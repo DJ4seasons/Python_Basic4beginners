@@ -1,6 +1,10 @@
 '''
 Numpy Basic(1)
-: Make new array and change shape
+1. How to create a numpy array
+1-1. Using pre-defined template
+1-2. Transform to numpy array
+1-3. 'arange' and 'linspace'
+1-4. Reshaping array
 
 By Daeho Jin
 '''

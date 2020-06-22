@@ -1,6 +1,9 @@
 '''
 Numpy Basic(2)
-: Some characteristics of array and popular functions
+2. characteristics of numpy array
+2-1. Operation of array(s)
+2-2. Slicing and Indexing
+2-3. Numpy.where() function
 
 By Daeho Jin
 '''
@@ -95,6 +98,11 @@ print('a[::-1][index_list] = {}'.format(a[::-1][index_list]))
 print('\nindex_list= np.array([1,3,5])  # numpy array')
 index_list= np.array([1,3,5])
 print('a[::-1][index_list] = {}'.format(a[::-1][index_list]))
+
+print("\nIf given just one index to 2-D array?")
+print("a.reshape([5,2])[0] = {}".format(a.reshape([5,2])[0]))
+print("a.reshape([5,2])[-1] = {}".format(a.reshape([5,2])[-1]))
+print("# It is interpreted as the index of the first axis (axis=0)")
 
 input("\nPress Enter to continue...\n")
 
