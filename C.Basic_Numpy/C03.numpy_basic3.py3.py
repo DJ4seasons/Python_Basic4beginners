@@ -23,7 +23,7 @@ def show_array_info(a,show_contents=True):
 print("\n2. characteristics of numpy array")
 print("\n2-4. Concatenated application of numpy functions")
 
-print('\nFirst define sample array')
+print('\nFirst define a sample array')
 print('''arr1= np.arange(24)
 arr1= np.reshape(arr1, [4,6]''')
 arr1= np.arange(24)
@@ -125,40 +125,73 @@ input("\nPress Enter to continue...\n")
 print("----------------------------------------\n")
 print("\n2-6. Array transformation") # hsatck, vstack, ...
 
+print('\nDefine a sample array')
+print('''a= np.arange(4)''')
+a= np.arange(4)
+print(a)
 
+print('\nb= np.tile(a,3)  # Repet as a whole')
+b= np.tile(a,3)
+show_array_info(b)
+
+print('\nc= np.repeat(a,3)  # Repet by element')
+c= np.repeat(a,3)
+show_array_info(c)
+
+print('\nApply tile and repeat to 2-D array')
+print('a2= b.reshape([3,4])')
+a2= b.reshape([3,4])
+print(a2)
+
+print('\nb2= np.tile(a2,2)  # Repet as a whole')
+b2= np.tile(a2,2)
+show_array_info(b2)
+
+print('\nc2= np.repeat(a2,2)  # Repet by element')
+c2= np.repeat(a2,2)
+show_array_info(c2)
 
 input("\nPress Enter to continue...\n")
-print("----------------------------------------\n")
-print("\n . Random module examples")
 
+print('\nDefine two sample arrays')
+print('''d1= np.arange(6).reshape([2,3])''')
+print('''d2= d1+10''')
+d1= np.arange(6).reshape([2,3])
+d2= d1+10
+show_array_info(d1)
+show_array_info(d2)
 
+print("\ne= np.hstack((d1,d2))  # 'hstack'")
+e= np.hstack((d1,d2))
+show_array_info(e)
+
+print("\nAbove is same to e= np.concatenate((d1,d2),axis=1)")
+e= np.concatenate((d1,d2),axis=1)
+show_array_info(e)
 
 input("\nPress Enter to continue...\n")
-print("----------------------------------------\n")
-print("\n NaN and Masked Array")
 
+print("f= np.vstack((d1,d2))  # 'vstack'")
+f= np.vstack((d1,d2))
+show_array_info(f)
 
+print("\nAbove is same to f= np.concatenate((d1,d2),axis=0)")
+f= np.concatenate((d1,d2),axis=0)
+show_array_info(f)
 
+input("\nPress Enter to continue...\n")
 
+print("g= np.dstack((d1,d2))  # 'dstack'")
+g= np.dstack((d1,d2))
+show_array_info(g)
 
+print("\nAbove is same to g= np.concatenate((d1.reshape([*d1.shape,1]),d2[:,:,None]),axis=2)")
+g= np.concatenate((d1.reshape([*d1.shape,1]),d2[:,:,None]),axis=2)
+show_array_info(g)
 
+input("\nPress Enter to continue...\n")
 
-
-
-'''
-### Logical operation
-np.logical_and()
-np.logical_or()
-np.logical_not()
-
-### Expanding Array
-np.repeat()
-np.tile()
-np.concatenate()
-np.hstack()
-np.vstack()
-np.dstack()
-
+print('''Check other numpy functions, too!
 ### Simple statistical methods
 np.dot()
 np.max()
@@ -192,22 +225,8 @@ np.ceil()
 np.power()
 np.log()
 np.exp()
-
-### Checking data
-np.isnan()
-np.isinf()
-np.isfinite()
-
-### Treat NaN values
-np.nan_to_num()
-np.nansum()
-np.nanmin()
-np.nanargmin()
-np.nanpercentile()
 ...
 
 ### https://docs.scipy.org/doc/numpy/reference/
-
-
-
-'''
+''')
+print("THE END: Basic Numpy\n")

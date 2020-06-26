@@ -99,6 +99,15 @@ print('\nindex_list= np.array([1,3,5])  # numpy array')
 index_list= np.array([1,3,5])
 print('a[::-1][index_list] = {}'.format(a[::-1][index_list]))
 
+print('\nHow about the index of other than integer?')
+print('index_list= np.asfarray([1,3,5])  # numpy float array')
+index_list= np.asfarray([1,3,5])
+try:
+    print('a[::-1][index_list] = {}'.format(a[::-1][index_list]))
+except Exception as err:
+    print("Error message\n:",err)
+
+
 print("\nIf given just one index to 2-D array?")
 print("a.reshape([5,2])[0] = {}".format(a.reshape([5,2])[0]))
 print("a.reshape([5,2])[-1] = {}".format(a.reshape([5,2])[-1]))
@@ -150,7 +159,14 @@ for j,i in zip(*loc):
 for j,i in zip(*loc):
   print("j={}, i={}, value={}".format(j,i,b[j,i]))
 
-print('\n\nUsage2: When want to replace values by certain condition')
+print("\nloc2= np.asarray(loc)")
+print("show_array_info(loc2)")
+loc2= np.asarray(loc)
+show_array_info(loc2)
+
+input("\nPress Enter to continue...\n")
+
+print('\nUsage2: When want to replace values by certain condition')
 print('\narray "b" is already defined above')
 show_array_info(b)
 
