@@ -208,6 +208,7 @@ np.digitize()
 np.percentile()
 np.sort()
 np.partition()
+np.unique()
 ...
 
 ### Argument methods
