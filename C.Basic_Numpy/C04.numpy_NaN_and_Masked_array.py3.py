@@ -66,6 +66,7 @@ show_array_info(norm1)
 
 input("\nPress Enter to continue...\n")
 print("----------------------------------------\n")
+
 print("\n2. Using NaN (Not a Number) to represent missings")
 print("\n2-1. Set an array with missings")
 print("""undef= np.nan
@@ -139,6 +140,7 @@ print('"Matplotlib" automatically identify NaN as an missing data!!!')
 
 input("\nPress Enter to continue...\n")
 print("----------------------------------------\n")
+
 print("\n3. Using Masked Array module")
 print("\n3-1. Create a masked array")
 print("""arr3= np.ma.masked_where(ms_idx,arr0)
@@ -161,9 +163,9 @@ print(arr3.mask)
 
 print("""
 ### Also available various functions to make masked array
-np.ma.masked_greater()
-np.ma.masked_less_equal()
-np.ma.masked_outside()
+np.ma.masked_greater(x, value[, copy])
+np.ma.masked_less_equal(x, value[, copy])
+np.ma.masked_outside(x, v1, v2[, copy])
 ...
 """)
 
@@ -182,6 +184,15 @@ show_array_info(norm3)
 norm3= np.ma.copy(arr3)/arr3.sum()
 show_array_info(norm3)
 
+print('''
+### Be Caution: "np.copy" makes different result!
+norm3b= np.copy(arr3)/arr3.sum()
+show_array_info(norm3b)''')
+norm3b= np.copy(arr3)/arr3.sum()
+show_array_info(norm3b)
+
+input("\nPress Enter to continue...\n")
+
 print("\n3-4. Back to numpy array")
 print("""
 ### If want to keep dimension:
@@ -193,8 +204,11 @@ print("""
 show_array_info(arr3.compressed())""")
 show_array_info(arr3.compressed())
 
+
 print("""
-### There are so many functions for masked array
+3-5. Other functions for masked array
+
+### There are quite various functions available for masked array
 ### Check https://numpy.org/doc/stable/reference/routines.ma.html
 """)
 

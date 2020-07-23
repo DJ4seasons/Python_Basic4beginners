@@ -3,6 +3,7 @@ Numpy Basic(3)
 2. characteristics of numpy array
 2-4. Concatenated application of numpy functions
 2-5. In-place operation
+2-6. Tiling/Joining Arrays
 
 By Daeho Jin
 '''
@@ -123,7 +124,7 @@ print("""
 
 input("\nPress Enter to continue...\n")
 print("----------------------------------------\n")
-print("\n2-6. Array transformation") # hsatck, vstack, ...
+print("\n2-6. Tiling/Joining Arrays") 
 
 print('\nDefine a sample array')
 print('''a= np.arange(4)''')
