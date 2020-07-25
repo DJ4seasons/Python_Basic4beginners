@@ -124,7 +124,7 @@ print("""
 
 input("\nPress Enter to continue...\n")
 print("----------------------------------------\n")
-print("\n2-6. Tiling/Joining Arrays") 
+print("\n2-6. Tiling/Joining Arrays")
 
 print('\nDefine a sample array')
 print('''a= np.arange(4)''')
@@ -195,9 +195,9 @@ input("\nPress Enter to continue...\n")
 print('''Check other numpy functions, too!
 ### Simple statistical methods
 np.dot()
-np.max()
+np.max(arr1); np.maximum(arr1,arr2)
 np.mean(); np.average()
-np.min()
+np.min(arr1); np.minimum(arr1,arr2)
 np.sum()
 np.std()
 np.var()

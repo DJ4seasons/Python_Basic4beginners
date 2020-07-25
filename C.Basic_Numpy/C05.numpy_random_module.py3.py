@@ -19,7 +19,6 @@ print('ver= np.__version__  # Check if Numpy version is 1.17 or later')
 ver= np.__version__
 print('version= ',ver)
 if int(ver.split('.')[1])<17:
-
     sys.exit('Numpy version should be 1.17 or later')
 
 print('\n* Start by initializing')
