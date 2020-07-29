@@ -41,7 +41,7 @@ def hdf_key_details(hdf_fid, key_name):
 
 def main():
     ##-- Parameters
-    indir= '../data/'
+    indir= '../Data/'
     fname= indir+'3B-HHR.MS.MRG.3IMERG.20180218-S000000-E002959.0000.V06B.HDF5'
 
     hdf_f = open_hdf5(fname)

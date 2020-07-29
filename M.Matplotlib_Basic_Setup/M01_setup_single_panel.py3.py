@@ -1,9 +1,18 @@
+'''
+Matplotlib Basic(1)
+: Define and Set up a figure
+: Define an axes in a figure
+: Draw a simple line plot
+: Save the plot with some options
+
+by Daeho Jin
+
+---
+Reference:
+https://matplotlib.org/3.3.0/tutorials/introductory/usage.html#parts-of-a-figure
+'''
+
 import numpy as np
-import sys
-
-import matplotlib   ### Discover Only
-matplotlib.use('TkAgg')   ### Discover Only
-
 import matplotlib.pyplot as plt
 
 ###--- Synthesizing data to be plotted ---###
@@ -15,7 +24,7 @@ y = x**2
 ###---
 
 
-###--- Plotting Start ---###  
+###--- Plotting Start ---###
 
 ##-- Page Setup --##
 fig = plt.figure()
@@ -39,15 +48,13 @@ ax1.plot(x,y)
 plt.show()
 
 #- If want to save to file
-outdir = "/home/djin1/Zbegins_Python/Py3_lecture_2019/data/Pics/"
-outfnm = outdir+"single_panel1.png"
+outdir = "../Pics/"
+outfnm = outdir+"M01_single_panel1.png"
+print(outfnm)
 #fig.savefig(outfnm,dpi=100)   # dpi: pixels per inch
-#fig.savefig(outfnm,dpi=100,facecolor='0.8')   
+#fig.savefig(outfnm,dpi=100,facecolor='0.8')
 #fig.savefig(outfnm,dpi=100,facecolor='0.8',transparent=True)
 
 #fig.savefig(outfnm,dpi=100,bbox_inches='tight')   # dpi: pixels per inch
 
 # Defalut: facecolor='w', edgecolor='w', transparent=False
-sys.exit()
-
-

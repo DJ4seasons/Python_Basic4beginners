@@ -45,7 +45,7 @@ def main():
     ###--- Parameters
     tgt_date= datetime(2019,1,1)
     date_str= '{}{:02d}{:02d}'.format(tgt_date.year, tgt_date.month, tgt_date.day)
-    indir = '../data/'
+    indir = '../Data/'
     #CCMP_Wind_Analysis_20190101_V02.0_L3.0_RSS.nc
     infn= indir+'CCMP_Wind_Analysis_{}_V02.0_L3.0_RSS.nc'.format(date_str)
 

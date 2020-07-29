@@ -1,9 +1,16 @@
+'''
+Matplotlib Basic(4)
+: Produce multi-panels using fig.add_axes()
+
+by Daeho Jin
+
+---
+Reference:
+https://matplotlib.org/3.3.0/api/_as_gen/matplotlib.figure.Figure.html#matplotlib.figure.Figure.add_axes
+https://matplotlib.org/api/_as_gen/matplotlib.axes.Axes.plot.html
+'''
+
 import numpy as np
-import sys
-
-import matplotlib   ### Discover Only
-matplotlib.use('TkAgg')   ### Discover Only
-
 import matplotlib.pyplot as plt
 
 ###--- Synthesizing data to be plotted ---###
@@ -15,7 +22,7 @@ y = x**2
 ###---
 
 abc='abcdefghijklmn'
-###--- Plotting Start ---###  
+###--- Plotting Start ---###
 
 ##-- Page Setup --##
 fig = plt.figure()
@@ -23,14 +30,14 @@ fig.set_size_inches(8.5,6)    # Physical page size in inches, (lx,ly)
 
 ##-- Title for the page --##
 suptit="Multi-Panel Setting"
-fig.suptitle(suptit,fontsize=15)  #,ha='left',x=0.,y=0.98,stretch='semi-condensed')
+fig.suptitle(suptit,fontsize=15,va='bottom',y=0.975)  #,ha='left',x=0.,stretch='semi-condensed')
 
 ##-- Subplot Setting --##
 nrow, ncol= 3,4
 
 left,right,top,bottom = 0.05,0.95,0.925,0.05
-npnx=ncol; gapx=0.05
-npny=nrow; gapy=0.08
+npnx,gapx= ncol,0.05
+npny,gapy= nrow,0.08
 lpnx= (right-left-(npnx-1)*gapx)/npnx
 lpny= (top-bottom-(npny-1)*gapy)/npny
 
@@ -40,18 +47,15 @@ for i in range(nrow*ncol):
     ax1 = fig.add_axes([ix,iy-lpny,lpnx,lpny])  # [left,bottom,width,height]
 
     ##-- Plot on an axis --##
-    ax1.plot(x,y)
+    ax1.plot(x,y,color='{:.1f}'.format(i/(nrow*ncol)))
+    ax1.set_title('({}) Panel#{:d}'.format(abc[i],i+1))
 
-    ##-- Title for each panel --##
-    subtit='({}) Panel#{}'.format(abc[i],i+1)
-    ax1.set_title(subtit,fontsize=12)
-
+    ##-- Update panel location
     ix=ix+lpnx+gapx
-    if ix >= right:
+    if ix+lpnx > 1.:
        ix=left
        iy=iy-lpny-gapy
 
-    
 
 ##-- Seeing or Saving Pic --##
 
@@ -59,12 +63,10 @@ for i in range(nrow*ncol):
 plt.show()
 
 #- If want to save to file
-outdir = "/home/djin1/Zbegins_Python/Py3_lecture_2019/data/Pics/"
-outfnm = outdir+"multi_panel2.png"
+outdir = "../Pics/"
+outfnm = outdir+"M04_multi_panel2.png"
+print(outfnm)
 #fig.savefig(outfnm,dpi=100)   # dpi: pixels per inch
 #fig.savefig(outfnm,dpi=100,bbox_inches='tight')   # dpi: pixels per inch
 
 # Defalut: facecolor='w', edgecolor='w', transparent=False
-sys.exit()
-
-

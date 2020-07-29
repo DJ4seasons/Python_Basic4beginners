@@ -76,7 +76,7 @@ def check_data_imshow(arr2d, origin='lower'):
 
 def main():
     ###--- Parameters
-    indir= '../data/'
+    indir= '../Data/'
     #PRCP_CU_GAUGE_V1.0GLB_0.50deg.lnx.20200701.RT
     tgt_date= date(2020,7,1)
     tgt_date_name= tgt_date.strftime('%Y%m%d')

@@ -71,7 +71,7 @@ def write_text_rmm(filename, rmm_data):
             f.write(one_line)
 
 def main():
-    indir= '../data/'
+    indir= '../Data/'
     infn= indir+'rmm.74toRealtime.txt'
 
     rmm_data= read_rmm_manual(infn)

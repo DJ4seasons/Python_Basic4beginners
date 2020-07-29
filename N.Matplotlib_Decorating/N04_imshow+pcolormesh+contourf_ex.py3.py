@@ -1,45 +1,52 @@
+'''
+Matplotlib Basic_Lv2(4)
+: Display 2d array
+: imshow vs. pcolormesh vs. contourf
+
+by Daeho Jin
+
+---
+Reference:
+https://matplotlib.org/api/_as_gen/matplotlib.axes.Axes.imshow.html
+https://matplotlib.org/api/_as_gen/matplotlib.axes.Axes.pcolormesh.html
+https://matplotlib.org/api/_as_gen/matplotlib.axes.Axes.contourf.html
+'''
 import numpy as np
-import sys
-
-import matplotlib   ### Discover Only
-matplotlib.use('TkAgg')   ### Discover Only
-
 import matplotlib.pyplot as plt
 from matplotlib.ticker import AutoMinorLocator, MultipleLocator, FuncFormatter
 
 def plot_common(ax,subtit,xlin,ylin):
-    ax.set_title(subtit,fontsize=12,x=0.,ha='left') #,y=0.9
+    ax.set_title(subtit,fontsize=12) #,x=0.,ha='left',y=0.9
 
     ax.set_xticks(np.linspace(0,len(xlin)-1,4))
     ax.set_xticklabels([-2,0,2,4])
     ax.set_yticks(np.linspace(0,len(ylin)-1,5))
     ax.set_yticklabels([-3,-1,1,3,5])
-    
-    #ax.yaxis.set_ticks_position('both')        
+
+    #ax.yaxis.set_ticks_position('both')
     ax.tick_params(axis='both',labelsize=10)
 
 def plot_common2(ax,subtit=''):
-    ax.set_title(subtit,fontsize=12,x=0.,ha='left',stretch='condensed') #,y=0.9
+    ax.set_title(subtit,fontsize=12,stretch='condensed') #,x=0.,ha='left',y=0.9
 
     ax.set_xlim(-2,4)
     ax.xaxis.set_major_locator(MultipleLocator(2))   # For Major Ticks
     #ax.xaxis.set_minor_locator(AutoMinorLocator(2))   # For minor Ticks
     #xt_form=FuncFormatter(lambda x, pos: "{:0.1f}".format(x))
     #ax.xaxis.set_major_formatter(xt_form)
-   
+
     ax.set_ylim(-3,5)
     ax.set_yticks(range(-3,6,2))
     #ax.yaxis.set_minor_locator(AutoMinorLocator(2))
 
-    #ax.yaxis.set_ticks_position('both')        
+    #ax.yaxis.set_ticks_position('both')
     ax.tick_params(axis='both',labelsize=10)
-
 
 
 ###---
 
 abc='abcdefghijklmn'
-###--- Plotting Start ---###  
+###--- Plotting Start ---###
 
 ##-- Page Setup --##
 fig = plt.figure()
@@ -93,23 +100,22 @@ for i in range(2):
     subtit='({}) contourf clev=100'.format(abc[i+10])
     plot_common2(ax6,subtit)
 
-        
-
-
 ##-- Seeing or Saving Pic --##
 
 #- If want to see on screen -#
 plt.show()
 
 #- If want to save to file
-outdir = "/home/djin1/Zbegins_Python/Py3_lecture_2019/data/Pics/"
-outfnm = outdir+"imshow+pcolormesh+contourf.png"
+outdir = "../Pics/"
+outfnm = outdir+"N04_imshow+pcolormesh+contourf.png"
+print(outfnm)
 #fig.savefig(outfnm,dpi=100)   # dpi: pixels per inch
 #fig.savefig(outfnm,dpi=100,bbox_inches='tight')   # dpi: pixels per inch
 
 # Defalut: facecolor='w', edgecolor='w', transparent=False
-sys.exit()
 
-
-### Legend Guide
-### https://matplotlib.org/3.1.0/tutorials/intermediate/legend_guide.html
+'''
+xlin2 = np.concatenate((xlin-res/2,[xlin[-1]+res/2]))
+ylin2 = np.concatenate((ylin-res/2,[ylin[-1]+res/2]))
+X2,Y2 = np.meshgrid(xlin2,ylin2)
+'''

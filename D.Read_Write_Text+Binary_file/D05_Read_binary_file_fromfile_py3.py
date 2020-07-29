@@ -40,7 +40,7 @@ def check_data_plot(arr1d):
 
 def main():
     ###--- Parameters
-    indir= '../data/'
+    indir= '../Data/'
     #HadISST1.sample.2017-2019.36x180x360.f32dat
     yrs= [2017,2019]  # Starting year and ending year
     mon_per_yr= 12

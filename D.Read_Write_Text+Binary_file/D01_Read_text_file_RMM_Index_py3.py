@@ -81,7 +81,7 @@ def read_rmm_genfromtxt(fname):
     return time_info,pcs,phs,amps
 
 def main():
-    indir= '../data/'
+    indir= '../Data/'
     infn= indir+'rmm.74toRealtime.txt'
 
     rmm_data= read_rmm_manual(infn)

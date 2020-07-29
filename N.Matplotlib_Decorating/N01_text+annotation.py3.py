@@ -1,9 +1,17 @@
+'''
+Matplotlib Basic_Lv2(1)
+: Write/Draw text
+: Advanced annotation
+
+by Daeho Jin
+
+---
+Reference:
+https://matplotlib.org/api/_as_gen/matplotlib.axes.Axes.text.html#matplotlib.axes.Axes.text
+https://matplotlib.org/api/_as_gen/matplotlib.pyplot.figtext.html
+https://matplotlib.org/api/_as_gen/matplotlib.axes.Axes.annotate.html#matplotlib.axes.Axes.annotate
+'''
 import numpy as np
-import sys
-
-import matplotlib   ### Discover Only
-matplotlib.use('TkAgg')   ### Discover Only
-
 import matplotlib.pyplot as plt
 from matplotlib.ticker import AutoMinorLocator, MultipleLocator, FuncFormatter
 
@@ -16,13 +24,13 @@ y = x**2
 ###---
 
 
-###--- Plotting Start ---###  
+###--- Plotting Start ---###
 
 ##-- Page Setup --##
 fig = plt.figure()
 fig.set_size_inches(6,4.5)    # Physical page size in inches, (lx,ly)
 
-fig.subplots_adjust(left=0.1,right=0.95,top=0.9,bottom=0.1,hspace=0.2,wspace=0.15)  ### Margins, etc.
+fig.subplots_adjust(left=0.1,right=0.95,top=0.9,bottom=0.1) #,hspace=0.2,wspace=0.15)  ### Margins, etc.
 
 ##-- Title for the page --##
 suptit="Text and Annotation"
@@ -55,7 +63,7 @@ ax1.axhline(y=0.,color='k',linestyle=':')
 ax1.axvline(x=0.,color='k',ls=':',lw=0.5)
 
 ##-- Text and Annotation --##
-ax1.text(0.,16.,'Normal Text',ha='left',va='center')  # Data Coordinate
+ax1.text(0.,16.,'Normal Text',ha='left',va='center',color='r')  # Data Coordinate
 
 pos1=ax1.get_position().bounds  ##<= (left,bottom,width,height)
 plt.figtext(pos1[0]+pos1[2]*0.25,pos1[1]+pos1[3]*0.75,'Text in Pink Box',backgroundcolor='pink',color='k',fontsize=12)   # Figure Coordinate by default
@@ -66,23 +74,16 @@ ax1.annotate(r'$y=x^2$', xy=(3., 9.),  xycoords='data',
              )
 
 
-    
-
 ##-- Seeing or Saving Pic --##
 
 #- If want to see on screen -#
 plt.show()
 
 #- If want to save to file
-outdir = "/home/djin1/Zbegins_Python/Py3_lecture_2019/data/Pics/"
-outfnm = outdir+"single_panel3.png"
+outdir = "../Pics/"
+outfnm = outdir+"N01_single_panel+text_annotation.png"
+print(outfnm)
 #fig.savefig(outfnm,dpi=100)   # dpi: pixels per inch
-#fig.savefig(outfnm,dpi=100,facecolor='0.8')   
-#fig.savefig(outfnm,dpi=100,facecolor='0.8',transparent=True)
-
 #fig.savefig(outfnm,dpi=100,bbox_inches='tight')   # dpi: pixels per inch
 
 # Defalut: facecolor='w', edgecolor='w', transparent=False
-sys.exit()
-
-

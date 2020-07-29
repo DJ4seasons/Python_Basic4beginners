@@ -48,7 +48,7 @@ def hdf_key_test(f, key1):
 
 def main():
     ##-- Parameters
-    indir='../data/'
+    indir='../Data/'
     fname=indir+'3B-HHR.MS.MRG.3IMERG.20180218-S000000-E002959.0000.V06B.HDF5'
 
     var_names= ['time','lon', 'lat', 'precipitationCal']

@@ -26,7 +26,7 @@ def open_hdf4(fname):
 
 
 ##-- Parameters
-indir='../data/'
+indir='../Data/'
 fname=indir+'3B42.20180218.00.7.HDF'
 
 hdf_f = open_hdf4(fname)

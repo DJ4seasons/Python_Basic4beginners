@@ -64,7 +64,7 @@ def write_binary_data(filename, data, dtype=np.float32):
         data.astype(dtype).tofile(f)
 
 def main():
-    indir= '../data/'
+    indir= '../Data/'
     yrs= [2017,2019]  # Starting year and ending year
     for yr in range(yrs[0],yrs[1]+1,1):
         #HadISST1_SST_2019.txt

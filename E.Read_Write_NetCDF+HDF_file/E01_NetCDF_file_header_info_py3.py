@@ -43,7 +43,7 @@ def print_netcdf_details(nc_fid):
 def main():
 
     ###--- Parameters
-    indir= '../data/'
+    indir= '../Data/'
 
     ### netCDF3 example:
     fname= indir+'AMO_HADLEY.1870-2010.CLM_1901-1970.nc'
