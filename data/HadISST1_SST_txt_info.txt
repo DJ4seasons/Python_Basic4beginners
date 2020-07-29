@@ -1,0 +1,37 @@
+Data are stored in ASCII
+
+All values are integers
+Temperatures are stored as degrees C * 100
+100% sea-ice-covered gridboxes are flagged as -1000
+Land squares are set to -32768
+
+The day, month and year are stored at the start of each month. The day simply tells
+you on which day the month starts.
+
+Data Array (360x180)
+Item (  1,  1) stores the value for the 1-deg-area centred at 179.5W and 89.5N
+Item (360,180) stores the value for the 1-deg-area centred at 179.5E and 89.5S
+
+          ----- ----- -----
+         |     |     |     |
+         | DAY | MON | YR  |
+         |_____|_____|_____|____________________________
+     90N |(1,1)                                         |
+         |                                              |
+         |                                              |
+         |                                              |
+         |                                              |
+         |(1,90)                                        |
+     Equ |                                              |
+         |(1,91)                                        |
+         |                                              |
+         |                                              |
+         |                                              |
+         |                                              |
+     90S |(1,180)______________________________(360,180)|
+          180W                 0                    180E
+
+
+Referece: Rayner, N. A.; Parker, D. E.; Horton, E. B.; Folland, C. K.; Alexander, L. V.; Rowell, D. P.; Kent, E. C.; Kaplan, A. (2003) Global analyses of sea surface temperature, sea ice, and night marine air temperature since the late nineteenth century J. Geophys. Res.Vol. 108, No. D14, 4407 10.1029/2002JD002670 
+
+Source: https://www.metoffice.gov.uk/hadobs/hadisst/data/download.html

@@ -1,0 +1,11 @@
+Citation:
+AMO Index Data provided by the Climate Analysis Section, NCAR, Boulder, USA, Trenberth and Shea (2006)
+
+Notes:
+input data: HadISST1.1
+
+"AMO_WARM_REMOVED_..." is the AMO index as defined by Trenberth and Shea (2006), with the global mean SST timeseries (SST_GLOBAL_...) subtracted from each grid box prior to averaging the SSTs over the AMO region.
+
+Acknowledgement:
+Trenberth, Kevin, Zhang, Rong & National Center for Atmospheric Research Staff (Eds). Last modified 10 Jan 2019. "The Climate Data Guide: Atlantic Multi-decadal Oscillation (AMO)." Retrieved from https://climatedataguide.ucar.edu/climate-data/atlantic-multi-decadal-oscillation-amo.
+
