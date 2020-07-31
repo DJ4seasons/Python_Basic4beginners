@@ -1,17 +1,20 @@
-import numpy as np
+'''
+Matplotlib Application(2)
+: Display Box plot and Violin plot to show distribution
+
+Data
+: CCMP_Wind_Analysis_20190101_V02.0_L3.0_RSS.daily.nc (obtained from E02)
+
+
+by Daeho Jin
+'''
+
 import sys
 import os.path
-from subprocess import call
-from datetime import timedelta, date, datetime
-from netCDF4 import Dataset, date2num
+import numpy as np
 
-
-import matplotlib   ### Discover Only
-matplotlib.use('TkAgg')   ### Discover Only
-
-import matplotlib.pyplot as plt
-from matplotlib.ticker import AutoMinorLocator, MultipleLocator, FuncFormatter
-import matplotlib.patches as mpatches
+from datetime import timedelta, date
+from netCDF4 import Dataset
 
 def open_netcdf(fname):
     if not os.path.isfile(fname):
@@ -22,10 +25,6 @@ def open_netcdf(fname):
     print("Open:",fname)
     return fid
 
-def daterange(start_date, end_date):
-    ### Including end date
-    for n in range(int((end_date - start_date).days)+1):
-        yield start_date + timedelta(n)
 
 def read_nc_variable(fid,var_name):
     vdata=fid.variables[var_name][:]
@@ -33,169 +32,131 @@ def read_nc_variable(fid,var_name):
         vdata=vdata.reshape(vdata.shape[1:])
     return vdata
 
-def setBoxColors(bp,cn1):
-    from matplotlib.pyplot import setp
 
-    #print len(bp['caps']),len(bp['fliers'])
-    k=len(bp['fliers'])
-    for i in range(k):
-        i2=i*2
-        setp(bp['boxes'][i], color=cn1,linewidth=1.5)
-        setp(bp['caps'][i2], color=cn1,linewidth=1.5)
-        setp(bp['caps'][i2+1], color=cn1,linewidth=1.5)
-        setp(bp['whiskers'][i2], color=cn1,linewidth=1.5)
-        setp(bp['whiskers'][i2+1], color=cn1,linewidth=1.5)
-        setp(bp['fliers'][i], color=cn1,marker='.',markersize=2)
-        setp(bp['medians'][i], color='k',linewidth=1.5)
+def main():
+    ###--- Read CCMP wind data
+    tgt_date= date(2019,1,1)
+    date_txt= tgt_date.strftime('%Y%m%d')
 
+    indir= '../Data/'
+    infn= indir+'CCMP_Wind_Analysis_{}_V02.0_L3.0_RSS.daily.nc'.format(date_txt)
 
-###--- Prepare Data ---###
-var1,var2 = 'hgt_200hPa','hgt_500hPa'
-dim_names = ['XLAT','XLONG']
-indir = '/home/djin1/Zbegins_Python/Py3_lecture_2019/data/'
+    fid= open_netcdf(infn)
 
-start_date = date(2018,2,17)  ### Start Date
-end_date = date(2018,2,19)   ### Including this End Date
+    var_names= ['uwnd', 'vwnd']
+    wnd_data=[]
+    for vn in var_names:
+        data1= read_nc_variable(fid,vn).reshape(-1)
+        data1= data1.compressed()  # Transform Masked_array into numpy array by removing missings
+        wnd_data.append(data1)
 
-abc='abcdefghijklmn'
+    outdir= '../Pics/'
+    outfn= outdir+'O02_CCMP_Wind_daily_distribution.{}.box+violin.png'
+
+    plot_data= dict(data=wnd_data,var_names=var_names,outfn=outfn)
+    plot_main(plot_data)
 
 
-data1=[]; data2=[]; days=[]
-for oneday in daterange(start_date,end_date):
-    dd=oneday.strftime('%Y-%m-%d')
-    days.append(dd)
+###---
+### Box and Viloin Plot
+###---
+import matplotlib.pyplot as plt
+from matplotlib.ticker import AutoMinorLocator, MultipleLocator, FuncFormatter
+import matplotlib.patches as mpatches
 
-    infn=indir+'{}_wrfout_d01_{}_12-00-00.nc'.format(var1,dd)
-    fid=open_netcdf(infn)
-    #if oneday==start_date:
-    #    lats=read_nc_variable(fid,'XLAT')
-    #    lons=read_nc_variable(fid,'XLONG')
-    vname=var1.split('_')[0].upper()
-    data=read_nc_variable(fid,vname)
-    data1.append(data.reshape(-1)[::50])
+def plot_main(plot_data):
+    ###--- Plotting Start ---###
+    abc='abcdefghijklmn'
+    ##-- Page Setup --##
+    fig = plt.figure()
+    fig.set_size_inches(6,8.5)    # Physical page size in inches, (lx,ly)
+    fig.subplots_adjust(left=0.06,right=0.94,top=0.92,bottom=0.05,hspace=0.25) #,wspace=0.15)  ### Margins, etc.
 
-    infn=indir+'{}_wrfout_d01_{}_12-00-00.nc'.format(var2,dd)
-    fid=open_netcdf(infn)
-    vname=var2.split('_')[0].upper()
-    data=read_nc_variable(fid,vname)
-    data2.append(data.reshape(-1)[::50])
+    ##-- Title for the page --##
+    suptit="CCMP Surface Wind distribution on 2019.01.01"
+    fig.suptitle(suptit,fontsize=17,va='bottom',y=0.975)  #,ha='left',x=0.,stretch='semi-condensed')
 
+    nbins=len(plot_data['data'])
+    xind=np.arange(nbins)
+    cc=['steelblue','#f07575']
 
+    ##-- Set up an axis --##
+    ax1 = fig.add_subplot(2,1,1)   # (# of rows, # of columns, indicater from 1)
 
-###--- Plotting Start ---###
-
-##-- Page Setup --##
-fig = plt.figure()
-fig.set_size_inches(8.5,8.5)    # Physical page size in inches, (lx,ly)
-
-fig.subplots_adjust(left=0.06,right=0.94,top=0.92,bottom=0.05,hspace=0.35,wspace=0.15)  ### Margins, etc.
-
-##-- Title for the page --##
-suptit="Box Plot + Violet Plot"
-fig.suptitle(suptit,fontsize=15)  #,ha='left',x=0.,y=0.98,stretch='semi-condensed')
-
-nbins=len(data1)
-xind=np.arange(nbins)
-cc=['deeppink','skyblue','gold','0.7']
-
-##-- Set up an axis --##
-ax1 = fig.add_subplot(3,1,1)   # (# of rows, # of columns, indicater from 1)
-ax1b= ax1.twinx()
-
-flierprops = dict(marker='.',markerfacecolor='gray',markeredgecolor='none',markersize=3,linestyle='none')
-medianprops = dict(color='k',linewidth=1.5)
-meanprops = dict(marker='x',markeredgecolor='k',markerfacecolor='k',markersize=10,markeredgewidth=2)
-capprops = dict(linewidth=1.5,color='k')
-whiskerprops=dict(linewidth=1.5,linestyle='-')
-
-box1=ax1.boxplot(data1,whis=[5,95],widths=0.25,positions=xind-0.15,patch_artist=True,showmeans=True,flierprops=flierprops,boxprops=dict(facecolor='lightblue',linewidth=1.5),medianprops=medianprops,meanprops=meanprops,capprops=capprops,whiskerprops=whiskerprops)
-box2=ax1b.boxplot(data2,whis=[5,95],widths=0.25,positions=xind+0.15,patch_artist=True,showmeans=True,flierprops=flierprops,boxprops=dict(facecolor='pink',linewidth=1.5),medianprops=medianprops,meanprops=meanprops,capprops=capprops,whiskerprops=whiskerprops)
-
-ax1.legend([box1["boxes"][0],box2["boxes"][0]], [var1,var2], bbox_to_anchor=(0.5,0.98,.49,.1),loc=3,ncol=2,mode='expand',fontsize=12,framealpha=0.6,borderaxespad=0.)
+    flierprops = dict(marker='.',markerfacecolor='gray',markeredgecolor='none',markersize=3,linestyle='none')
+    medianprops = dict(color='k',linewidth=1.5)
+    meanprops = dict(marker='x',markeredgecolor='k',markerfacecolor='k',markersize=10,markeredgewidth=2)
+    capprops = dict(linewidth=1.5,color='k')
+    whiskerprops= dict(linewidth=1.5,linestyle='-')
 
 
-subtit='(a) Filled Box Plot'
-ax1.set_title(subtit,fontsize=12,x=0.,ha='left')
-ax1.set_xticks(xind)
-ax1.set_xticklabels(days)
-ax1.set_xlim(xind[0]-0.5,xind[-1]+0.5)
-#yt_form=FuncFormatter(lambda x, pos: "{:0.0f}%".format(x))
-#ax1.yaxis.set_major_formatter(yt_form)
-ax1.set_ylim(12400,12510)
-ax1b.set_ylim(5600,6000)
+    boxes=[]
+    for i in range(nbins):
+        boxprops= dict(facecolor=cc[i],linewidth=1.5)
+        box1=ax1.boxplot(plot_data['data'][i],positions=[xind[i],],
+                    whis=[5,95],widths=0.6,patch_artist=True,showmeans=True,
+                    boxprops=boxprops,flierprops=flierprops,
+                    medianprops=medianprops,meanprops=meanprops,
+                    capprops=capprops,whiskerprops=whiskerprops)
+        boxes.append(box1)
 
+    ax1.legend([box["boxes"][0] for box in boxes], plot_data['var_names'],
+                loc='upper right', bbox_to_anchor=[0.99,0.98],
+                fontsize=12,framealpha=0.6,borderaxespad=0.)
 
-##-- Set another axis --##
-ax2 = fig.add_subplot(3,1,2)   # (# of rows, # of columns, indicater from 1)
-ax2b= ax2.twinx()
+    subtit='(a) Filled Box Plot'
+    data_range= [[wnd.min(),wnd.max()] for wnd in plot_data['data']]
+    data_max= np.absolute(np.asarray(data_range)).max()+1
+    y_range=[-data_max, data_max]
+    plot_common(ax1,subtit,xind,plot_data['var_names'],y_range)
 
-vio1=ax2.violinplot(data1,positions=xind-0.15,points=100,showextrema=True,widths=0.25)
-vio2=ax2b.violinplot(data2,positions=xind+0.15,points=100,showextrema=False,widths=0.25)
+    ##-- Set another axis --##
+    ax2 = fig.add_subplot(2,1,2)   # (# of rows, # of columns, indicater from 1)
 
-for b1,b2 in zip(vio1['bodies'],vio2['bodies']):
-    b1.set_color('lightblue'); b1.set_alpha(0.9)
-    b2.set_color('pink'); b2.set_alpha(0.9)
+    violins=[]
+    for i in range(nbins):
+        vio1=ax2.violinplot(plot_data['data'][i],positions=[xind[i],],
+                        points=100, widths=0.6,
+                        vert=True, showextrema=True)
+        violins.append(vio1)
 
-patch1= mpatches.Patch(color='lightblue')
-patch2= mpatches.Patch(color='pink')
-ax2.legend([patch1,patch2], [var1,var2], bbox_to_anchor=(0.5,0.98,.49,.1),loc=3,ncol=2,mode='expand',fontsize=12,framealpha=0.6,borderaxespad=0.)
+    markerprops= dict(marker='x',c='k',s=100,linewidth=2,zorder=3)  # 'linewidth', not 'linewidths'
+    ax2.scatter(xind,[data.mean() for data in plot_data['data']], **markerprops)
 
+    for b1,b2 in zip(*[vio1['bodies'] for vio1 in violins]):
+        b1.set_color(cc[0]); b1.set_alpha(0.9)
+        b2.set_color(cc[1]); b2.set_alpha(0.9)
 
-subtit='(b) Violin Plot'
-ax2.set_title(subtit,fontsize=12,x=0.,ha='left')
-ax2.set_xticks(xind)
-ax2.set_xlim(xind[0]-0.5,xind[-1]+0.5)
-ax2.set_xticklabels(days)
-ax2.set_ylim(12400,12510)
-ax2b.set_ylim(5600,6000)
+    patches= [mpatches.Patch(color=col) for col in cc]
+    ax2.legend(patches, plot_data['var_names'],
+                loc='upper right', bbox_to_anchor=[0.99,0.98],
+                fontsize=12,framealpha=0.6,borderaxespad=0.)
 
+    subtit='(b) Violin Plot'
+    plot_common(ax2,subtit,xind,plot_data['var_names'],y_range)
 
-##-- Set another axis --##
-ax3 = fig.add_subplot(3,1,3)   # (# of rows, # of columns, indicater from 1)
-ax3b= ax3.twinx()
+    ##-- Seeing or Saving Pic --##
+    #- If want to see on screen -#
+    #plt.show()
 
-vio1=ax3.violinplot(data1,positions=xind,points=100,showextrema=False,widths=0.5)
-vio2=ax3b.violinplot(data2,positions=xind,points=100,showextrema=False,widths=0.5)
+    #- If want to save to file
+    outfnm= plot_data['outfn']
+    print(outfnm)
+    #fig.savefig(outfnm,dpi=100)   # dpi: pixels per inch
+    fig.savefig(outfnm,dpi=100,bbox_inches='tight')   # dpi: pixels per inch
+    return
 
-for b1,b2 in zip(vio1['bodies'],vio2['bodies']):
-    b1.set_color('lightblue'); b1.set_alpha(0.9)
-    m = np.mean(b1.get_paths()[0].vertices[:, 0])
-    b1.get_paths()[0].vertices[:, 0] = np.clip(b1.get_paths()[0].vertices[:, 0], -np.inf, m)
+def plot_common(ax,subtit,xind,x_ticklabels,y_range):
+    ax.set_title(subtit,fontsize=14,x=0.,ha='left')
+    ax.set_xticks(xind)
+    ax.set_xticklabels(x_ticklabels)
+    ax.set_xlim(xind[0]-0.6,xind[-1]+1.)
 
-    b2.set_color('pink'); b2.set_alpha(0.9)
-    m = np.mean(b2.get_paths()[0].vertices[:, 0])
-    b2.get_paths()[0].vertices[:, 0] = np.clip(b2.get_paths()[0].vertices[:, 0], m, np.inf)
+    ax.set_ylim(y_range)
+    ax.set_ylabel('Unit= m/s',fontsize=12,labelpad=0)
 
-patch1= mpatches.Patch(color='lightblue')
-patch2= mpatches.Patch(color='pink')
-ax3.legend([patch1,patch2], [var1,var2], bbox_to_anchor=(0.5,0.98,.49,.1),loc=3,ncol=2,mode='expand',fontsize=12,framealpha=0.6,borderaxespad=0.)
+    ax.tick_params(axis='both',which='major',labelsize=11)
+    return
 
-flierprops = dict(marker='.',markerfacecolor='gray',markeredgecolor='none',markersize=3,linestyle='none')
-box1=ax3.boxplot(data1,whis=[5,95],widths=0.15,positions=xind-0.12,patch_artist=False,flierprops=flierprops)
-box2=ax3b.boxplot(data2,whis=[5,95],widths=0.15,positions=xind+0.12,patch_artist=False,flierprops=flierprops)
-
-#setBoxColors(box1,'lightblue')
-#setBoxColors(box2,'pink')
-
-subtit='(c) Half-Violin Plot'
-ax3.set_title(subtit,fontsize=12,x=0.,ha='left')
-ax3.set_xticks(xind)
-ax3.set_xlim(xind[0]-0.5,xind[-1]+0.5)
-ax3.set_xticklabels(days)
-ax3.set_ylim(12400,12510)
-ax3b.set_ylim(5600,6000)
-
-
-##-- Seeing or Saving Pic --##
-
-#- If want to see on screen -#
-plt.show()
-
-#- If want to save to file
-outdir = "/home/djin1/Zbegins_Python/Py3_lecture_2019/data/Pics/"
-outfnm = outdir+"Box+violet1.png"
-#fig.savefig(outfnm,dpi=100)   # dpi: pixels per inch
-#fig.savefig(outfnm,dpi=100,bbox_inches='tight')   # dpi: pixels per inch
-
-# Defalut: facecolor='w', edgecolor='w', transparent=False
-sys.exit()
+if __name__ == "__main__":
+    main()

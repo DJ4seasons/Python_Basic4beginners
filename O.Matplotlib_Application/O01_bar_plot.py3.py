@@ -7,7 +7,6 @@ Data
 : Make a histogram and display via bar plot
 
 by Daeho Jin
-
 '''
 
 import sys
@@ -57,6 +56,7 @@ def main():
         hist= hist/hist.sum()*100.
         hist_data.append(hist)
 
+    ### Call a function to draw the bar chart
     data_labels= [2017, 2018, 2019]
     outdir= '../Pics/'
     fig_filename= outdir+'O01_HadISST1_histogram_bar.png'
@@ -86,7 +86,7 @@ def plot_main(plot_data):
 
     ### Parameters for subplot area
     left,right,top,bottom= 0.05, 0.95, 0.925, 0.05
-    npnx,gapx,npny,gapy= 1, 0.03, 2.4, 0.09
+    npnx,gapx,npny,gapy= 1, 0.03, 2.3, 0.09
     lx= (right-left-gapx*(npnx-1))/npnx
     ly= (top-bottom-gapy*(npny-1))/npny; ly2=ly*1.3
     ix,iy= left, top

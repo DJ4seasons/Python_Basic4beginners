@@ -106,7 +106,7 @@ plt.show()
 
 #- If want to save to file
 outdir = "../Pics/"
-outfnm = outdir+"color_control.png"
+outfnm = outdir+"N05_color_control.png"
 print(outfnm)
 #fig.savefig(outfnm,dpi=100)   # dpi: pixels per inch
 #fig.savefig(outfnm,dpi=100,bbox_inches='tight')   # dpi: pixels per inch
