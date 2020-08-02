@@ -161,7 +161,6 @@ print("list(h) = {}".format(list(h)))
 
 print("\nh = 12345")
 h = 12345
-print("[h] = {}".format([h]))
 try:
     print("try list(h)  # Try to apply 'list' function to int")
     list(h)

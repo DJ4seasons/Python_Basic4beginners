@@ -28,7 +28,7 @@ def open_netcdf(fname):
 
 def read_nc_variable(fid,var_name):
     vdata=fid.variables[var_name][:]
-    if vdata.shape[0]==1:
+    if vdata.shape[0]==1:  # Same to Numpy.squeeze()
         vdata=vdata.reshape(vdata.shape[1:])
     return vdata
 
@@ -51,7 +51,7 @@ def main():
         wnd_data.append(data1)
 
     outdir= '../Pics/'
-    outfn= outdir+'O02_CCMP_Wind_daily_distribution.{}.box+violin.png'
+    outfn= outdir+'O02_CCMP_Wind_daily_distribution.{}.box+violin.png'.format(date_txt)
 
     plot_data= dict(data=wnd_data,var_names=var_names,outfn=outfn)
     plot_main(plot_data)
