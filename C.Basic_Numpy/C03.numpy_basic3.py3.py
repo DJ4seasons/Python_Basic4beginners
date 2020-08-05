@@ -26,7 +26,7 @@ print("\n2-4. Concatenated application of numpy functions")
 
 print('\nFirst define a sample array')
 print('''arr1= np.arange(24)
-arr1= np.reshape(arr1, [4,6]''')
+arr1= np.reshape(arr1, [4,6])''')
 arr1= np.arange(24)
 arr1= np.reshape(arr1, [4,6])
 show_array_info(arr1)
@@ -94,11 +94,11 @@ print(e)
 
 print("""
 Test4:
-e4= e[1,:]
-e4[1]=4
+e5= e[1,:]
+e5[1]=4
 print(e)""")
-e4= e[1,:]
-e4[1]=4
+e5= e[1,:]
+e5[1]=4
 print(e)
 
 print("""

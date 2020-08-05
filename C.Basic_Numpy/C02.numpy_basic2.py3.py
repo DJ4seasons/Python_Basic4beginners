@@ -89,7 +89,7 @@ print("\na[2:5] = {}  # = a[2:5:1]".format(a[2:5]))
 print("a[::2] = {}  # = a[0:len(a):2]".format(a[::2]))
 print("a[1::2] = {}".format(a[1::2]))
 print("a[::-1] = {}  # Flip the order".format(a[::-1]))
-print("a[8:1:-2] = {}  # Reversed slicing is not working".format(a[::-1]))
+print("a[8:1:-2] = {}  # Reversed slicing is working".format(a[8:1:-2]))
 
 print('\nIndexing: Pull out data by providing indexes')
 print('index_list=[1,3,5]  # List object')

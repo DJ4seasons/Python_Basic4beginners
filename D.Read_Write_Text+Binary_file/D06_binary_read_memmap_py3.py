@@ -90,7 +90,7 @@ def main():
     infn= indir+"PRCP_CU_GAUGE_V1.0GLB_0.50deg.lnx.{}.RT".format(tgt_date_name)
     ### Actually, this sample file is not big enough to avoid np.fromfile()
     ### However, this code intend to show exmaple of np.memmap()
-    prcp= bin_file_read_memmap(infn, dtype=np.float32) #, shape=data_dim)
+    prcp= bin_file_read_memmap(infn, dtype=np.float32, shape=data_dim)
     print(type(prcp), prcp.shape)
 
     prcp= prcp[0,60:300,:]  # Slicing for rain, 60S-60N

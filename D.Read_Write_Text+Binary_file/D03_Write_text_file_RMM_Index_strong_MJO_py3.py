@@ -56,6 +56,8 @@ def write_text_rmm(filename, rmm_data):
             mode= 'a'  # '(a)ppend'
         else:
             sys.exit("Your type {} is inappropriate.".format(answer))
+    else:
+        mode='w'
 
     with open(filename, mode) as f:
         header1= "RMM Index only for strong MJOs (amplitude>1)\n"

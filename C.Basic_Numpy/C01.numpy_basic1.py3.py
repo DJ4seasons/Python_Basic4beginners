@@ -121,13 +121,13 @@ input("\nPress Enter to continue...\n")
 print("----------------------------------------\n")
 print("\n1-4. Reshaping array")
 
-print("\nh=np.arange(24)  # 1-d array")
+print("\nh=np.arange(12)  # 1-d array")
 h=np.arange(12)
 print("\nh=np.reshape(h,[3,4])  # 2-d array")
 h=np.reshape(h,[3,4])   ### Reshape: Very Important!
 show_array_info(h)
 print("""
-# This is also same: h=np.arange(24).reshape([3,4])
+# This is also same: h=np.arange(12).reshape([3,4])
 """)
 print("\nh=h.T  # Transpose")
 h=h.T  ### Same: np.transpose()

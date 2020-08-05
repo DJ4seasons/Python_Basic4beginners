@@ -58,6 +58,8 @@ def write_binary_data(filename, data, dtype=np.float32):
             mode= 'ab'  # 'append' 'binary'
         else:
             sys.exit("Your type {} is inappropriate.".format(answer))
+    else:
+        mode='wb'
 
     ### Wirte sst to a binary file
     with open(filename, mode) as f:

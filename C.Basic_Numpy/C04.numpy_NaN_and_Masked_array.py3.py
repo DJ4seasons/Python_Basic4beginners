@@ -70,9 +70,9 @@ print("----------------------------------------\n")
 print("\n2. Using NaN (Not a Number) to represent missings")
 print("\n2-1. Set an array with missings")
 print("""undef= np.nan
-arr1= np.copy(arr0)
+arr2= np.copy(arr0)
 missing_loc= ([0,2],[1,2])  # (axis0_indices, axis1_indices)
-arr1[missing_loc]= undef
+arr2[missing_loc]= undef
 """)
 undef= np.nan
 arr2= np.copy(arr0)

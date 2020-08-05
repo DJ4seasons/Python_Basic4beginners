@@ -1,16 +1,18 @@
-import numpy as np
+'''
+Matplotlib Application(3)
+: Display scatter and 2D histogram plot to show relationship of two variables
+
+Data
+: CCMP_Wind_Analysis_20190101_V02.0_L3.0_RSS.daily.nc (obtained from E02)
+
+by Daeho Jin
+'''
+
 import sys
 import os.path
-from subprocess import call
-from datetime import timedelta, date, datetime
-from netCDF4 import Dataset, date2num
-
-
-import matplotlib   ### Discover Only
-matplotlib.use('TkAgg')   ### Discover Only
-
-import matplotlib.pyplot as plt
-from matplotlib.ticker import AutoMinorLocator, MultipleLocator, FuncFormatter
+import numpy as np
+from datetime import date
+from netCDF4 import Dataset
 
 def open_netcdf(fname):
     if not os.path.isfile(fname):
@@ -21,16 +23,130 @@ def open_netcdf(fname):
     print("Open:",fname)
     return fid
 
-def daterange(start_date, end_date):
-    ### Including end date
-    for n in range(int((end_date - start_date).days)+1):
-        yield start_date + timedelta(n)
-
 def read_nc_variable(fid,var_name):
     vdata=fid.variables[var_name][:]
-    if vdata.shape[0]==1:
+    if vdata.shape[0]==1:  # Same to Numpy.squeeze()
         vdata=vdata.reshape(vdata.shape[1:])
     return vdata
+
+def main():
+    ###--- Read CCMP wind data
+    tgt_date= date(2019,1,1)
+    date_txt= tgt_date.strftime('%Y%m%d')
+
+    indir= '../Data/'
+    infn= indir+'CCMP_Wind_Analysis_{}_V02.0_L3.0_RSS.daily.nc'.format(date_txt)
+
+    fid= open_netcdf(infn)
+
+    var_names= ['uwnd', 'vwnd']
+    uwnd= read_nc_variable(fid,var_names[0])
+    vwnd= read_nc_variable(fid,var_names[1])
+
+    ###--- Check missings and select commonly non-missing data
+    missings= np.logical_or(uwnd.mask, vwnd.mask)
+    uwnd.mask, vwnd.mask= missings, missings
+    uwnd= uwnd.compressed()
+    vwnd= vwnd.compressed()
+    if uwnd.shape != vwnd.shape:  # Now the shape should be identical
+        print("Shapes are not same:", uwnd.shape, vwnd.shape)
+        sys.exit()
+
+    outdir= '../Pics/'
+    outfn= outdir+'O03_CCMP_Wind_daily_u_vs_v.{}.box+violin.png'.format(date_txt)
+
+    plot_data= dict(data=[uwnd,vwnd],var_names=var_names,outfn=outfn)
+    plot_main(plot_data)
+
+
+###---
+### Box and Viloin Plot
+###---
+import matplotlib.pyplot as plt
+from matplotlib.ticker import AutoMinorLocator, MultipleLocator, FuncFormatter
+import matplotlib.patches as mpatches
+
+def plot_main(plot_data):
+    ###--- Plotting Start ---###
+    abc='abcdefghijklmn'
+    ##-- Page Setup --##
+    fig = plt.figure()
+    fig.set_size_inches(6,8.5)    # Physical page size in inches, (lx,ly)
+    fig.subplots_adjust(left=0.06,right=0.94,top=0.92,bottom=0.05,hspace=0.25) #,wspace=0.15)  ### Margins, etc.
+
+    ##-- Title for the page --##
+    suptit="CCMP Surface Wind distribution on 2019.01.01"
+    fig.suptitle(suptit,fontsize=17,va='bottom',y=0.975)  #,ha='left',x=0.,stretch='semi-condensed')
+
+    nbins=len(plot_data['data'])
+    xind=np.arange(nbins)
+    cc=['steelblue','#f07575']
+
+    ##-- Set up an axis --##
+    ax1 = fig.add_subplot(2,1,1)   # (# of rows, # of columns, indicater from 1)
+
+    flierprops = dict(marker='.',markerfacecolor='gray',markeredgecolor='none',markersize=3,linestyle='none')
+    medianprops = dict(color='k',linewidth=1.5)
+    meanprops = dict(marker='x',markeredgecolor='k',markerfacecolor='k',markersize=10,markeredgewidth=2)
+    capprops = dict(linewidth=1.5,color='k')
+    whiskerprops= dict(linewidth=1.5,linestyle='-')
+
+
+    boxes=[]
+    for i in range(nbins):
+        boxprops= dict(facecolor=cc[i],linewidth=1.5)
+        box1=ax1.boxplot(plot_data['data'][i],positions=[xind[i],],
+                    whis=[5,95],widths=0.6,patch_artist=True,showmeans=True,
+                    boxprops=boxprops,flierprops=flierprops,
+                    medianprops=medianprops,meanprops=meanprops,
+                    capprops=capprops,whiskerprops=whiskerprops)
+        boxes.append(box1)
+
+    ax1.legend([box["boxes"][0] for box in boxes], plot_data['var_names'],
+                loc='upper right', bbox_to_anchor=[0.99,0.98],
+                fontsize=12,framealpha=0.6,borderaxespad=0.)
+
+    subtit='(a) Filled Box Plot'
+    data_range= [[wnd.min(),wnd.max()] for wnd in plot_data['data']]
+    data_max= np.absolute(np.asarray(data_range)).max()+1
+    y_range=[-data_max, data_max]
+    plot_common(ax1,subtit,xind,plot_data['var_names'],y_range)
+
+    ##-- Set another axis --##
+    ax2 = fig.add_subplot(2,1,2)   # (# of rows, # of columns, indicater from 1)
+
+    violins=[]
+    for i in range(nbins):
+        vio1=ax2.violinplot(plot_data['data'][i],positions=[xind[i],],
+                        points=100, widths=0.6,
+                        vert=True, showextrema=True)
+        violins.append(vio1)
+
+    markerprops= dict(marker='x',c='k',s=100,linewidth=2,zorder=3)  # 'linewidth', not 'linewidths'
+    ax2.scatter(xind,[data.mean() for data in plot_data['data']], **markerprops)
+
+    for b1,b2 in zip(*[vio1['bodies'] for vio1 in violins]):
+        b1.set_color(cc[0]); b1.set_alpha(0.9)
+        b2.set_color(cc[1]); b2.set_alpha(0.9)
+
+    patches= [mpatches.Patch(color=col) for col in cc]
+    ax2.legend(patches, plot_data['var_names'],
+                loc='upper right', bbox_to_anchor=[0.99,0.98],
+                fontsize=12,framealpha=0.6,borderaxespad=0.)
+
+    subtit='(b) Violin Plot'
+    plot_common(ax2,subtit,xind,plot_data['var_names'],y_range)
+
+    ##-- Seeing or Saving Pic --##
+    #- If want to see on screen -#
+    #plt.show()
+
+    #- If want to save to file
+    outfnm= plot_data['outfn']
+    print(outfnm)
+    #fig.savefig(outfnm,dpi=100)   # dpi: pixels per inch
+    fig.savefig(outfnm,dpi=100,bbox_inches='tight')   # dpi: pixels per inch
+    return
 
 def draw_colorbar(ax,pic1,type='vertical',size='panel',gap=0.06,width=0.02,extend='neither'):
     '''
@@ -93,29 +209,6 @@ x=x[xidx]
 y=data[0][xidx]
 cc=data[2][xidx]
 
-###--- Linear Regression
-from sklearn import linear_model
-
-## For linear-regression
-regr=linear_model.LinearRegression()   ### Initiate Regression Object
-
-xdata=x.reshape([-1,1])  ## wind speed
-ydata=y.reshape([-1,1])  ## surface pressure
-
-regr.fit(xdata,ydata)
-r2score=regr.score(xdata,ydata)
-print(u"Coeff.={:.2f}, Intercept={:.2f}, R\u00B2 Score={:.3f}".format(regr.coef_[0][0], regr.intercept_[0],r2score))
-
-xcoord=np.linspace(x.min(),x.max(),100).reshape([-1,1])
-y_pred=regr.predict(xcoord)
-#regr.__init__()     ### Re-initiate in order to use next time with different data
-
-### Calculate density of data
-from scipy.stats import kde
-
-k=kde.gaussian_kde([x,y])
-xi,yi=np.mgrid[x.min():x.max():100j,y.min():y.max():100j]
-zi=k(np.vstack([xi.flatten(),yi.flatten()]))
 
 
 
