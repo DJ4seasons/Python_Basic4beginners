@@ -70,7 +70,7 @@ ax1.axvline(x=0.,color='k',ls=':',lw=0.5)
 ##-- Seeing or Saving Pic --##
 
 #- If want to see on screen -#
-plt.show()
+#plt.show()
 
 #- If want to save to file
 outdir = "../Pics/"
@@ -80,6 +80,6 @@ print(outfnm)
 #fig.savefig(outfnm,dpi=100,facecolor='0.8')
 #fig.savefig(outfnm,dpi=100,facecolor='0.8',transparent=True)
 
-#fig.savefig(outfnm,dpi=100,bbox_inches='tight')   # dpi: pixels per inch
+fig.savefig(outfnm,dpi=100,bbox_inches='tight')   # dpi: pixels per inch
 
 # Defalut: facecolor='w', edgecolor='w', transparent=False

@@ -45,13 +45,13 @@ ax1.plot(x,y)
 ##-- Seeing or Saving Pic --##
 
 #- If want to see on screen -#
-plt.show()
+#plt.show()
 
 #- If want to save to file
 outdir = "../Pics/"
 outfnm = outdir+"M01_single_panel1.png"
 print(outfnm)
-#fig.savefig(outfnm,dpi=100)   # dpi: pixels per inch
+fig.savefig(outfnm,dpi=100)   # dpi: pixels per inch
 #fig.savefig(outfnm,dpi=100,facecolor='0.8')
 #fig.savefig(outfnm,dpi=100,facecolor='0.8',transparent=True)
 
