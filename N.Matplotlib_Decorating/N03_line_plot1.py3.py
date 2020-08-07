@@ -83,7 +83,8 @@ for i in range(nrow*ncol):
     ax1 = fig.add_axes([ix,iy-lpny,lpnx,lpny])  # [left,bottom,width,height]
 
     ##-- Plot on an axis --##
-    props=dict(color=color_names[i%lcn],marker=markers[i%lmk],linestyle=line_styles[i%lls],markersize=2+i,linewidth=0.5+i*0.3)
+    props=dict(color=color_names[i%lcn],marker=markers[i%lmk],
+            linestyle=line_styles[i%lls],markersize=2+i,linewidth=0.5+i*0.3)
     ax1.plot(x,y,**props)
     ### No Marker: just remove "marker=something"
     ### No Line: add "linestyle='None'"

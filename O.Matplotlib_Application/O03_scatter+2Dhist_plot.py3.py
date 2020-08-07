@@ -46,14 +46,14 @@ def main():
     ###--- Check missings and select commonly non-missing data
     missings= np.logical_or(uwnd.mask, vwnd.mask)
     uwnd.mask, vwnd.mask= missings, missings
-    uwnd= uwnd.compressed()
-    vwnd= vwnd.compressed()
+    uwnd= uwnd.compressed()[::3]  # Reduce data size to 1/3 for convenience
+    vwnd= vwnd.compressed()[::3]
     if uwnd.shape != vwnd.shape:  # Now the shape should be identical
         print("Shapes are not same:", uwnd.shape, vwnd.shape)
         sys.exit()
 
     outdir= '../Pics/'
-    outfn= outdir+'O03_CCMP_Wind_daily_u_vs_v.{}.box+violin.png'.format(date_txt)
+    outfn= outdir+'O03_CCMP_Wind_daily_u_vs_v.{}.Scatter+2Dhist.png'.format(date_txt)
 
     plot_data= dict(data=[uwnd,vwnd],var_names=var_names,outfn=outfn)
     plot_main(plot_data)
@@ -71,71 +71,60 @@ def plot_main(plot_data):
     abc='abcdefghijklmn'
     ##-- Page Setup --##
     fig = plt.figure()
-    fig.set_size_inches(6,8.5)    # Physical page size in inches, (lx,ly)
-    fig.subplots_adjust(left=0.06,right=0.94,top=0.92,bottom=0.05,hspace=0.25) #,wspace=0.15)  ### Margins, etc.
+    fig.set_size_inches(10,5)    # Physical page size in inches, (lx,ly)
+    fig.subplots_adjust(left=0.05,right=0.95,top=0.92,bottom=0.1,wspace=0.15)  ### Margins, etc. ,hspace=0.35
 
     ##-- Title for the page --##
     suptit="CCMP Surface Wind distribution on 2019.01.01"
-    fig.suptitle(suptit,fontsize=17,va='bottom',y=0.975)  #,ha='left',x=0.,stretch='semi-condensed')
+    fig.suptitle(suptit,fontsize=16,va='bottom',y=0.98)  #,ha='left',x=0.,stretch='semi-condensed')
 
-    nbins=len(plot_data['data'])
-    xind=np.arange(nbins)
-    cc=['steelblue','#f07575']
+    cm=plt.cm.get_cmap('plasma')
+    x, y= plot_data['data']
+    spd= np.sqrt(x**2+y**2)  # Wind speed; set for color scale of scatter plot
 
     ##-- Set up an axis --##
-    ax1 = fig.add_subplot(2,1,1)   # (# of rows, # of columns, indicater from 1)
+    ax1 = fig.add_subplot(1,2,1)   # (# of rows, # of columns, indicater from 1)
+    props= dict(s=5,marker='o',alpha=0.8,cmap=cm,vmin=0.,vmax=20)
+    pic1 = ax1.scatter(x,y,c=spd,**props)
 
-    flierprops = dict(marker='.',markerfacecolor='gray',markeredgecolor='none',markersize=3,linestyle='none')
-    medianprops = dict(color='k',linewidth=1.5)
-    meanprops = dict(marker='x',markeredgecolor='k',markerfacecolor='k',markersize=10,markeredgewidth=2)
-    capprops = dict(linewidth=1.5,color='k')
-    whiskerprops= dict(linewidth=1.5,linestyle='-')
+    subtit='(a) Scatter Plot'
+    ax1.set_title(subtit,fontsize=12,x=0.,ha='left')
+    plot_common(ax1,subtit=subtit)
+    ax1.set_xlabel(plot_data['var_names'][0].upper(),fontsize=12)
+    ax1.set_ylabel(plot_data['var_names'][1].upper(),fontsize=12)
 
+    cb1=draw_colorbar(fig,ax1,pic1,type='horizontal',size='panel',extend='max',gap=0.15,width=0.03)
+    cb1.set_ticks(range(0,21,5))
+    cb1.set_label('Wind Speed(m/s)',fontsize=11)
+    ##-- Set up an axis --##
+    ax2 = fig.add_subplot(1,2,2)   # (# of rows, # of columns, indicater from 1)
 
-    boxes=[]
-    for i in range(nbins):
-        boxprops= dict(facecolor=cc[i],linewidth=1.5)
-        box1=ax1.boxplot(plot_data['data'][i],positions=[xind[i],],
-                    whis=[5,95],widths=0.6,patch_artist=True,showmeans=True,
-                    boxprops=boxprops,flierprops=flierprops,
-                    medianprops=medianprops,meanprops=meanprops,
-                    capprops=capprops,whiskerprops=whiskerprops)
-        boxes.append(box1)
+    cm=plt.cm.get_cmap('viridis'); cm.set_under(color='0.8')
+    H, xedges, yedges= np.histogram2d(x,y,bins=(9,8))
+    H=(H/H.sum()*100.).T; print(H.max(),H.mean())
+    X,Y=np.meshgrid(xedges,yedges)
+    props = dict(edgecolor='none',alpha=0.8,vmin=0.1,vmax=10,cmap=cm)
 
-    ax1.legend([box["boxes"][0] for box in boxes], plot_data['var_names'],
-                loc='upper right', bbox_to_anchor=[0.99,0.98],
-                fontsize=12,framealpha=0.6,borderaxespad=0.)
+    pic2 = ax2.pcolormesh(X,Y,H,**props)
 
-    subtit='(a) Filled Box Plot'
-    data_range= [[wnd.min(),wnd.max()] for wnd in plot_data['data']]
-    data_max= np.absolute(np.asarray(data_range)).max()+1
-    y_range=[-data_max, data_max]
-    plot_common(ax1,subtit,xind,plot_data['var_names'],y_range)
+    subtit='(c) 2D Histogram'
+    ax2.set_title(subtit,fontsize=12,x=0.,ha='left')
+    plot_common(ax2,subtit=subtit,ytright=True)
+    ax2.set_xlabel(plot_data['var_names'][0].upper(),fontsize=12)
+    ax2.set_ylabel(plot_data['var_names'][1].upper(),fontsize=12,rotation=-90)
+    ax2.yaxis.set_label_position("right")
 
-    ##-- Set another axis --##
-    ax2 = fig.add_subplot(2,1,2)   # (# of rows, # of columns, indicater from 1)
+    cb2=draw_colorbar(fig,ax2,pic2,type='horizontal',size='panel',extend='both',gap=0.15,width=0.03)
+    xt= cb2.get_ticks()
+    xt= [0.1,]+list(xt)
+    cb2.set_ticks(xt)
+    cb2.ax.set_xticklabels(['{:.1f}%'.format(x) for x in xt],size=10)
 
-    violins=[]
-    for i in range(nbins):
-        vio1=ax2.violinplot(plot_data['data'][i],positions=[xind[i],],
-                        points=100, widths=0.6,
-                        vert=True, showextrema=True)
-        violins.append(vio1)
-
-    markerprops= dict(marker='x',c='k',s=100,linewidth=2,zorder=3)  # 'linewidth', not 'linewidths'
-    ax2.scatter(xind,[data.mean() for data in plot_data['data']], **markerprops)
-
-    for b1,b2 in zip(*[vio1['bodies'] for vio1 in violins]):
-        b1.set_color(cc[0]); b1.set_alpha(0.9)
-        b2.set_color(cc[1]); b2.set_alpha(0.9)
-
-    patches= [mpatches.Patch(color=col) for col in cc]
-    ax2.legend(patches, plot_data['var_names'],
-                loc='upper right', bbox_to_anchor=[0.99,0.98],
-                fontsize=12,framealpha=0.6,borderaxespad=0.)
-
-    subtit='(b) Violin Plot'
-    plot_common(ax2,subtit,xind,plot_data['var_names'],y_range)
+    ny,nx=H.shape
+    xlocs=(xedges[1:]+xedges[:-1])/2
+    ylocs=(yedges[1:]+yedges[:-1])/2
+    xl,yl= np.meshgrid(xlocs,ylocs)
+    write_val(ax2,H.reshape(-1),xl.reshape(-1),yl.reshape(-1),crt=4.95)
 
     ##-- Seeing or Saving Pic --##
     #- If want to see on screen -#
@@ -148,7 +137,39 @@ def plot_main(plot_data):
     fig.savefig(outfnm,dpi=100,bbox_inches='tight')   # dpi: pixels per inch
     return
 
-def draw_colorbar(ax,pic1,type='vertical',size='panel',gap=0.06,width=0.02,extend='neither'):
+def write_val(ax,values,xloc,yloc,crt=0,ha='center',va='center'):
+    """
+    Show values on designated location if val>crt.
+    Input values, xloc, and yloc should be of same dimension
+    """
+    ### Show data values
+    for val,xl,yl in zip(values,xloc,yloc):
+        if val>crt: # Write only for large numbers
+            pctxt='{:.1f}%'.format(val)
+            ax.text(xl,yl,pctxt,ha=ha,va=va,stretch='semi-condensed',fontsize=10)
+    return
+
+def plot_common(ax,subtit='',ytlab=True,ytright=False):
+    ax.set_title(subtit,fontsize=14,x=0.,ha='left') #,y=0.9
+
+    ax.set_xlim(-20,20)
+    ax.xaxis.set_major_locator(MultipleLocator(10))   # For Major Ticks
+    ax.xaxis.set_minor_locator(AutoMinorLocator(2))   # For minor Ticks
+
+    ax.set_ylim(-20,20)
+    ax.set_yticks(range(-20,21,10))
+    ax.yaxis.set_minor_locator(AutoMinorLocator(2))
+
+    if not ytlab:
+        ax.set_yticklabels('')
+
+    if ytright:
+        ax.yaxis.tick_right()
+
+    ax.yaxis.set_ticks_position('both')
+    ax.tick_params(axis='both',labelsize=10)
+
+def draw_colorbar(fig,ax,pic1,type='vertical',size='panel',gap=0.06,width=0.02,extend='neither'):
     '''
     Type: 'horizontal' or 'vertical'
     Size: 'page' or 'panel'
@@ -173,139 +194,5 @@ def draw_colorbar(ax,pic1,type='vertical',size='panel',gap=0.06,width=0.02,exten
     return cbar
 
 
-###--- Prepare Data ---###
-var= 'slp'
-dim_names = ['XLAT','XLONG']
-indir = '/home/djin1/Zbegins_Python/Py3_lecture_2019/data/'
-
-start_date = date(2018,2,17)  ### Start Date
-end_date = date(2018,2,19)   ### Including this End Date
-
-abc='abcdefghijklmn'
-
-bins=np.arange(970,1021,5)
-xlabs=['{}-\n{}'.format(bins[i],bins[i+1]) for i in range(len(bins)-1)]
-print(xlabs)
-
-data=[]; days=[]
-for oneday in daterange(start_date,end_date):
-    dd=oneday.strftime('%Y-%m-%d')
-    days.append(dd)
-
-    infn=indir+'{}_wrfout_d01_{}_12-00-00.nc'.format(var,dd)
-    fid=open_netcdf(infn)
-    #if oneday==start_date:
-    #    lats=read_nc_variable(fid,'XLAT')
-    #    lons=read_nc_variable(fid,'XLONG')
-
-    data1=read_nc_variable(fid,var.upper())
-    data.append(data1.reshape(-1))
-
-
-
-x=data[1]
-xidx= x<990
-x=x[xidx]
-y=data[0][xidx]
-cc=data[2][xidx]
-
-
-
-
-###--- Plotting Start ---###
-
-##-- Page Setup --##
-fig = plt.figure()
-fig.set_size_inches(10,5)    # Physical page size in inches, (lx,ly)
-
-fig.subplots_adjust(left=0.05,right=0.95,top=0.92,bottom=0.05,hspace=0.35,wspace=0.15)  ### Margins, etc.
-
-##-- Title for the page --##
-suptit="SLP(t+0) vs. SLP(t-1) Plot"
-fig.suptitle(suptit,fontsize=15,y=1.)  #,ha='left',x=0.,y=0.98,stretch='semi-condensed')
-
-##-- Color Map
-cm=plt.cm.get_cmap('viridis'); cm.set_under(color='0.8')
-
-##-- Set up an axis --##
-ax1 = fig.add_subplot(1,3,1)   # (# of rows, # of columns, indicater from 1)
-
-pic1 = ax1.scatter(x,y,c=cc,s=5,marker='o',alpha=0.8,cmap=cm)
-
-rline = ax1.plot(xcoord,y_pred,color='k',ls='--',linewidth=2.)
-anntxt=r'$R^2={:.3f}$'.format(r2score)
-anntxt2='Coef.={:.2f}'.format(regr.coef_[0][0])
-ax1.annotate(anntxt,xy=(0.02,0.92),xycoords='axes fraction',ha='left',fontsize=12,stretch='semi-condensed')
-ax1.annotate(anntxt2,xy=(0.02,0.85),xycoords='axes fraction',ha='left',fontsize=12,stretch='semi-condensed')
-
-cb=draw_colorbar(ax1,pic1,type='horizontal',size='panel',gap=0.08,width=0.03)
-
-subtit='(a) Scatter+Regression'
-ax1.set_title(subtit,fontsize=12,x=0.,ha='left')
-ax1.set_xlim(970,992)
-ax1.set_ylim(999,1004)
-#ax1.set_xticks(xind)
-#ax1.set_xticklabels(xlabs[:-4])
-#yt_form=FuncFormatter(lambda x, pos: "{:0.0f}%".format(x))
-#ax1.yaxis.set_major_formatter(yt_form)
-
-##-- Set up an axis --##
-ax2 = fig.add_subplot(1,3,2)   # (# of rows, # of columns, indicater from 1)
-
-pic1 = ax2.scatter(x,y,c=cc,s=5,marker='o',alpha=0.8,cmap=cm)
-den1 = ax2.contour(xi,yi,zi.reshape(xi.shape),6,colors='k',linewidths=1.5)
-
-
-
-subtit='(b) Scatter+Density'
-ax2.set_title(subtit,fontsize=12,x=0.,ha='left')
-ax2.set_xlim(970,992)
-ax2.set_ylim(999,1004)
-ax2.set_yticklabels('')
-#ax1.set_xticks(xind)
-#ax1.set_xticklabels(xlabs[:-4])
-#yt_form=FuncFormatter(lambda x, pos: "{:0.0f}%".format(x))
-#ax1.yaxis.set_major_formatter(yt_form)
-
-##-- Set up an axis --##
-ax3 = fig.add_subplot(1,3,3)   # (# of rows, # of columns, indicater from 1)
-
-H, xedges, yedges= np.histogram2d(x,y,bins=10)
-H=(H/H.sum()*100.).T; print(H.max(),H.mean())
-X,Y=np.meshgrid(xedges,yedges)
-props = dict(edgecolor='none',alpha=0.8,vmin=0.1,vmax=6,cmap=cm)
-
-pic1 = ax3.pcolormesh(X,Y,H,**props)
-
-cb=draw_colorbar(ax3,pic1,type='horizontal',size='panel',extend='both',gap=0.08,width=0.03)
-
-subtit='(c) 2D Histogram'
-ax3.set_title(subtit,fontsize=12,x=0.,ha='left')
-ax3.yaxis.tick_right()
-#ax3.set_xlim(970,992)
-#ax3.set_ylim(999,1004)
-
-
-ny,nx=H.shape #; maxlocs.append([])
-for n in range(ny):
-    for m in range(nx):
-        if H[n,m]>3.:
-            xloc=(xedges[m]+xedges[m+1])/2.
-            yloc=(yedges[n]+yedges[n+1])/2.
-            ax3.annotate("{:.1f}".format(H[n,m]),xy=(xloc,yloc),ha='center',va='center',stretch='semi-condensed',fontsize=12)
-
-
-
-##-- Seeing or Saving Pic --##
-
-#- If want to see on screen -#
-plt.show()
-
-#- If want to save to file
-outdir = "/home/djin1/Zbegins_Python/Py3_lecture_2019/data/Pics/"
-outfnm = outdir+"Scatter+2Dhist1.png"
-#fig.savefig(outfnm,dpi=100)   # dpi: pixels per inch
-#fig.savefig(outfnm,dpi=100,bbox_inches='tight')   # dpi: pixels per inch
-
-# Defalut: facecolor='w', edgecolor='w', transparent=False
-sys.exit()
+if __name__ == "__main__":
+    main()

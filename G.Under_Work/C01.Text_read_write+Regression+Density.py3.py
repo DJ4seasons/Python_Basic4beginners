@@ -49,6 +49,13 @@ print(u"Coeff.={:.2f}, Intercept={:.2f}, R\u00B2 Score={:.3f}".format(regr.coef_
 #y_pred=regr.predict(xcoord)
 regr.__init__()     ### Re-initiate in order to use next time with different data
 
+'''
+rline = ax1.plot(xcoord,y_pred,color='k',ls='--',linewidth=2.)
+anntxt=r'$R^2={:.3f}$'.format(r2score)
+anntxt2='Coef.={:.2f}'.format(regr.coef_[0][0])
+ax1.annotate(anntxt,xy=(0.02,0.92),xycoords='axes fraction',ha='left',fontsize=12,stretch='semi-condensed')
+ax1.annotate(anntxt2,xy=(0.02,0.85),xycoords='axes fraction',ha='left',fontsize=12,stretch='semi-condensed')
+'''
 
 ###-------------
 
@@ -68,7 +75,10 @@ xloc= xdata.min()+(xdata.max()-xdata.min())/100*i
 yloc= ydata.min()+(ydata.max()-ydata.min())/100*j
 print("Max Density is {:.05f} when wind speed={:.2f} and pressure={:.2f}".format(zi.max(),xloc,yloc))
 
+'''
+den1 = ax2.contour(xi,yi,zi.reshape(xi.shape),6,colors='k',linewidths=1.5)
 
+'''
 ###-------------
 
 ### Write to text file
