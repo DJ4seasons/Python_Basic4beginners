@@ -90,7 +90,7 @@ def check_data_imshow(arr2d, origin='lower'):
 
 def main():
     indir= '../Data/'
-    yrs= [2017,2019]  # Starting year and ending year
+    yrs= [2015,2019]  # Starting year and ending year
     for yr in range(yrs[0],yrs[1]+1,1):
         #HadISST1_SST_2019.txt
         infn= indir+'HadISST1_SST_{}.txt'.format(yr)

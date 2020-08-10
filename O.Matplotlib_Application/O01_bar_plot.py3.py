@@ -34,7 +34,7 @@ def main():
     ###--- Parameters
     indir= '../Data/'
     #HadISST1.sample.2017-2019.36x180x360.f32dat
-    yrs= [2017,2019]  # Starting year and ending year
+    yrs= [2015,2019]  # Starting year and ending year
     nyears= yrs[1]-yrs[0]+1
     mon_per_yr= 12
     nt= nyears*mon_per_yr
@@ -57,12 +57,12 @@ def main():
         hist_data.append(hist)
 
     ### Call a function to draw the bar chart
-    data_labels= [2017, 2018, 2019]
+    data_labels= list(range(yrs[0],yrs[1]+1))
     outdir= '../Pics/'
     fig_filename= outdir+'O01_HadISST1_histogram_bar.png'
 
-    plot_data= dict(fig_data=hist_data, bin_bounds=bin_bounds,
-                data_labels=data_labels, outfn=fig_filename)
+    plot_data= dict(fig_data=hist_data[-3:], bin_bounds=bin_bounds,
+                data_labels=data_labels[-3:], outfn=fig_filename)
     plot_main(plot_data)
     return
 

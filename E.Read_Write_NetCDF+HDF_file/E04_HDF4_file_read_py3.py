@@ -56,7 +56,7 @@ def main():
         print(var_names[i],np.nanmin(d),np.nanmax(d),ms_idx.sum())
 
     outdir= '../Pics'
-    out_fig_nm= outdir+'MYD04_L2.A2019001.0420.{}.png'.format(var_names[2])
+    out_fig_nm= outdir+'E04_MYD04_L2.A2019001.0420.{}.png'.format(var_names[2])
     plot_data= dict(data=data, var_names=var_names, out_fnm=out_fig_nm)
     plot_map(plot_data)
 

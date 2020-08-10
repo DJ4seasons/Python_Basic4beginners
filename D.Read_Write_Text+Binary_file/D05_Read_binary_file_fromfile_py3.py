@@ -42,7 +42,7 @@ def main():
     ###--- Parameters
     indir= '../Data/'
     #HadISST1.sample.2017-2019.36x180x360.f32dat
-    yrs= [2017,2019]  # Starting year and ending year
+    yrs= [2015,2019]  # Starting year and ending year
     mon_per_yr= 12
     nt= (yrs[1]-yrs[0]+1)*mon_per_yr
     nlat, nlon= 180, 360
