@@ -57,6 +57,7 @@ def main():
     it=13
     hdf_key_details(hdf_f, h5keys[it])
 
+    hdf_f.close()
     return
 
 

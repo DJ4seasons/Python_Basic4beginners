@@ -58,9 +58,10 @@ def read_rmm_genfromtxt(fname):
         #print( "File does not exist:"+fname); sys.exit()
         sys.exit("File does not exist: "+fname)
 
+
     dtypes= dict(names=('yr','mon','day','pc1','pc2','phs','amp'),
                 formats=(int,int,int,float,float,int,float))
-
+    '''
     data= np.genfromtxt(fname, dtype=dtypes, skip_header=2, usecols=range(len(dtypes['names'])))
     print("Total RMM data record=",len(data))
     print(type(data),data.dtype,data.shape)
@@ -78,6 +79,17 @@ def read_rmm_genfromtxt(fname):
     pcs= float_part[:,:2]
     phs= int_part[:,-1]
     amps= float_part[:,-1]
+    '''
+    ### Another strategy: read all as float
+    data= np.genfromtxt(fname, dtype=float, skip_header=2, usecols=range(len(dtypes['names'])))
+    print("Total RMM data record=",len(data))
+    print(type(data),data.dtype,data.shape)
+
+    time_info= data[:,:3].astype(int)
+    pcs= data[:,3:5]
+    phs= data[:,5].astype(int)
+    amps= data[:,6]
+
     return time_info,pcs,phs,amps
 
 def main():
@@ -93,6 +105,7 @@ def main():
     test_idx= 1000
     for arr in rmm_data2:
         print(arr.shape, arr[test_idx])
+        
     return
 
 if __name__ == "__main__":

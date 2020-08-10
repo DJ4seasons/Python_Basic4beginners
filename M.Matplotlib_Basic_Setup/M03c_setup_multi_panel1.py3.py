@@ -35,15 +35,17 @@ fig.subplots_adjust(left=0.05,right=0.95,top=0.92,bottom=0.05,hspace=0.3,wspace=
 suptit="Multi-Panel Setting"
 fig.suptitle(suptit,fontsize=15,va='bottom',y=0.975)  #,ha='left',x=0.,stretch='semi-condensed')
 
-nrow, ncol= 3,4
-#for i in range(nrow*ncol):
-    ##-- Set up an axis --##
-i=1
-ax1 = fig.add_subplot(nrow,ncol,i+1)   # (# of rows, # of columns, indicater from 1)
+axes=[]
+axes.append(fig.add_subplot(2,2,1))
+axes.append(fig.add_subplot(2,4,3))
+axes.append(fig.add_subplot(4,4,4))
+axes.append(fig.add_subplot(4,4,8))
+axes.append(fig.add_subplot(4,1,3))
 
-    ##-- Plot on an axis --##
-ax1.plot(x,y,color='{:.1f}'.format(i/(nrow*ncol)))
-ax1.set_title('({}) Panel#{:d}'.format(abc[i],i+1))
+##-- Plot on an axis --##
+for i,ax1 in enumerate(axes):
+    ax1.plot(x,y,color='{:.1f}'.format(i/5))
+    ax1.set_title('({}) Panel#{:d}'.format(abc[i],i+1))
 
 
 ##-- Seeing or Saving Pic --##
@@ -53,7 +55,7 @@ plt.show()
 
 #- If want to save to file
 outdir = "../Pics/"
-outfnm = outdir+"M03b_multi_panel1.png"
+outfnm = outdir+"M03c_multi_panel1.png"
 print(outfnm)
 #fig.savefig(outfnm,dpi=100)   # dpi: pixels per inch
 #fig.savefig(outfnm,dpi=100,bbox_inches='tight')   # dpi: pixels per inch

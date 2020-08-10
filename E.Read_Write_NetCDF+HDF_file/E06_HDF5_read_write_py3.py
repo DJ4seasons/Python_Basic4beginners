@@ -20,7 +20,6 @@ import sys
 import os.path
 import numpy as np
 
-
 import h5py
 
 def open_hdf5(fname):

@@ -83,4 +83,21 @@ print("\n'Mustang' in g.values() ?")
 print('Mustang' in g.values())
 
 input("\nPress Enter to continue...\n")
+print("----------------------------------------\n")
+
+print("\n5. Visit all items")
+print("\n5-1. Method1")
+print('''for key in g:
+    print("{}: {}".format(key, g[key]))
+''')
+for key in g:
+    print("{}: {}".format(key, g[key]))
+
+print("\n5-2. Method2")
+print('''for key, val in g.items():
+    print("{}: {}".format(key, val))
+''')
+for key, val in g.items():
+    print("{}: {}".format(key, val))
+
 print("THE END: Python Basic(3) - Tuple and Dictionary\n")

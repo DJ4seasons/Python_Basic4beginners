@@ -1,0 +1,5 @@
+https://modis.gsfc.nasa.gov/data/dataprod/mod04.php
+DOI: Levy, R., Hsu, C., et al., 2015. MODIS Atmosphere L2 Aerosol Product. NASA MODIS Adaptive Processing System, Goddard Space Flight Center, USA: 
+http://dx.doi.org/10.5067/MODIS/MYD04_L2.006 (Aqua)
+
+MODIS Aerosol Data Products can be found at the LAADS Web website. 
