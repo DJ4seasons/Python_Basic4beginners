@@ -77,11 +77,13 @@ def plot_map(plot_data):
     fig.set_size_inches(7,6)  ## (xsize,ysize)
 
     ###--- Map Projection
-    proj = ccrs.PlateCarree()
+    #proj = ccrs.PlateCarree()
+
 
     ###--- Check range of map
     lat_min, lat_max= np.nanmin(plot_data['data'][0]),np.nanmax(plot_data['data'][0])
     lon_min, lon_max= np.nanmin(plot_data['data'][1]),np.nanmax(plot_data['data'][1])
+    proj= ccrs.Orthographic(central_longitude=(lon_min+lon_max)/2, central_latitude=(lat_min+lat_max)/2)
 
     #val_min, val_max= np.nanmin(plot_data['data'][2]),np.nanmax(plot_data['data'][2])
     val_min, val_max= np.nanpercentile(plot_data['data'][2],[5,95])
@@ -96,7 +98,7 @@ def plot_map(plot_data):
     ax1= fig.add_subplot(111,projection=proj)
     ax1.set_extent(extent_range)
     props= dict(vmin=val_min, vmax=val_max, marker='s',s=1,
-                alpha=0.7,cmap=cm,transform=proj)
+                alpha=0.7,cmap=cm,transform=ccrs.PlateCarree())
     map1= ax1.scatter(plot_data['data'][1],plot_data['data'][0],c=plot_data['data'][2],**props)
 
     ### If want to add missing points
@@ -104,7 +106,7 @@ def plot_map(plot_data):
     map2= ax1.scatter(plot_data['data'][1][ms_idx],plot_data['data'][0][ms_idx],c='0.85',**props)
 
     subtit= plot_data['var_names'][2]
-    map_common(ax1,subtit,proj,xloc=5,yloc=5)
+    map_common(ax1,subtit,ccrs.PlateCarree(),xloc=5,yloc=5)
     draw_colorbar(fig,ax1,map1,type='horizontal',size='panel',gap=0.08,width=0.03,extend='both')
 
     ##-- Seeing or Saving Pic --##
@@ -125,19 +127,19 @@ def map_common(ax,subtit,proj,gl_lab_locator=[False,True,True,False],yloc=10,xlo
     ### Title
     ax.set_title(subtit,fontsize=13,ha='left',x=0.0)
     ### Coast Lines
-    ax.coastlines(color='silver',linewidth=1.)
+    ax.coastlines(color='silver',linewidth=1.,resolution='50m')
     ### Grid Lines
-    gl= ax.gridlines(crs=proj, draw_labels=True,
+    gl= ax.gridlines(crs=proj, draw_labels=False,
                     linewidth=0.6, color='gray', alpha=0.5, linestyle='--')
 
     ### x and y-axis tick labels
-    gl.xlabels_top,gl.xlabels_bottom,gl.ylabels_left,gl.ylabels_right = gl_lab_locator
-    gl.xlocator = MultipleLocator(xloc)
-    gl.ylocator = MultipleLocator(yloc)
-    gl.xformatter = LONGITUDE_FORMATTER
-    gl.yformatter = LATITUDE_FORMATTER
-    gl.xlabel_style = {'size': 10, 'color': 'k'}
-    gl.ylabel_style = {'size': 10, 'color': 'k'}
+    #gl.xlabels_top,gl.xlabels_bottom,gl.ylabels_left,gl.ylabels_right = gl_lab_locator
+    #gl.xlocator = MultipleLocator(xloc)
+    #gl.ylocator = MultipleLocator(yloc)
+    #gl.xformatter = LONGITUDE_FORMATTER
+    #gl.yformatter = LATITUDE_FORMATTER
+    #gl.xlabel_style = {'size': 10, 'color': 'k'}
+    #gl.ylabel_style = {'size': 10, 'color': 'k'}
     ### Aspect ratio of map
     #ax.set_aspect('auto') ### 'auto' allows the map to be distorted and fill the defined axes
     return

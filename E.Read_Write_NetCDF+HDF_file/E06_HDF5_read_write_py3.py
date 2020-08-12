@@ -92,7 +92,7 @@ def main():
     ## Test the written netcdf file
     test= True
     if test:
-        import E04_HDF5_file_header_info_py3 as hdf_check
+        import E05_HDF5_file_header_info_py3 as hdf_check
 
         hdf_f2= hdf_check.open_hdf5(outfn)
         hdf_check.hdf_key_details(hdf_f2, var_names[3])

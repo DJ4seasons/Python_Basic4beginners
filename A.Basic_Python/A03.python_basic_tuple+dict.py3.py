@@ -90,7 +90,7 @@ print("\n5-1. Method1")
 print('''for key in g:
     print("{}: {}".format(key, g[key]))
 ''')
-for key in g:
+for key in g: # or g.keys()
     print("{}: {}".format(key, g[key]))
 
 print("\n5-2. Method2")
