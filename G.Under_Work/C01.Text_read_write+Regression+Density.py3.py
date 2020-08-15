@@ -97,3 +97,28 @@ else:
         for i in range(data.shape[0]):
             data_txt="{:.2f}, {:.2f}, {:d}, {:02d}".format(data[i,0],data[i,2],time_info[i,0],time_info[i,1])
             f.write(data_txt+"\n")
+
+
+def get_monthly_mean_byMJO_phase(times, indices, phs):
+    '''
+    Change daily data to monthly data by MJO phase
+    '''
+    data_mo=[]
+    idate, idate_idx= times[0], 0
+    while idate<times[-1]:
+        yr,mo= idate.year, idate.month
+        if mo==12:
+            ndate= date(yr+1,1,1)
+        else:
+            ndate= date(yr,mo+1,1)
+        mdays= (ndate-idate).days
+        tmp_ind= indices[idate_idx:idate_idx+mdays]
+        tmp_phs= phs[idate_idx:idate_idx+mdays]
+        mo_data1=[]
+        for ph in range(1,9,1):
+            idx= tmp_phs==ph
+            mo_data1.append(tmp_ind[idx].sum()/mdays)
+        data_mo.append(mo_data1)
+        idate, idate_idx= ndate, idate_idx+mdays  # Update for next loop
+
+    return np.asarray(data_mo)
