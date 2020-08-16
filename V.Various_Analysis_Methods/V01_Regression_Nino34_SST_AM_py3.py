@@ -27,10 +27,10 @@ def main():
     ### Get Nino3.4 Index
     yrs= [2015,2019]  # Starting year and ending year
     #Nino3.4 (5N-5S, 170W-120W) [-170,-120,-5,5]
-    nn34= vf.get_sst_areamean_from_HadISST([-170,-120,-5,5],yrs)
+    nn34= vf.get_sst_areamean_from_HadISST([-170,-120,-5,5],yrs,remove_AC=True)
     ### And other regions
-    tio= vf.get_sst_areamean_from_HadISST([240,280,-10,0],yrs)
-    spo= vf.get_sst_areamean_from_HadISST([-170,-120,-40,-30],yrs)
+    tio= vf.get_sst_areamean_from_HadISST([240,280,-10,0],yrs,remove_AC=True)
+    spo= vf.get_sst_areamean_from_HadISST([-170,-120,-40,-30],yrs,remove_AC=True)
 
     ###---
     ### Plotting setup
@@ -57,7 +57,9 @@ def main():
     outdir= '../Pics/'
     out_fig_nm= outdir+'V01.regression_example.SST_AMvsNino34.png'
     #fig.savefig(outfnm,dpi=100)   # dpi: pixels per inch
-    #fig.savefig(outfnm,dpi=100,bbox_inches='tight')   # dpi: pixels per inch
+    #fig.savefig(out_fig_nm,dpi=150,bbox_inches='tight')   # dpi: pixels per inch
+    print(out_fig_nm)
+
     return
 
 def scatter_and_regr_plot(ax,x,y,subtit):
@@ -71,8 +73,10 @@ def scatter_and_regr_plot(ax,x,y,subtit):
     new_x= np.linspace(x.min(),x.max(),100)
     prd= new_x*slope+intercept
 
-    ##- Draw regression line
+    ##-- Draw regression line
     rline= ax.plot(new_x,prd,c='k',lw=2,alpha=0.8)
+
+    ##-- Write regression info
     anntxt=r'$R^2={:.3f}$'.format(rvalue**2)
     anntxt2='Coef.={:.2f}'.format(slope)
     anntxt3='p_value={:.3f}'.format(pvalue)

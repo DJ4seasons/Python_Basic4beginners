@@ -16,9 +16,10 @@ Daeho Jin
 import sys
 import os.path
 import numpy as np
-from datetime import date
+
 import matplotlib.pyplot as plt
 from matplotlib.ticker import AutoMinorLocator, MultipleLocator
+
 from scipy.stats import norm
 
 import V00_Functions as vf
@@ -27,10 +28,10 @@ def main():
     ### Get Nino3.4 Index
     yrs= [2015,2019]  # Starting year and ending year
     #Nino3.4 (5N-5S, 170W-120W) [-170,-120,-5,5]
-    nn34= vf.get_sst_areamean_from_HadISST([-170,-120,-5,5],yrs)
+    nn34= vf.get_sst_areamean_from_HadISST([-170,-120,-5,5],yrs,remove_AC=True)
     ### And other region
-    tio= vf.get_sst_areamean_from_HadISST([240,280,-10,0],yrs)
-    spo= vf.get_sst_areamean_from_HadISST([-170,-120,-40,-30],yrs)
+    tio= vf.get_sst_areamean_from_HadISST([240,280,-10,0],yrs,remove_AC=True)
+    spo= vf.get_sst_areamean_from_HadISST([-170,-120,-40,-30],yrs,remove_AC=True)
 
     ###---
     ### Plotting setup
@@ -64,7 +65,8 @@ def main():
     outdir= '../Pics/'
     out_fig_nm= outdir+'V04.estimate_corr_sig_level_example.SST_AM+Nino34.png'
     #fig.savefig(outfnm,dpi=100)   # dpi: pixels per inch
-    #fig.savefig(outfnm,dpi=100,bbox_inches='tight')   # dpi: pixels per inch
+    #fig.savefig(out_fig_nm,dpi=150,bbox_inches='tight')   # dpi: pixels per inch
+    print(out_fig_nm)
     return
 
 def llcorr_plot(ax,data,vnames,subtit,maxlag=5,corr_crt=-1):
@@ -74,7 +76,7 @@ def llcorr_plot(ax,data,vnames,subtit,maxlag=5,corr_crt=-1):
 
     tlag= np.arange(-maxlag,maxlag+1,1)
     ccoef= llcorr_simple(*data,tlag)
-    print(ccoef)
+    
     ### Lead-Lag Corr plot
     llc= ax.plot(tlag,ccoef,color='k',lw='1.5')
     ##-- Mark significant values
@@ -118,6 +120,8 @@ def estimate_significant_corr_coef(ts1,ts2):
     from statsmodels.tsa.stattools import acf
     def get_dependency_level(ts1,ts2):
         '''
+        Calculate dependency_level in order to estimate "Effective Degrees of Freedom"
+
         Bayley & Hammersley 1946, http://doi.org/10.2307/2983560
         Bretherton et al. 1999, https://doi.org/10.1175/1520-0442(1999)012<1990:TENOSD>2.0.CO;2
         https://stats.stackexchange.com/questions/151604/what-is-bartletts-theory
@@ -182,6 +186,7 @@ def simple_check_distribution(arr1d):
     plt.plot(x,norm.pdf(x,arr1d.mean(),arr1d.std(ddof=1)))
     plt.text(0.1,0.92,'mean= {:.2f}'.format(arr1d.mean()),transform=plt.gca().transAxes)
     plt.text(0.1,0.86,'std = {:.2f}'.format(arr1d.std(ddof=1)),transform=plt.gca().transAxes)
+    plt.title('Distribution of Corr. Coef.')
     plt.show()
     return
 

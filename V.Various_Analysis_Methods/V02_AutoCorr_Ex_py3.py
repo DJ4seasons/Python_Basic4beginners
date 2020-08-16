@@ -16,7 +16,6 @@ Daeho Jin
 import sys
 import os.path
 import numpy as np
-from datetime import date
 import matplotlib.pyplot as plt
 
 import V00_Functions as vf
@@ -26,9 +25,10 @@ def main():
     ### Get Nino3.4 Index
     yrs= [2015,2019]  # Starting year and ending year
     #Nino3.4 (5N-5S, 170W-120W) [-170,-120,-5,5]
-    nn34= vf.get_sst_areamean_from_HadISST([-170,-120,-5,5],yrs)
+    nn34= vf.get_sst_areamean_from_HadISST([-170,-120,-5,5],yrs,remove_AC=True)
     ### And other region
-    tio= vf.get_sst_areamean_from_HadISST([240,280,-10,0],yrs)
+    tio= vf.get_sst_areamean_from_HadISST([240,280,-10,0],yrs,remove_AC=True)
+    spo= vf.get_sst_areamean_from_HadISST([-170,-120,-40,-30],yrs,remove_AC=True)
 
     ###---
     ### Plotting setup
@@ -42,8 +42,8 @@ def main():
 
     ax1= fig.add_subplot(111)
     sub_tit= ''
-    data=[nn34,tio]
-    vnames=['Ni{}o3.4'.format('\u00F1'),'TIO']
+    data=[nn34,tio,spo]
+    vnames=['Ni{}o3.4'.format('\u00F1'),'Trop. IO','S. Pacific']
     autocorr_plot(ax1,data,vnames,sub_tit)
 
     ### Show or save
@@ -52,7 +52,9 @@ def main():
     outdir= '../Pics/'
     out_fig_nm= outdir+'V02.autocorr_example.SST_AM+Nino34.png'
     #fig.savefig(outfnm,dpi=100)   # dpi: pixels per inch
-    #fig.savefig(outfnm,dpi=100,bbox_inches='tight')   # dpi: pixels per inch
+    #fig.savefig(out_fig_nm,dpi=150,bbox_inches='tight')   # dpi: pixels per inch
+    print(out_fig_nm)
+
     return
 
 def autocorr_plot(ax,data,vnames,subtit):
@@ -62,7 +64,7 @@ def autocorr_plot(ax,data,vnames,subtit):
 
     ### auto-corr plot
     for d,vn in zip(data,vnames):
-        ac= ax.plot(acf(d,nlags=min(len(d)-5,160)),label=vn)
+        ac= ax.plot(acf(d,nlags=min(len(d)-1,160)),label=vn)
 
     ### Title
     ax.set_title(subtit,fontsize=13,ha='left',x=0.0)
@@ -71,7 +73,7 @@ def autocorr_plot(ax,data,vnames,subtit):
     ylim= ax.get_ylim()
     if ylim[0]*ylim[1]<0:
         ax.axhline(y=0.,ls='--',lw=1,c='k')
-    ax.axhline(y=0.5,ls='--',lw=1,c='k')
+    ax.axhline(y=1/np.exp(1),ls='--',lw=1,c='k')  # 1/e; ref. for e-folding time
 
     ### Misc
     ax.legend(loc='upper right',fontsize=11)

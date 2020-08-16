@@ -51,7 +51,7 @@ def main():
     print(dof_coef2.min(),np.median(dof_coef2))
 
     ### Split data for t-test
-    data_prv, data_post= data2test[:36,:], data2test[36:,:]
+    data_prv, data_post= data2test[:36,:], data2test[36:,:]  # First 3 years and later 2 years
 
     ### Calculate signi level of t-test by different dof setting
     p_vals1= get_ttest_pval_2d(dof_coef1,data_prv,data_post)
@@ -72,12 +72,13 @@ def main():
     ##-- Above bound is based on previous resolution, but it's ok since no change on area_boundary
 
     ### Prepare for plotting
+    suptit="t-test for Mean Diff., 2015-16 vs. 2017-19 [HadISST]"
     var_names= ['DoF= -Nlog(r1)','DoF= N/(2*Te)','DoF= N']
 
     outdir= '../Pics/'
-    out_fig_nm= outdir+'V08.t-test_example2.png'
+    out_fig_nm= outdir+'V08.t-test_example_5deg_box.png'
     plot_data= dict(data=data, var_names=var_names, out_fnm=out_fig_nm,
-                    img_bound=img_bound)
+                    img_bound=img_bound,suptit=suptit)
     plot_map(plot_data)
 
     return
@@ -131,10 +132,7 @@ def get_dof_coef_e_folding(ts1d):
 ###---
 import matplotlib.pyplot as plt
 import matplotlib.colors as cls
-from matplotlib.ticker import MultipleLocator, FixedLocator
-
 import cartopy.crs as ccrs
-from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
 
 def plot_map(pdata):
     '''
@@ -147,7 +145,7 @@ def plot_map(pdata):
     fig.set_size_inches(7,8.5)  ## (xsize,ysize)
 
     ###--- Suptitle
-    suptit="t-test for Mean Diff., 2015-16 vs. 2017-19 [HadISST]"
+    suptit=pdata['suptit']
     fig.suptitle(suptit,fontsize=16,y=0.97,va='bottom',stretch='semi-condensed')
 
     ###--- Map Projection
@@ -184,7 +182,7 @@ def plot_map(pdata):
         map1= ax1.imshow(data,**props_imshow)
 
         subtit= '({}) {}'.format(abc[i],vnm)
-        map_common(ax1,subtit,data_crs,xloc=60,yloc=20)
+        vf.map_common(ax1,subtit,data_crs,xloc=60,yloc=20)
 
         iy=iy-ly-gapy
     cb= vf.draw_colorbar(fig,ax1,map1,type='horizontal',size='panel',gap=0.06)
@@ -199,41 +197,10 @@ def plot_map(pdata):
     outfnm = pdata['out_fnm']
     print(outfnm)
     #fig.savefig(outfnm,dpi=100)   # dpi: pixels per inch
-    #fig.savefig(outfnm,dpi=100,bbox_inches='tight')   # dpi: pixels per inch
+    #fig.savefig(outfnm,dpi=150,bbox_inches='tight')   # dpi: pixels per inch
 
     # Defalut: facecolor='w', edgecolor='w', transparent=False
     return
-
-def map_common(ax,subtit,proj,gl_lab_locator=[False,True,True,False],yloc=10,xloc=30):
-    """ Decorating Cartopy Map
-    """
-    ### Title
-    ax.set_title(subtit,fontsize=13,ha='left',x=0.0)
-    ### Coast Lines
-    ax.coastlines(color='0.3',linewidth=1.)
-    ### Grid Lines
-    '''# Trick to draw grid lines over dateline; not necessary in Cartopy 0.18.0 or later
-    gl= ax.gridlines(crs=proj, draw_labels=False,
-                    linewidth=0.6, color='gray', alpha=0.5, linestyle='--')
-    gl.xlocator = MultipleLocator(xloc)
-    gl.ylocator = MultipleLocator(yloc)'''
-
-    gl= ax.gridlines(crs=proj, draw_labels=True,
-                    linewidth=0.6, color='gray', alpha=0.5, linestyle='--')
-
-    ### x and y-axis tick labels
-    gl.xlabels_top,gl.xlabels_bottom,gl.ylabels_left,gl.ylabels_right = gl_lab_locator
-    gl.xlocator = MultipleLocator(xloc)
-    #gl.xlocator = FixedLocator(range(-180,180,xloc))
-    gl.ylocator = MultipleLocator(yloc)
-    gl.xformatter = LONGITUDE_FORMATTER
-    gl.yformatter = LATITUDE_FORMATTER
-    gl.xlabel_style = {'size': 10, 'color': 'k'}
-    gl.ylabel_style = {'size': 10, 'color': 'k'}
-    ### Aspect ratio of map
-    ax.set_aspect('auto') ### 'auto' allows the map to be distorted and fill the defined axes
-    return
-
 
 if __name__ == "__main__":
     main()

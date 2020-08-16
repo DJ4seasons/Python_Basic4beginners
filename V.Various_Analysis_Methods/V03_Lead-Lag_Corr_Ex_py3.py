@@ -16,7 +16,7 @@ Daeho Jin
 import sys
 import os.path
 import numpy as np
-from datetime import date
+
 import matplotlib.pyplot as plt
 from matplotlib.ticker import AutoMinorLocator, MultipleLocator
 
@@ -27,10 +27,10 @@ def main():
     ### Get Nino3.4 Index
     yrs= [2015,2019]  # Starting year and ending year
     #Nino3.4 (5N-5S, 170W-120W) [-170,-120,-5,5]
-    nn34= vf.get_sst_areamean_from_HadISST([-170,-120,-5,5],yrs)
+    nn34= vf.get_sst_areamean_from_HadISST([-170,-120,-5,5],yrs,remove_AC=True)
     ### And other region
-    tio= vf.get_sst_areamean_from_HadISST([240,280,-10,0],yrs)
-    spo= vf.get_sst_areamean_from_HadISST([-170,-120,-40,-30],yrs)
+    tio= vf.get_sst_areamean_from_HadISST([240,280,-10,0],yrs,remove_AC=True)
+    spo= vf.get_sst_areamean_from_HadISST([-170,-120,-40,-30],yrs,remove_AC=True)
 
     ###---
     ### Plotting setup
@@ -62,7 +62,8 @@ def main():
     outdir= '../Pics/'
     out_fig_nm= outdir+'V03.llcorr_example.SST_AM+Nino34.png'
     #fig.savefig(outfnm,dpi=100)   # dpi: pixels per inch
-    #fig.savefig(outfnm,dpi=100,bbox_inches='tight')   # dpi: pixels per inch
+    #fig.savefig(out_fig_nm,dpi=150,bbox_inches='tight')   # dpi: pixels per inch
+    print(out_fig_nm)
     return
 
 def llcorr_plot(ax,data,vnames,subtit,maxlag=5):
@@ -104,6 +105,8 @@ def llcorr(ts1,ts2,tlag):
     from statsmodels.tsa.stattools import acf
     def get_dependency_level(ts1,ts2):
         '''
+        Calculate dependency_level in order to estimate "Effective Degrees of Freedom"
+
         Bayley & Hammersley 1946, http://doi.org/10.2307/2983560
         Bretherton et al. 1999, https://doi.org/10.1175/1520-0442(1999)012<1990:TENOSD>2.0.CO;2
         https://stats.stackexchange.com/questions/151604/what-is-bartletts-theory
@@ -127,6 +130,7 @@ def llcorr(ts1,ts2,tlag):
 
     def get_cdf_of_beta_distribution(nn,val):
         '''
+        Beta distribution is used to calculate p-value of correlation coefficient
         https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.pearsonr.html
         '''
         dist = st.beta(nn/2 - 1, nn/2 - 1, loc=-1, scale=2)

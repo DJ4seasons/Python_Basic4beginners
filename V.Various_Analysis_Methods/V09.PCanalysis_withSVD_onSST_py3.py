@@ -129,11 +129,9 @@ def PC_analysis(arr2d, maxnum=10):
 ### Draw (semi) global map
 ###---
 import matplotlib.pyplot as plt
-from matplotlib.ticker import MultipleLocator, FixedLocator
+from matplotlib.ticker import AutoMinorLocator
 from matplotlib.dates import DateFormatter
-
 import cartopy.crs as ccrs
-from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
 
 def plot_map(pdata):
     '''
@@ -151,7 +149,7 @@ def plot_map(pdata):
     ###--- Axes setting
     nk= len(pdata['tgt_nums'])  # Number of data to show
     left,right,top,bottom= 0.07, 0.93, 0.925, 0.1
-    npnx,gapx,npny,gapy= 1, 0.05, nk+1, 0.07
+    npnx,gapx,npny,gapy= 1, 0.05, nk+1, 0.064
     lx= (right-left-gapx*(npnx-1))/npnx
     ly= (top-bottom-gapy*(npny-1))/npny
     ix,iy= left, top
@@ -167,8 +165,10 @@ def plot_map(pdata):
     ax1.set_title(subtit,fontsize=12,ha='left',x=0.0)
     ax1.legend(bbox_to_anchor=(0.08, 1.02, .92, .10), loc='lower left',
            ncol=nk, mode="expand", borderaxespad=0.,fontsize=10)
-    ax1.axhline(y=0.,c='silver',lw=0.8,ls='--')
+    ax1.axhline(y=0.,c='k',lw=0.8,ls='--')
+    ax1.grid(ls=':')
     ax1.xaxis.set_major_formatter(DateFormatter('%b%Y'))
+    ax1.yaxis.set_minor_locator(AutoMinorLocator(2))
     ax1.yaxis.set_ticks_position('both')
     ax1.tick_params(axis='both',labelsize=10)
 
@@ -198,10 +198,10 @@ def plot_map(pdata):
         map1= ax2.imshow(data,**props)
 
         subtit= '({}) EOF{}'.format(abc[i+1],k)
-        map_common(ax2,subtit,data_crs,xloc=60,yloc=20,gl_lab_locator=[False,True,True,True])
+        vf.map_common(ax2,subtit,data_crs,xloc=60,yloc=20,gl_lab_locator=[False,True,True,True])
 
         iy=iy-ly-gapy
-    vf.draw_colorbar(fig,ax2,map1,type='horizontal',size='panel',gap=0.06)
+    vf.draw_colorbar(fig,ax2,map1,type='horizontal',size='panel',gap=0.06,extend='both')
 
     ##-- Seeing or Saving Pic --##
     plt.show()
@@ -210,41 +210,10 @@ def plot_map(pdata):
     outfnm = pdata['out_fnm']
     print(outfnm)
     #fig.savefig(outfnm,dpi=100)   # dpi: pixels per inch
-    #fig.savefig(outfnm,dpi=100,bbox_inches='tight')   # dpi: pixels per inch
+    #fig.savefig(outfnm,dpi=150,bbox_inches='tight')   # dpi: pixels per inch
 
     # Defalut: facecolor='w', edgecolor='w', transparent=False
     return
-
-def map_common(ax,subtit,proj,gl_lab_locator=[False,True,True,False],yloc=10,xloc=30):
-    """ Decorating Cartopy Map
-    """
-    ### Title
-    ax.set_title(subtit,fontsize=13,ha='left',x=0.0)
-    ### Coast Lines
-    ax.coastlines(color='silver',linewidth=1.)
-    ### Grid Lines
-    '''# Trick to draw grid lines over dateline; not necessary in Cartopy 0.18.0 or later
-    gl= ax.gridlines(crs=proj, draw_labels=False,
-                    linewidth=0.6, color='gray', alpha=0.5, linestyle='--')
-    gl.xlocator = MultipleLocator(xloc)
-    gl.ylocator = MultipleLocator(yloc)'''
-
-    gl= ax.gridlines(crs=proj, draw_labels=True,
-                    linewidth=0.6, color='gray', alpha=0.5, linestyle='--')
-
-    ### x and y-axis tick labels
-    gl.xlabels_top,gl.xlabels_bottom,gl.ylabels_left,gl.ylabels_right = gl_lab_locator
-    gl.xlocator = FixedLocator(range(-180,180,xloc))
-    #gl.xlocator = MultipleLocator(xloc)
-    gl.ylocator = MultipleLocator(yloc)
-    gl.xformatter = LONGITUDE_FORMATTER
-    gl.yformatter = LATITUDE_FORMATTER
-    gl.xlabel_style = {'size': 10, 'color': 'k'}
-    gl.ylabel_style = {'size': 10, 'color': 'k'}
-    ### Aspect ratio of map
-    ax.set_aspect('auto') ### 'auto' allows the map to be distorted and fill the defined axes
-    return
-
 
 if __name__ == "__main__":
     main()

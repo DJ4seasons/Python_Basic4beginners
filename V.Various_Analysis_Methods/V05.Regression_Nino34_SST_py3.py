@@ -26,12 +26,12 @@ def main():
 
     ### Get Nino3.4 Index
     #Nino3.4 (5N-5S, 170W-120W) [-170,-120,-5,5]
-    nn34= vf.get_sst_areamean_from_HadISST([-170,-120,-5,5],yrs)
+    nn34= vf.get_sst_areamean_from_HadISST([-170,-120,-5,5],yrs,remove_AC=True)
 
     ### Get SST anomaly
     area_range= [-180,180,-60,60]  # [lon_range, lat_range]
     #area_range= [0,360,-60,60]  # [lon_range, lat_range]
-    sstano, lat_info, lon_info= vf.get_sst_ano_from_HadISST(area_range,yrs)
+    sstano, lat_info, lon_info= vf.get_sst_ano_from_HadISST(area_range,yrs,remove_AC=True)
 
     print(nn34.shape, nn34.min(), nn34.max())  # Check if NaN exists here
     print(sstano.shape, np.nanmin(sstano), np.nanmax(sstano))  # Check data
@@ -57,15 +57,14 @@ def main():
     regr_coef3= np.copy(regr_map)
 
     ### Prepare for plotting
+    suptit="Regr. coef. of SST against Ni{}o3.4 [HadISST,2015-19]".format('\u00F1')
     data= [regr_coef1, regr_coef2, regr_coef3]
     var_names= ['Calc_manually','Using linregress()','Using sklearn.linear_model']
-    #lat_info= dict(lat0=lat0,dlat=dlat,nlat=nlat)
-    #lon_info= dict(lon0=lon0,dlon=dlon,nlon=nlon)
 
     outdir= '../Pics/'
-    out_fig_nm= outdir+'V05.regression_example.png'
+    out_fig_nm= outdir+'V05.regression_2D_example.png'
     plot_data= dict(data=data, var_names=var_names, out_fnm=out_fig_nm,
-                    lat_info=lat_info, lon_info=lon_info)
+                    suptit=suptit,lat_info=lat_info, lon_info=lon_info)
     plot_map(plot_data)
 
     return
@@ -136,10 +135,7 @@ def regr_sklearn_1d_vs_2d(arr1d, arr2d):
 ### Draw (semi) global map
 ###---
 import matplotlib.pyplot as plt
-from matplotlib.ticker import MultipleLocator, FixedLocator
-
 import cartopy.crs as ccrs
-from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
 
 def plot_map(pdata):
     '''
@@ -152,7 +148,7 @@ def plot_map(pdata):
     fig.set_size_inches(7,8.5)  ## (xsize,ysize)
 
     ###--- Suptitle
-    suptit="Regr. coef. of SST against Ni{}o3.4 [HadISST,2015-19]".format('\u00F1')
+    suptit= pdata['suptit']
     fig.suptitle(suptit,fontsize=16,y=0.97,va='bottom',stretch='semi-condensed')
 
     ###--- Map Projection
@@ -193,7 +189,7 @@ def plot_map(pdata):
         #map1= ax1.pcolormesh(xm,ym,data,**props_pcolormesh)
 
         subtit= '({}) {}'.format(abc[i],vnm)
-        map_common(ax1,subtit,data_crs,xloc=60,yloc=20)
+        vf.map_common(ax1,subtit,data_crs,xloc=60,yloc=20)
 
         iy=iy-ly-gapy
     cb= vf.draw_colorbar(fig,ax1,map1,type='horizontal',size='panel',gap=0.06,extend='both')
@@ -207,39 +203,8 @@ def plot_map(pdata):
     outfnm = pdata['out_fnm']
     print(outfnm)
     #fig.savefig(outfnm,dpi=100)   # dpi: pixels per inch
-    #fig.savefig(outfnm,dpi=100,bbox_inches='tight')   # dpi: pixels per inch
+    #fig.savefig(outfnm,dpi=150,bbox_inches='tight')   # dpi: pixels per inch
 
-    # Defalut: facecolor='w', edgecolor='w', transparent=False
-    return
-
-def map_common(ax,subtit,proj,gl_lab_locator=[False,True,True,False],yloc=10,xloc=30):
-    """ Decorating Cartopy Map
-    """
-    ### Title
-    ax.set_title(subtit,fontsize=13,ha='left',x=0.0)
-    ### Coast Lines
-    ax.coastlines(color='silver',linewidth=1.)
-    ### Grid Lines
-    '''# Trick to draw grid lines over dateline; not necessary in Cartopy 0.18.0 or later
-    gl= ax.gridlines(crs=proj, draw_labels=False,
-                    linewidth=0.6, color='gray', alpha=0.5, linestyle='--')
-    gl.xlocator = MultipleLocator(xloc)
-    gl.ylocator = MultipleLocator(yloc)'''
-
-    gl= ax.gridlines(crs=proj, draw_labels=True,
-                    linewidth=0.6, color='gray', alpha=0.5, linestyle='--')
-
-    ### x and y-axis tick labels
-    gl.xlabels_top,gl.xlabels_bottom,gl.ylabels_left,gl.ylabels_right = gl_lab_locator
-    gl.xlocator = MultipleLocator(xloc)
-    #gl.xlocator = FixedLocator(range(-180,180,xloc))
-    gl.ylocator = MultipleLocator(yloc)
-    gl.xformatter = LONGITUDE_FORMATTER
-    gl.yformatter = LATITUDE_FORMATTER
-    gl.xlabel_style = {'size': 10, 'color': 'k'}
-    gl.ylabel_style = {'size': 10, 'color': 'k'}
-    ### Aspect ratio of map
-    ax.set_aspect('auto') ### 'auto' allows the map to be distorted and fill the defined axes
     return
 
 
