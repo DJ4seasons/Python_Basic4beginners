@@ -1,5 +1,16 @@
 """
-Calculate correlation coefficients between Nino3.4 and global SST
+Principal Component Analysis (or Empirical Orthogonal Function[EOF] analysis)
+https://climatedataguide.ucar.edu/climate-data-tools-and-analysis/empirical-orthogonal-function-eof-analysis-and-rotated-eof-analysis
+
+Basic idea
+1. Calculate co-variance matrix of a variable, [2-D domain as 1-D, time]
+2. From co-variance matrix (size= 2-D_domain_size**2), calculate eigenvalue and orthogonal patterns
+3. Project the orthogonal patterns to the original variable matrix, and get principal components(PCs)
+4. Normalize orthogonal patterns and PCs
+
+Improved method using Singular Value Decomposition(SVD)
+1. Apply SVD to a variable matrix, [2-D domain as 1-D, time], and get orthogonal patterns and PCs
+2. Normalize orthogonal patterns and PCs
 
 ---
 Binary data file(HadISST) was produced by D04 code
@@ -17,250 +28,180 @@ Daeho Jin
 import sys
 import os.path
 import numpy as np
+from datetime import date, timedelta
 
-def bin_file_read2mtx(fname, dtype=np.float32):
-    """ Open a binary file, and read data
-        fname : file name with directory path
-        dtype   : data type; np.float32 or np.float64, etc. """
-
-    if not os.path.isfile(fname):
-        print("File does not exist:"+fname)
-        sys.exit()
-
-    with open(fname,'rb') as fd:
-        bin_mat = np.fromfile(file=fd, dtype=dtype)
-
-    return bin_mat
-
-from math import ceil
-def lon_deg2x(lon,lon0,dlon):
-    '''
-    For given longitude information, return index of given specific longitude
-    lon: target longitude to be transformed to index
-    lon0: the first (smallest) value of longitude grid
-    dlon: the increment of longitude grid
-    return: integer index
-    '''
-    x = ceil((lon-lon0)/dlon)
-    nx = int(360/dlon)
-    if x<0:
-        while(x<0):
-            x+= nx
-    if x>=nx: x=x%nx
-    return x
-lat_deg2y = lambda lat,lat0,dlat: ceil((lat-lat0)/dlat)
+import V00_Functions as vf
 
 def main():
-    ###--- Parameters
-    indir= '../Data/'
-    #HadISST1.sample.2017-2019.36x180x360.f32dat
+    ### Years to read data
     yrs= [2015,2019]  # Starting year and ending year
-    mon_per_yr= 12
-    nt= (yrs[1]-yrs[0]+1)*mon_per_yr
-    lon0,dlon,nlon= -179.5,1.,360
-    lat0,dlat,nlat=  -89.5,1.,180
 
-    infn= indir+"HadISST1.sample.{}-{}.{}x{}x{}.f32dat".format(*yrs,nt,nlat,nlon)
-    sst= bin_file_read2mtx(infn)  # 'dtype' option is omitted because 'f32' is basic dtype
-    sst= sst.reshape([nt,nlat,nlon]).astype(float)  # Improve precision of calculation
-    print(sst.shape)
+    ### Get SST anomaly
+    area_range= [-180,180,-60,60]  # [lon_range, lat_range]
+    sstano, lat_info, lon_info= vf.get_sst_ano_from_HadISST(area_range,yrs,remove_AC=True)
+    lat0, dlat, nlat= lat_info.values()
+    lon0, dlon, nlon= lon_info.values()
 
-    ### We already know that missings are -999.9, and ice-cover value is -10.00.
-    miss_idx= sst<-9.9
-    sst[miss_idx]= np.nan
-    print(miss_idx.sum())
+    ### Weight by latitude
+    lat_deg= np.arange(nlat)*dlat+lat0
+    lat_wt= np.sqrt(np.cos(lat_deg/180*np.pi))
+    sstano= sstano*lat_wt[None,:,None]
 
-    ### Cut SST only for 60S to 60N for convenience
-    lat_idx= [lat_deg2y(lat,lat0,dlat) for lat in [-60,60]]
-    sst= sst[:,lat_idx[0]:lat_idx[1],:]
-    ##- Update parameters
-    lat0= lat0+ (lat_idx[0]*dlat)
-    nlat= lat_idx[1]-lat_idx[0]
-
+    ### This is only for reducing computing time!!!
     ### Degrading data resolution (for convenience)
-    sst= sst.reshape([nt,nlat//2,2,nlon//2,2]).swapaxes(2,3).\
-            reshape([nt,nlat//2,nlon//2,4]).mean(axis=-1)
-    ##- Update parameters
-    lat0,dlat,nlat= lat0+dlat, dlat*2, nlat//2
-    lon0,dlon,nlon= lon0+dlon, dlon*2, nlon//2
-    print(sst.shape)
+    scaler=2
+    nlat2, nlon2= nlat//scaler, nlon//scaler
+    sstano= sstano.reshape([-1,nlat2,scaler,nlon2,scaler]).swapaxes(2,3).\
+            reshape([-1,nlat2,nlon2,scaler**2]).mean(axis=-1)
 
-    ### Remove annual mean
-    sstm= sst.mean(axis=0)
-    sstano= sst-sstm[None,:,:]  # This is for masking grid cells with any NaN
-    sst=1  # Flush sst array data from memory because it's unnecessary hereinafter
-    ms_idx= np.isnan(sstm)  # They will not be used for calculation
-    print(ms_idx.sum(), '{:.2f}%'.format(ms_idx.sum()/nlat/nlon*100))
+    ### Find location of missing values (and non-missing values, too)
+    ms_idx= np.isnan(sstano[0,:,:])  # missing if more than half is missing
+    print("Missing ratio= {:.2f}%".format(ms_idx.sum()/ms_idx.reshape(-1).shape[0]*100))
 
-    ### Remove seasonal cycle
-    ssn_mean= sstano.reshape([-1,mon_per_yr,nlat,nlon]).mean(axis=0)
-    sstano= (sstano.reshape([-1,mon_per_yr,nlat,nlon])-ssn_mean[None,:,:,:]).reshape([nt,nlat,nlon])
+    ### Get PCs and Eigenvectors
+    maxnum=6
+    pc, evec, eval= PC_analysis(sstano[:,~ms_idx],maxnum=maxnum)
 
-    ### Principle Component using SVD
-    from scipy.linalg import svd
-    pc, s, evec = svd(sstano[:,~ms_idx])
-    print(evec.shape, s.shape, pc.shape)
-
-    ### Eigen values
-    eval= s**2/nt
-    print(eval[:3],eval[-3:],eval.max())
-    trace= np.sum(eval)
-    print("Trace = {:.3f}".format(trace))
-
-    for i in range(10):
-        eval_info='''
-    Eigenvalue #{num} = {ev:7.3f}
-    This explains {ev_pct:.1f}% of total variance.'''.format(
-            num=i, ev=eval[i], ev_pct=eval[i]/trace*100)
-        print(eval_info)
-
-    ### Normalizing EOF
-    evec= evec[:nt,:]*np.sqrt(eval)[:,None]
-    flip_idx= evec.min(axis=1)*-1 > evec.max(axis=1)  # set bigger value becomes positive
-    evec[flip_idx,:]*=-1
-
-    ### Normalizing PC
-    pc= pc*np.sqrt(nt) #[:,None]
-    pc[:,flip_idx]*=-1
-
-    import matplotlib.pyplot as plt
-    amap= np.full([nlat,nlon],np.nan)
-    amap[~ms_idx]= evec[0,:]
-    #plt.imshow(amap,origin='lower')
-    plt.plot(pc[:,0],color='k')
-    plt.plot(pc[:,1],color='r')
-    #plt.colorbar()
-    plt.show()
-    sys.exit()
+    ev_map= np.full([maxnum,*ms_idx.shape],np.nan)
+    ev_map[:,~ms_idx]= evec
+    img_bound= [lon0-dlon/2,lon0+dlon*(nlon+0.5),lat0-dlat/2,lat0+dlat*(nlat+0.5)]  # Exact range of data, necessary for imshow()
+    ##-- Above bound is based on previous resolution, but it's ok since no change on area_boundary
 
     ### Prepare for plotting
-    data= [corr_coef1, corr_coef2, corr_coef3]
-    var_names= ['Calc_manually','Using pearsonr()','Using corrcoef()']
-    lat_info= dict(lat0=lat0,dlat=dlat,nlat=nlat)
-    lon_info= dict(lon0=lon0,dlon=dlon,nlon=nlon)
+    suptit= 'PC and EOF of Global SST [HadISST, 2015-19]'
+    tgt_nums= [1,2,3]
+    mon_list= vf.get_monthly_dates(date(yrs[0],1,1),date(yrs[1],12,31),day=15,include_date2=True)
 
     outdir= '../Pics/'
-    out_fig_nm= outdir+'X0x.correlation_example.png'.format(var_names[2])
-    plot_data= dict(data=data, var_names=var_names, out_fnm=out_fig_nm,
-                    lat_info=lat_info, lon_info=lon_info)
+    out_fig_nm= outdir+'V09.EOF_example_HadISST.png'
+    plot_data= dict(ev_map=ev_map, pc=pc, suptit= suptit, out_fnm=out_fig_nm,
+                    img_bound=img_bound,mon_list=mon_list,tgt_nums=tgt_nums)
     plot_map(plot_data)
 
     return
 
-def corr_manual_1d_vs_2d(arr1d, arr2d):
-    """
-    Calculate Pearson correlation coefficients
+def PC_analysis(arr2d, maxnum=10):
+    '''
+    # Principle Component using SVD
+    # Require "scipy.linalg.svd"
+    # Assume that the input data, "arr2d" has no missing values, and
+    #    shape of [time, other dimensions as 1d]
+    # "maxnum" controls the number of PCs and Eigenvectors to return
+    #
+    # Output
+    # pc: principal components, [time, maxnum]
+    # evec: eigenvectors, [maxnum, other dimensions as 1d]
+    # eval: eigenvalues, [min(time, other dimensions as 1d)]
+    '''
+    from scipy.linalg import svd
 
-    Input
-    arr1d: 1-d array of shape [m,]
-    arr2d: 2-d array of shape [m,n]
-    Assumed that there is no missings in input data
-    ---
-    Output
-    corr: coefficients, 1-d array of shape [n]
-    Abnormal values are filled with NaN
-    """
-    std1= np.std(arr1d)
-    std2= np.std(arr2d,axis=0)
-    ### Avoid division by zero
-    nonzero_idx= std2!=0
+    if len(arr2d.shape)>2:
+        arr2d= arr2d.reshape([arr2d.shape[0],-1])
+    nt,nn= arr2d.shape
 
-    corr= np.full([arr2d.shape[1],],np.nan)
-    corr[nonzero_idx]= np.mean(arr2d*arr1d[:,None],axis=0)[nonzero_idx]/std1/std2[nonzero_idx]
-    return corr
+    ### Perform SVD
+    pc, s, evec = svd(arr2d)
+    print(evec.shape, s.shape, pc.shape)
 
-def corr_pearsonr_1d_vs_2d(arr1d, arr2d):
-    """
-    Calculate Pearson correlation coefficients
-    based on scipy.stats.pearsonr()
-    Because 'pearsonr' only get 1-d array, need to use 'np.apply_along_axis'
-    'pearsonr' returns two variables, coefficient and p-value.
+    ### Eigen values
+    eval= s**2/nt
+    trace= np.sum(eval)
+    print("\nTrace Sum= {:.3f}".format(trace))
 
-    Input
-    arr1d: 1-d array of shape [m,]
-    arr2d: 2-d array of shape [m,n]
-    Assumed that there is no missings in input data
-    ---
-    Output
-    corr: coefficients, 1-d array of shape [n]
-    Abnormal values are filled with NaN
-    """
-    from scipy.stats import pearsonr
-    corr= np.apply_along_axis(lambda x,y: pearsonr(x,y)[0],0,arr2d,y=arr1d)
-    return corr
+    for i in range(maxnum):
+        eval_info='''
+    Eigenvalue #{num} = {ev:10.3f}; {ev_pct:6.1f}% of total variance.'''.format(
+            num=i+1, ev=eval[i], ev_pct=eval[i]/trace*100)
+        print(eval_info)
 
-def corr_corrcoef_1d_vs_2d(arr1d, arr2d):
-    """
-    Calculate Pearson correlation coefficients
-    based on numpy.corrcoef()
-    Because 'corrcoef' only get 1-d array, need to use 'np.apply_along_axis'
-    'corrcoef' returns a array, and coefficient is [0,1] or [1,0]
+    ### Normalizing Eigenvectors
+    evec= evec[:maxnum,:]*np.sqrt(eval[:maxnum])[:,None]
+    flip_idx= evec.min(axis=1)*-1 > evec.max(axis=1)
+    evec[flip_idx,:]*=-1  # Set bigger value becomes positive
 
-    Input
-    arr1d: 1-d array of shape [m,]
-    arr2d: 2-d array of shape [m,n]
-    Assumed that there is no missings in input data
-    ---
-    Output
-    corr: coefficients, 1-d array of shape [n]
-    Abnormal values are filled with NaN
-    """
-    corr= np.apply_along_axis(lambda x,y: np.corrcoef(x,y)[0,1],0,arr2d,y=arr1d)
-    return corr
+    ### Normalizing PC
+    pc= pc[:,:maxnum]*np.sqrt(nt)
+    pc[:,flip_idx]*=-1  # Same flipping as eigenvectors
 
+    return pc, evec, eval
 
 ###---
 ### Draw (semi) global map
 ###---
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator, FixedLocator
+from matplotlib.dates import DateFormatter
 
 import cartopy.crs as ccrs
 from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
 
 def plot_map(pdata):
+    '''
+    Draw PC time series on the top, and
+       draw global map where dateline is on the center
+    '''
+
     ###--- Create a figure
     fig=plt.figure()
-    fig.set_size_inches(7,8.5)  ## (xsize,ysize)
+    fig.set_size_inches(6,8.5)  ## (xsize,ysize)
 
     ###--- Suptitle
-    suptit="Corr. coef. between SST and Ni{}o3.4 [HadISST,2015-19]".format('\u00F1')
-    fig.suptitle(suptit,fontsize=16,y=0.97,va='bottom',stretch='semi-condensed')
+    fig.suptitle(pdata['suptit'],fontsize=16,y=0.97,va='bottom',stretch='semi-condensed')
 
-    ###--- Map Projection
-    center= 180  # Want to draw a map where dateline is on the center
-    proj = ccrs.PlateCarree(central_longitude=center)
-    proj0= ccrs.PlateCarree()
-
-    ###--- We already know the range of values
-    map_extent= [0.,359.9,-60.1,60.1]  # Range to be shown
-    img_range= [-179.5,179.5,-59.5,59.5]  # Exact range of data
-    val_min, val_max= -1,1  # Because it's correlation coefficient
-    abc='abcdefgh'
-
-    ###--- Color map
-    cm = plt.cm.get_cmap('Spectral_r')
-    cm.set_bad('0.9')  # For the gridcell of NaN
-
-    left,right,top,bottom= 0.07, 0.97, 0.925, 0.1
-    npnx,gapx,npny,gapy= 1, 0.05, len(pdata['data']), 0.07
+    ###--- Axes setting
+    nk= len(pdata['tgt_nums'])  # Number of data to show
+    left,right,top,bottom= 0.07, 0.93, 0.925, 0.1
+    npnx,gapx,npny,gapy= 1, 0.05, nk+1, 0.07
     lx= (right-left-gapx*(npnx-1))/npnx
     ly= (top-bottom-gapy*(npny-1))/npny
     ix,iy= left, top
 
+    ###--- Top panel: PC time series
+    ax1= fig.add_axes([ix,iy-ly,lx,ly])
+    colors= plt.cm.tab10(np.linspace(0.05,0.95,10))
+    for i,k in enumerate(pdata['tgt_nums']):
+        ax1.plot_date(pdata['mon_list'],pdata['pc'][:,k],c=colors[i],marker='',
+                lw=1.5,ls='-',label='PC{}'.format(k))
+    iy=iy-ly-gapy
+    subtit= '(a) '
+    ax1.set_title(subtit,fontsize=12,ha='left',x=0.0)
+    ax1.legend(bbox_to_anchor=(0.08, 1.02, .92, .10), loc='lower left',
+           ncol=nk, mode="expand", borderaxespad=0.,fontsize=10)
+    ax1.axhline(y=0.,c='silver',lw=0.8,ls='--')
+    ax1.xaxis.set_major_formatter(DateFormatter('%b%Y'))
+    ax1.yaxis.set_ticks_position('both')
+    ax1.tick_params(axis='both',labelsize=10)
+
+    ###--- Next, draw global maps
+    ###--- Map Projection
+    center= 180  # Want to draw a map where dateline is on the center
+    proj = ccrs.PlateCarree(central_longitude=center)
+    data_crs= ccrs.PlateCarree()
+
+    map_extent= [0.,359.9,-60.1,60.1]  # Range to be shown
+    img_range= pdata['img_bound']
+
+    val_max= max(np.nanmin(pdata['ev_map'])*-1,np.nanmax(pdata['ev_map']))
+    val_min, val_max= val_max*-0.9, val_max*0.9
+    abc='abcdefgh'
+
+    ###--- Color map
+    cm = plt.cm.get_cmap('RdBu_r')
+    cm.set_bad('0.9')  # For the gridcell of NaN
+
     props= dict(vmin=val_min, vmax=val_max, origin='lower',
-                extent=img_range,cmap=cm,transform=proj0)
+                extent=img_range,cmap=cm,transform=data_crs)
 
-    for i, (data,vnm) in enumerate(zip(pdata['data'],pdata['var_names'])):
-        ax1= fig.add_axes([ix,iy-ly,lx,ly],projection=proj)
-        ax1.set_extent(map_extent,crs=proj0)
-        map1= ax1.imshow(data,**props)
+    for i, (data,k) in enumerate(zip(pdata['ev_map'],pdata['tgt_nums'])):
+        ax2= fig.add_axes([ix,iy-ly,lx,ly],projection=proj)
+        ax2.set_extent(map_extent,crs=data_crs)
+        map1= ax2.imshow(data,**props)
 
-        subtit= '({}) {}'.format(abc[i],vnm)
-        map_common(ax1,subtit,proj0,xloc=60,yloc=20)
+        subtit= '({}) EOF{}'.format(abc[i+1],k)
+        map_common(ax2,subtit,data_crs,xloc=60,yloc=20,gl_lab_locator=[False,True,True,True])
 
         iy=iy-ly-gapy
-    draw_colorbar(fig,ax1,map1,type='horizontal',size='panel',gap=0.06)
+    vf.draw_colorbar(fig,ax2,map1,type='horizontal',size='panel',gap=0.06)
 
     ##-- Seeing or Saving Pic --##
     plt.show()
@@ -304,29 +245,6 @@ def map_common(ax,subtit,proj,gl_lab_locator=[False,True,True,False],yloc=10,xlo
     ax.set_aspect('auto') ### 'auto' allows the map to be distorted and fill the defined axes
     return
 
-def draw_colorbar(fig,ax,pic1,type='vertical',size='panel',gap=0.06,width=0.02,extend='neither'):
-    '''
-    Type: 'horizontal' or 'vertical'
-    Size: 'page' or 'panel'
-    Gap: gap between panel(axis) and colorbar
-    Extend: 'both', 'min', 'max', 'neither'
-    '''
-    pos1=ax.get_position().bounds  ##<= (left,bottom,width,height)
-    if type.lower()=='vertical' and size.lower()=='page':
-        cb_ax =fig.add_axes([pos1[0]+pos1[2]+gap,0.1,width,0.8])  ##<= (left,bottom,width,height)
-    elif type.lower()=='vertical' and size.lower()=='panel':
-        cb_ax =fig.add_axes([pos1[0]+pos1[2]+gap,pos1[1],width,pos1[3]])  ##<= (left,bottom,width,height)
-    elif type.lower()=='horizontal' and size.lower()=='page':
-        cb_ax =fig.add_axes([0.1,pos1[1]-gap,0.8,width])  ##<= (left,bottom,width,height)
-    elif type.lower()=='horizontal' and size.lower()=='panel':
-        cb_ax =fig.add_axes([pos1[0],pos1[1]-gap,pos1[2],width])  ##<= (left,bottom,width,height)
-    else:
-        print('Error: Options are incorrect:',type,size)
-        return
-
-    cbar=fig.colorbar(pic1,cax=cb_ax,extend=extend,orientation=type)  #,ticks=[0.01,0.1,1],format='%.2f')
-    cbar.ax.tick_params(labelsize=10)
-    return cbar
 
 if __name__ == "__main__":
     main()

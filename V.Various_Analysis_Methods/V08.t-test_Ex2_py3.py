@@ -1,5 +1,7 @@
 """
 t-test example
+Re-arange global SST to 5deg x 5deg box, and for every box, test mean difference
+between first 2 years and later 3 years.
 
 Note: Welch's t-test
 Welch's t-test is to test if two populations have equal means.
@@ -21,7 +23,6 @@ Daeho Jin
 import sys
 import os.path
 import numpy as np
-#from datetime import date
 
 import V00_Functions as vf
 
@@ -50,7 +51,7 @@ def main():
     print(dof_coef2.min(),np.median(dof_coef2))
 
     ### Split data for t-test
-    data_prv, data_post= data2test[:24,:], data2test[24:,:]
+    data_prv, data_post= data2test[:36,:], data2test[36:,:]
 
     ### Calculate signi level of t-test by different dof setting
     p_vals1= get_ttest_pval_2d(dof_coef1,data_prv,data_post)
@@ -68,7 +69,7 @@ def main():
     lon0, dlon= lon_info['lon0'], lon_info['dlon']
     lat0, dlat= lat_info['lat0'], lat_info['dlat']
     img_bound= [lon0-dlon/2,lon0+dlon*(nlon+0.5),lat0-dlat/2,lat0+dlat*(nlat+0.5)]  # Exact range of data, necessary for imshow()
-    ##-- Above bound is based on previous resolution, but it's ok since no change on area
+    ##-- Above bound is based on previous resolution, but it's ok since no change on area_boundary
 
     ### Prepare for plotting
     var_names= ['DoF= -Nlog(r1)','DoF= N/(2*Te)','DoF= N']

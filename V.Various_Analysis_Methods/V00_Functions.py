@@ -110,7 +110,7 @@ def get_sst_ano_from_HadISST(area_bound,yrs=[2015,2019],remove_AC=True):
 
     return sstano, lats, lons
 
-def get_sst_areamean_from_HadISST(area_bound,yrs= [2015,2019]):
+def get_sst_areamean_from_HadISST(area_bound,yrs= [2015,2019],remove_AC=True):
     '''
     area_bound= [west,east,south,north] in degrees
     '''
@@ -128,10 +128,12 @@ def get_sst_areamean_from_HadISST(area_bound,yrs= [2015,2019]):
         am= np.nanmean(sst[:,lat_idx[0]:lat_idx[1],lon_idx[0]:lon_idx[1]],axis=(1,2))
     print(lon_idx+lat_idx,am.shape, am.min(), am.max())  # Check if NaN exists here
 
-    ### Remove seasonal cycle
-    mon_per_yr=12
-    am_mean= am.reshape([-1,mon_per_yr]).mean(axis=0)
-    am= (am.reshape([-1,mon_per_yr])-am_mean[None,:]).reshape(-1)
+    if remove_AC:
+        ### Remove seasonal cycle
+        mon_per_yr=12
+        am_mean= am.reshape([-1,mon_per_yr]).mean(axis=0)
+        am= (am.reshape([-1,mon_per_yr])-am_mean[None,:]).reshape(-1)
+
     return am
 
 def read_rmm_text(date_range=[]):
@@ -174,6 +176,32 @@ def read_rmm_text(date_range=[]):
         print("No missings")
 
     return time_info, pcs, phs, strs, miss_idx
+
+def get_monthly_dates(date1,date2,day=1,include_date2=True):
+    '''
+    From date1 to date2 (include or not)
+    yield date monthly
+    "day" indicate defalut day of month
+    '''
+    yr1,mo1= date1.year, date1.month
+    yr2,mo2= date2.year, date2.month
+    mon_per_year=12
+    if date1>date2:
+        tmpdate= date1
+        date1= date2
+        date2= tmpdate
+    outdates=[]
+    while True:
+        outdates.append(date(yr1,mo1,day))
+        mo1+=1
+        if mo1>mon_per_year:
+            mo1=1
+            yr1+=1
+        if yr1==yr2 and mo1==mo2:
+            break
+    if include_date2:
+        outdates.append(date(yr1,mo1,day))
+    return outdates
 
 def draw_colorbar(fig,ax,pic1,type='vertical',size='panel',gap=0.06,width=0.02,extend='neither'):
     '''
