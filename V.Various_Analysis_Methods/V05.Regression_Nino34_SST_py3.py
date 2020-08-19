@@ -159,7 +159,7 @@ def plot_map(pdata):
     lon0,dlon,nlon= [val for val in pdata['lon_info'].values()]
     lat0,dlat,nlat= [val for val in pdata['lat_info'].values()]
 
-    map_extent= [0.,359.9,-60.1,60.1]  # Range to be shown
+    map_extent= [70.,279.9,-60.1,60.1]  # Range to be shown
     img_range= [lon0-dlon/2,lon0+dlon*(nlon+0.5),lat0-dlat/2,lat0+dlat*(nlat+0.5)]  # Exact range of data, necessary for imshow()
     #xm,ym= np.meshgrid(np.arange(nlon+1)*dlon+lon0-dlon/2, np.arange(nlat+1)*dlat+lat0-dlat/2)  # For pcolormesh()
 

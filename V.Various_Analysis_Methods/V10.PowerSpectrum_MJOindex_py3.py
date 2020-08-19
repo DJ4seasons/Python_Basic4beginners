@@ -75,12 +75,12 @@ def plot_PS(pdata):
     ax1.axvline(x=1/60,ls=':',lw=0.8,c='k')  # Reference line for period=60days
 
     ### x-axis: period instead of frequency
-    #xtloc= [0.005,0.01,0.02,0.05,0.1,0.2]  # in freq
-    #xtlab= [int(np.rint(1/x)) for x in xtloc]
-    #ax1.set_xticks(xtloc)
-    #ax1.set_xticklabels(xtlab)
-    #ax1.set_xlabel('Period in days',fontsize=11)
-    #ax1.xaxis.set_minor_locator(NullLocator())
+    xtloc= [0.005,0.01,0.02,0.05,0.1,0.2]  # in freq
+    xtlab= [int(np.rint(1/x)) for x in xtloc]
+    ax1.set_xticks(xtloc)
+    ax1.set_xticklabels(xtlab)
+    ax1.set_xlabel('Period in days',fontsize=11)
+    ax1.xaxis.set_minor_locator(NullLocator())
 
     ##-- Seeing or Saving Pic --##
     plt.show()

@@ -1,7 +1,7 @@
 """
 t-test example
 Re-arange global SST to 5deg x 5deg box, and for every box, test mean difference
-between first 2 years and later 3 years.
+between first 3 years and later 2 years.
 
 Note: Welch's t-test
 Welch's t-test is to test if two populations have equal means.
@@ -158,10 +158,10 @@ def plot_map(pdata):
 
     ###--- Set range of values to be shown
     #val_min, val_max= 0,0.5   <-- it is unnecessary for BoundaryNorm
-    p_val_levels= [-0.0001,0.01, 0.02, 0.05, 0.1, 0.2]
+    p_val_levels= [-0.0001,0.01, 0.02, 0.05, 0.1, 0.2, 1]
 
     ###--- Color map
-    colors= ['darkred','#FA325A','darkorange','forestgreen','#C9CD71']
+    colors= ['darkred','#FA325A','darkorange','forestgreen','#C9CD71','w']
     cm= cls.LinearSegmentedColormap.from_list("cm5",colors)
     cm.set_under('1.')
     cm.set_bad('0.8')  # For the gridcell of NaN

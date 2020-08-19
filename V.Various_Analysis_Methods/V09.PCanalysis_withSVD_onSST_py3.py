@@ -44,7 +44,7 @@ def main():
 
     ### Weight by latitude
     lat_deg= np.arange(nlat)*dlat+lat0
-    lat_wt= np.sqrt(np.cos(lat_deg/180*np.pi))
+    lat_wt= np.sqrt(np.cos(lat_deg/180*np.pi))  # Or use np.deg2rad()
     sstano= sstano*lat_wt[None,:,None]
 
     ### This is only for reducing computing time!!!

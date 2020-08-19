@@ -76,7 +76,7 @@ def llcorr_plot(ax,data,vnames,subtit,maxlag=5,corr_crt=-1):
 
     tlag= np.arange(-maxlag,maxlag+1,1)
     ccoef= llcorr_simple(*data,tlag)
-    
+
     ### Lead-Lag Corr plot
     llc= ax.plot(tlag,ccoef,color='k',lw='1.5')
     ##-- Mark significant values
@@ -105,7 +105,7 @@ def llcorr_plot(ax,data,vnames,subtit,maxlag=5,corr_crt=-1):
     return
 
 def llcorr_simple(ts1,ts2,tlag):
-    coef,pp = [], []
+    coef = []
     for it in tlag:
         if it<0:
             cc=np.corrcoef(ts1[:it],ts2[-it:])[0,1]
@@ -173,8 +173,8 @@ def estimate_significant_corr_coef(ts1,ts2):
         corrs.append(np.corrcoef(np.asarray(new_ts1)[:sz],ts2[:sz])[0,1])
 
     corrs= np.asarray(corrs)
-    simple_check_distribution(corrs)
-    sys.exit()
+    #simple_check_distribution(corrs)
+    #sys.exit()
 
     return norm.ppf([0.9,0.95,0.975,0.99],loc=corrs.mean(),scale=corrs.std(ddof=1))
 

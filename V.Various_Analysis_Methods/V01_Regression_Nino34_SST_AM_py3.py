@@ -27,7 +27,7 @@ def main():
     ### Get Nino3.4 Index
     yrs= [2015,2019]  # Starting year and ending year
     #Nino3.4 (5N-5S, 170W-120W) [-170,-120,-5,5]
-    nn34= vf.get_sst_areamean_from_HadISST([-170,-120,-5,5],yrs,remove_AC=True)
+    nn34= vf.get_sst_areamean_from_HadISST([-170,-120,-5,5],yrs,remove_AC=False)
     ### And other regions
     tio= vf.get_sst_areamean_from_HadISST([240,280,-10,0],yrs,remove_AC=True)
     spo= vf.get_sst_areamean_from_HadISST([-170,-120,-40,-30],yrs,remove_AC=True)
