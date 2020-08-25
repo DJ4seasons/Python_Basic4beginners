@@ -12,22 +12,8 @@ import sys
 import os.path
 import numpy as np
 from datetime import date
-from netCDF4 import Dataset
 
-def open_netcdf(fname):
-    if not os.path.isfile(fname):
-        print("File does not exist:"+fname)
-        sys.exit()
-
-    fid=Dataset(fname,'r')
-    print("Open:",fname)
-    return fid
-
-def read_nc_variable(fid,var_name):
-    vdata=fid.variables[var_name][:]
-    if vdata.shape[0]==1:  # Same to Numpy.squeeze()
-        vdata=vdata.reshape(vdata.shape[1:])
-    return vdata
+import O00_Functions as fns
 
 def main():
     ###--- Read CCMP wind data
@@ -37,11 +23,11 @@ def main():
     indir= '../Data/'
     infn= indir+'CCMP_Wind_Analysis_{}_V02.0_L3.0_RSS.daily.nc'.format(date_txt)
 
-    fid= open_netcdf(infn)
+    fid= fns.open_netcdf(infn)
 
     var_names= ['uwnd', 'vwnd']
-    uwnd= read_nc_variable(fid,var_names[0])
-    vwnd= read_nc_variable(fid,var_names[1])
+    uwnd= fns.read_nc_variable(fid,var_names[0])
+    vwnd= fns.read_nc_variable(fid,var_names[1])
 
     ###--- Check missings and select commonly non-missing data
     missings= np.logical_or(uwnd.mask, vwnd.mask)
@@ -93,7 +79,7 @@ def plot_main(plot_data):
     ax1.set_xlabel(plot_data['var_names'][0].upper(),fontsize=12)
     ax1.set_ylabel(plot_data['var_names'][1].upper(),fontsize=12)
 
-    cb1=draw_colorbar(fig,ax1,pic1,type='horizontal',size='panel',extend='max',gap=0.15,width=0.03)
+    cb1=fns.draw_colorbar(fig,ax1,pic1,type='horizontal',size='panel',extend='max',gap=0.15,width=0.03)
     cb1.set_ticks(range(0,21,5))
     cb1.set_label('Wind Speed(m/s)',fontsize=11)
     ##-- Set up an axis --##
@@ -114,7 +100,7 @@ def plot_main(plot_data):
     ax2.set_ylabel(plot_data['var_names'][1].upper(),fontsize=12,rotation=-90)
     ax2.yaxis.set_label_position("right")
 
-    cb2=draw_colorbar(fig,ax2,pic2,type='horizontal',size='panel',extend='both',gap=0.15,width=0.03)
+    cb2=fns.draw_colorbar(fig,ax2,pic2,type='horizontal',size='panel',extend='both',gap=0.15,width=0.03)
     xt= cb2.get_ticks()
     xt= [0.1,]+list(xt)
     cb2.set_ticks(xt)
@@ -124,29 +110,17 @@ def plot_main(plot_data):
     xlocs=(xedges[1:]+xedges[:-1])/2
     ylocs=(yedges[1:]+yedges[:-1])/2
     xl,yl= np.meshgrid(xlocs,ylocs)
-    write_val(ax2,H.reshape(-1),xl.reshape(-1),yl.reshape(-1),crt=4.95)
+    fns.write_val(ax2,H.reshape(-1),xl.reshape(-1),yl.reshape(-1),crt=4.95)
 
     ##-- Seeing or Saving Pic --##
     #- If want to see on screen -#
-    #plt.show()
+    plt.show()
 
     #- If want to save to file
     outfnm= plot_data['outfn']
     print(outfnm)
     #fig.savefig(outfnm,dpi=100)   # dpi: pixels per inch
-    fig.savefig(outfnm,dpi=100,bbox_inches='tight')   # dpi: pixels per inch
-    return
-
-def write_val(ax,values,xloc,yloc,crt=0,ha='center',va='center'):
-    """
-    Show values on designated location if val>crt.
-    Input values, xloc, and yloc should be of same dimension
-    """
-    ### Show data values
-    for val,xl,yl in zip(values,xloc,yloc):
-        if val>crt: # Write only for large numbers
-            pctxt='{:.1f}%'.format(val)
-            ax.text(xl,yl,pctxt,ha=ha,va=va,stretch='semi-condensed',fontsize=10)
+    #fig.savefig(outfnm,dpi=100,bbox_inches='tight')   # dpi: pixels per inch
     return
 
 def plot_common(ax,subtit='',ytlab=True,ytright=False):
@@ -168,31 +142,7 @@ def plot_common(ax,subtit='',ytlab=True,ytright=False):
 
     ax.yaxis.set_ticks_position('both')
     ax.tick_params(axis='both',labelsize=10)
-
-def draw_colorbar(fig,ax,pic1,type='vertical',size='panel',gap=0.06,width=0.02,extend='neither'):
-    '''
-    Type: 'horizontal' or 'vertical'
-    Size: 'page' or 'panel'
-    Gap: gap between panel(axis) and colorbar
-    Extend: 'both', 'min', 'max', 'neither'
-    '''
-    pos1=ax.get_position().bounds  ##<= (left,bottom,width,height)
-    if type.lower()=='vertical' and size.lower()=='page':
-        cb_ax =fig.add_axes([pos1[0]+pos1[2]+gap,0.1,width,0.8])  ##<= (left,bottom,width,height)
-    elif type.lower()=='vertical' and size.lower()=='panel':
-        cb_ax =fig.add_axes([pos1[0]+pos1[2]+gap,pos1[1],width,pos1[3]])  ##<= (left,bottom,width,height)
-    elif type.lower()=='horizontal' and size.lower()=='page':
-        cb_ax =fig.add_axes([0.1,pos1[1]-gap,0.8,width])  ##<= (left,bottom,width,height)
-    elif type.lower()=='horizontal' and size.lower()=='panel':
-        cb_ax =fig.add_axes([pos1[0],pos1[1]-gap,pos1[2],width])  ##<= (left,bottom,width,height)
-    else:
-        print('Error: Options are incorrect:',type,size)
-        return
-
-    cbar=fig.colorbar(pic1,cax=cb_ax,extend=extend,orientation=type)  #,ticks=[0.01,0.1,1],format='%.2f')
-    cbar.ax.tick_params(labelsize=10)
-    return cbar
-
+    return
 
 if __name__ == "__main__":
     main()

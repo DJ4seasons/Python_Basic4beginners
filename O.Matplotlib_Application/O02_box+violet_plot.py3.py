@@ -12,26 +12,9 @@ by Daeho Jin
 import sys
 import os.path
 import numpy as np
-
 from datetime import timedelta, date
-from netCDF4 import Dataset
 
-def open_netcdf(fname):
-    if not os.path.isfile(fname):
-        print("File does not exist:"+fname)
-        sys.exit()
-
-    fid=Dataset(fname,'r')
-    print("Open:",fname)
-    return fid
-
-
-def read_nc_variable(fid,var_name):
-    vdata=fid.variables[var_name][:]
-    if vdata.shape[0]==1:  # Same to Numpy.squeeze()
-        vdata=vdata.reshape(vdata.shape[1:])
-    return vdata
-
+import O00_Functions as fns
 
 def main():
     ###--- Read CCMP wind data
@@ -41,12 +24,12 @@ def main():
     indir= '../Data/'
     infn= indir+'CCMP_Wind_Analysis_{}_V02.0_L3.0_RSS.daily.nc'.format(date_txt)
 
-    fid= open_netcdf(infn)
+    fid= fns.open_netcdf(infn)
 
     var_names= ['uwnd', 'vwnd']
     wnd_data=[]
     for vn in var_names:
-        data1= read_nc_variable(fid,vn).reshape(-1)
+        data1= fns.read_nc_variable(fid,vn).reshape(-1)
         data1= data1.compressed()  # Transform Masked_array into numpy array by removing missings
         wnd_data.append(data1)
 
@@ -137,13 +120,13 @@ def plot_main(plot_data):
 
     ##-- Seeing or Saving Pic --##
     #- If want to see on screen -#
-    #plt.show()
+    plt.show()
 
     #- If want to save to file
     outfnm= plot_data['outfn']
     print(outfnm)
     #fig.savefig(outfnm,dpi=100)   # dpi: pixels per inch
-    fig.savefig(outfnm,dpi=100,bbox_inches='tight')   # dpi: pixels per inch
+    #fig.savefig(outfnm,dpi=100,bbox_inches='tight')   # dpi: pixels per inch
     return
 
 def plot_common(ax,subtit,xind,x_ticklabels,y_range):

@@ -13,20 +13,7 @@ import sys
 import os.path
 import numpy as np
 
-def bin_file_read2mtx(fname, dtype=np.float32):
-    """ Open a binary file, and read data
-        fname : file name with directory path
-        dtype   : data type; np.float32 or np.float64, etc. """
-
-    if not os.path.isfile(fname):
-        print("File does not exist:"+fname)
-        sys.exit()
-
-    with open(fname,'rb') as fd:
-        bin_mat = np.fromfile(file=fd, dtype=dtype)
-
-    return bin_mat
-
+import O00_Functions as fns
 
 def main():
     ###--- Prepare Data ---###
@@ -41,7 +28,7 @@ def main():
     nlat, nlon= 180, 360
 
     infn= indir+"HadISST1.sample.{}-{}.{}x{}x{}.f32dat".format(*yrs,nt,nlat,nlon)
-    sst= bin_file_read2mtx(infn)  # 'dtype' option is omitted because 'f32' is basic dtype
+    sst= fns.bin_file_read2mtx(infn)  # 'dtype' option is omitted because 'f32' is basic dtype
     sst= sst.reshape([nyears,mon_per_yr*nlat*nlon])
     print(sst.shape)
 
@@ -98,7 +85,7 @@ def plot_main(plot_data):
     ### Compare strength distribution of phase 3 and 6
     ax1=fig.add_axes([ix,iy-ly,lx,ly])
     wd=0.8/nvars  # Width of bar
-    xlocs= bar_x_locator(wd, data_dim=[nvars,nbins])
+    xlocs= fns.bar_x_locator(wd, data_dim=[nvars,nbins])
     cc=['deeppink','skyblue','gold','0.7']  # Preset colors for each bars
 
     ### Draw Bar Plot
@@ -119,7 +106,7 @@ def plot_main(plot_data):
     ### Stacked bar for all years
     ax2=fig.add_axes([ix,iy-ly2,lx,ly2])
     wd=0.8  # Width of bar
-    xlocs= bar_x_locator(wd, data_dim=[1, nbins])
+    xlocs= fns.bar_x_locator(wd, data_dim=[1, nbins])
 
     ### Draw stacked bar
     ### - Need information of bar base
@@ -127,7 +114,7 @@ def plot_main(plot_data):
     for i,(data,d_label) in enumerate(zip(plot_data['fig_data'],plot_data['data_labels'])):
         pbar2=ax2.bar(xlocs[0], data, width=wd, bottom=base, color=cc[i],
                 alpha=0.9, label=d_label)
-        write_val(ax2, data, xlocs[0], base+data/2., crt=10)
+        fns.write_val(ax2, data, xlocs[0], base+data/2., crt=10)
         base+=data ### Update base of bar
 
     ### Fine tuning and decorating
@@ -141,31 +128,18 @@ def plot_main(plot_data):
     ##-- Seeing or Saving Pic --##
 
     #- If want to see on screen -#
-    #plt.show()
+    plt.show()
 
     #- If want to save to file
     outfnm= plot_data['outfn']
     print(outfnm)
     #fig.savefig(outfnm,dpi=100)   # dpi: pixels per inch
-    fig.savefig(outfnm,dpi=100,bbox_inches='tight')   # dpi: pixels per inch
+    #fig.savefig(outfnm,dpi=100,bbox_inches='tight')   # dpi: pixels per inch
 
     # Defalut: facecolor='w', edgecolor='w', transparent=False
     return
 
-def bar_x_locator(width,data_dim=[1,10]):
-    """
-    Depending on width and number of bars,
-    return bar location on x axis
-    Input width: (0,1) range
-    Input data_dim: [# of vars, # of bins]
-    Output locs: list of 1-D array(s)
-    """
-    xx=np.arange(data_dim[1])
-    shifter= -width/2*(data_dim[0]-1)
-    locs=[]
-    for x1 in range(data_dim[0]):
-        locs.append(xx+(shifter+width*x1))
-    return locs
+
 
 def bar_common(ax,subtit,x_dim=10,xt_labs=[],y_range=[]):
     """
@@ -199,17 +173,6 @@ def bar_common(ax,subtit,x_dim=10,xt_labs=[],y_range=[]):
     ax.grid(axis='y',color='0.7', linestyle=':', linewidth=1)
     return
 
-def write_val(ax,values,xloc,yloc,crt=0,ha='center',va='center'):
-    """
-    Show values on designated location if val>crt.
-    Input values, xloc, and yloc should be of same dimension
-    """
-    ### Show data values
-    for val,xl,yl in zip(values,xloc,yloc):
-        if val>crt: # Write large enough numbers only
-            pctxt='{:.0f}%'.format(val)
-            ax.text(xl,yl,pctxt,ha=ha,va=va,stretch='semi-condensed',fontsize=10)
-    return
 
 if __name__ == "__main__":
     main()
