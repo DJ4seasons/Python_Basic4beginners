@@ -4,6 +4,8 @@ Difference between masked_array and other indexing method
 +
 Applying backgroudn image (Need to check directory for BGimg folder)
 Ref: http://earthpy.org/cartopy_backgroung.html
+
+By Daeho Jin
 '''
 
 import sys
@@ -100,8 +102,8 @@ def plot_map(pdata):
 
     props_imshow= dict(vmin=val_min, vmax=val_max, origin='lower',
                     extent=img_bound,cmap=cm,transform=data_crs)
-    props_contour= dict(vmin=val_min,vmax=val_max,cmap=cm,
-                    alpha=0.9,transform=data_crs,extend='both')
+    props_contour= dict(cmap=cm,
+                    alpha=0.9,transform=data_crs,extend='both') #vmin=val_min,vmax=val_max,
 
     ##-- Top Panel
     ax11=fig.add_axes([ix,iy,lx,ly],projection=proj)  ### Now it's GeoAxes, not just Axes
@@ -145,10 +147,10 @@ def plot_map(pdata):
     cb1= fns.draw_colorbar(fig,ax22,pic22,type='horizontal')
 
     ### Show or Save
-    #plt.show()
+    plt.show()
     outfnm= pdata['out_fnm']
     print(outfnm)
-    plt.savefig(outfnm,bbox_inches='tight',dpi=150)
+    #plt.savefig(outfnm,bbox_inches='tight',dpi=150)
     #plt.savefig(outfnm,dpi=100)
 
     return
