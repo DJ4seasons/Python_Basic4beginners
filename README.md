@@ -4,7 +4,7 @@ Educational Code Examples for Getting Used to Python3
 
 Modules used in the codes
 ---
-
+   
 ```
 import sys
 import numpy as np
