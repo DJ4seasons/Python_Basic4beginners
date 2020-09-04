@@ -21,6 +21,10 @@ from matplotlib.ticker import MultipleLocator
 import cartopy.crs as ccrs
 from cartopy.feature import LAND
 
+import cartopy
+cartopy_version= float(cartopy.__version__[:4])
+print("Cartopy Version= {}".format(cartopy_version))
+
 def main():
     ### Read HadISST
     yrs=[2015,2019]
@@ -43,7 +47,7 @@ def main():
 
     abc= 'abcdefg'
     left,right,top,bottom=0.05,0.93,0.925,0.12
-    iix=left; gapx=0.02; npnx=3
+    iix=left; gapx=0.08; npnx=3
     lx=(right-iix-gapx*(npnx-1))/float(npnx)
     iiy=top; gapy=0.09; npny=2
     ly=(iiy-bottom-gapy*(npny-1))/float(npny)
@@ -75,11 +79,17 @@ def main():
         pic1= ax1.contourf(xlon,ylat,sstmean1,clevels,**props_contour)
         ax1.add_feature(LAND)
         ax1.coastlines(resolution='50m',color='0.25',linewidth=1.)
-        gl= ax1.gridlines(crs=data_crs, linewidth=0.8, color='gray', alpha=0.5, linestyle='--')
-        gl.xlocator = MultipleLocator(15)
-        gl.ylocator = MultipleLocator(10)
         subtit= '({}) {}'.format(abc[i],proj_nms[i])
         ax1.set_title(subtit,fontsize=13,ha='left',x=0.0)
+
+        prop_gl= dict(linewidth=0.8, color='gray', alpha=0.7, linestyle='--')
+        if cartopy_version < 0.18:
+            ax1.gridlines(crs=data_crs, **prop_gl)
+        else:
+            gl=ax1.gridlines(crs=data_crs,draw_labels=True,**prop_gl)
+            gl.top_labels, gl.right_labels= False, False
+        gl.xlocator = MultipleLocator(15)
+        gl.ylocator = MultipleLocator(10)
 
         ix=ix+lx+gapx
         if ix+lx>1:
@@ -101,14 +111,25 @@ def main():
         pic1= ax1.contourf(xlon,ylat,sstmean1,clevels,**props_contour)
         ax1.add_feature(LAND)
         ax1.coastlines(resolution='50m',color='0.25',linewidth=1.)
-        gl= ax1.gridlines(crs=data_crs, linewidth=0.8, color='gray', alpha=0.5, linestyle='--')
+
+        prop_gl= dict(linewidth=0.8, color='gray', alpha=0.7, linestyle='--')
+        if cartopy_version < 0.18:
+            ax1.gridlines(crs=data_crs, **prop_gl)
+        else:
+            gl=ax1.gridlines(crs=data_crs,draw_labels=True,**prop_gl)
+
+            if i%npnx==0:
+                gl.right_labels= False
+            elif i%npnx==1:
+                gl.left_labels= False
+
         gl.xlocator = MultipleLocator(15)
         gl.ylocator = MultipleLocator(10)
         subtit= '({}) {}'.format(abc[i+npnx],proj_nms[i])
         ax1.set_title(subtit,fontsize=13,ha='left',x=0.0)
         ix=ix+lx+gapx
 
-    cb= fns.draw_colorbar(fig,ax1,pic1,size='page',type='horizontal',width=0.025,gap=0.07)
+    cb= fns.draw_colorbar(fig,ax1,pic1,size='page',type='horizontal',width=0.025,gap=0.09)
     cb.set_ticks(MultipleLocator(5))
     cb.ax.set_xlabel('Temperature (\u00B0C)',fontsize=11)
     cb.ax.tick_params(labelsize=9)

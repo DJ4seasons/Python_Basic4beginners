@@ -21,6 +21,10 @@ from matplotlib.ticker import MultipleLocator
 import cartopy.crs as ccrs
 from cartopy.feature import LAND
 
+import cartopy
+cartopy_version= float(cartopy.__version__[:4])
+print("Cartopy Version= {}".format(cartopy_version))
+
 def main():
     ### Read HadISST
     yrs=[2015,2019]
@@ -77,9 +81,19 @@ def main():
         pic1= ax1.contourf(xlon,ylat,sstmean1,clevels,**props_contour)
         ax1.add_feature(LAND)
         ax1.coastlines(resolution='110m',color='0.25',linewidth=1.)
-        ax1.gridlines(crs=data_crs, linewidth=0.8, color='gray', alpha=0.5, linestyle='--')
+        #ax1.gridlines(crs=data_crs, linewidth=0.8, color='gray', alpha=0.5, linestyle='--')
         subtit= '({}) {}'.format(abc[i],proj_nms[i])
         ax1.set_title(subtit,fontsize=13,ha='left',x=0.0)
+
+        prop_gl= dict(linewidth=0.8, color='gray', alpha=0.7, linestyle='--')
+        if cartopy_version < 0.18:
+            ax1.gridlines(crs=data_crs, **prop_gl)
+        else:
+            gl=ax1.gridlines(crs=data_crs,draw_labels=True,**prop_gl)
+            gl.top_labels, gl.right_labels= False, False
+
+        gl.xlocator = MultipleLocator(60)
+        gl.ylocator = MultipleLocator(30)
 
         ix=ix+lx+gapx
         if ix+lx>1:
