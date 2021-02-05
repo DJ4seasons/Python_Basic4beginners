@@ -23,7 +23,6 @@ from matplotlib.ticker import AutoMinorLocator, FixedLocator, MultipleLocator
 import cartopy.crs as ccrs
 from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
 import cartopy.feature as cfeature
-~~import shapely.geometry as sgeom~~
 
 from scipy.interpolate import griddata
 
@@ -31,3 +30,8 @@ from sklearn import linear_model
 
 from scipy.stats import kde
 ```
+
+<p align="center">
+  <img src="https://github.com/DJ4seasons/Python_Basic4beginners/blob/master/Book_Cover.jpg" width="640" title="Book Covers">
+</p>
+
