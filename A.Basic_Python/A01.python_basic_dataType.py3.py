@@ -67,6 +67,9 @@ print("----------------------------------------\n")
 
 ### String
 print("\n3. String examples\n")
+print("str1, str2= 'abc1@', \"abc!2\"")
+str1,str2= 'abc1@', "abc!2"
+print(str1,str2,"\n")
 print("d = str(c) # Change type from float to string ")
 d=str(c)
 print("d = {}:\ttype = {}\n".format(d,type(d)))
@@ -84,7 +87,7 @@ print("\n4. Unicode example\n")
 print("El Ni\u00F1o and La Ni\u00F1a \n")
 print("Delta: {}, epsilon: {}, degree: {} \n".format('\u0394','\u03B5','\u00B0'))
 print("Subscript: x{}, x{}, x{} \n".format('\u2081','\u2082','\u2090'))
-print("Superscript: x{}, x{}, x{} \n".format('\u2071','\u00B2','\u0363'))
+print("Superscript: x{}, x{}, x{} \n".format('\u2071','\u00B2','\u1D43'))
 input("\nPress Enter to continue... (4)\n")
 print("----------------------------------------\n")
 

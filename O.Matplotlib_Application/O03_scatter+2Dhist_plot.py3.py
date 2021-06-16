@@ -46,7 +46,7 @@ def main():
 
 
 ###---
-### Box and Viloin Plot
+### Scatter and 2D_Histogram Plot
 ###---
 import matplotlib.pyplot as plt
 from matplotlib.ticker import AutoMinorLocator, MultipleLocator, FuncFormatter
