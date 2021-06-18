@@ -1,5 +1,5 @@
 '''
-Python Basic(3)
+Python Basic Part3
 : Tuple and Dictionary
 
 By Daeho Jin
@@ -10,13 +10,13 @@ print("\n*** Tuple ***")
 print("\n1. Define a tuple with ()")
 print("a = (1,2,3)  # Define a tuple" )
 a = (1,2,3)
-print("a = {}:\ttype = {}".format(a,type(a)))
+print("a = {};\ttype = {}".format(a,type(a)))
 
 print("\n2. Tuple operation")
 print("a+a = {}".format(a+a))
 print("a*3 = {}".format(a*3))
-input("\nPress Enter to continue...\n")
-print("----------------------------------------\n")
+print("\nPress Enter to continue... (1,2)\n")
+input("----------------------------------------\n")
 
 print("\n3. What makes tuple distinguished from list")
 try:
@@ -25,79 +25,99 @@ try:
 except Exception as err:
     print("Error message\n:",err)
 
-input("\nPress Enter to continue...\n")
-print("----------------------------------------\n")
+print("\nHence, tuple is usually used for parameters.")
+print("\nPress Enter to continue... (3)\n")
+input("----------------------------------------\n")
 
 ###--- Dictionary
 print("\n*** Dictionary ***")
 print("\n1. Define a dictionry with {}")
 print("ex) a_dict = {key:value}\n")
-print('d = {"brand": "Ford", "model": "Mustang", "year": 2019 }')
-d = {"brand": "Ford", "model": "Mustang", "year": 2019 }
-print("d = {}:\ttype = {}\n".format(d,type(d)))
-print('d["year"] = {}  # Access value by key'.format(d['year']))
+print('d = {"brand": "Ford", "model": "Mustang", "year": [2015, 2019] }')
+d = {"brand": "Ford", "model": "Mustang", "year": [2015, 2019] }
+print("d = {}; type = {}\n".format(d,type(d)))
+print("d['model'] = {}  # Access value by key".format(d['model']))
 
-input("\nPress Enter to continue...\n")
-print("----------------------------------------\n")
-
-print("\n2. Add, change, and remove item")
-print("e = {}  # Empty dictionry")
-e = {}
-print("e['brand']='kia'")
-e['brand']='kia'
-print("e['model']='optima'")
-e['model']='optima'
+print("\n2. Define a dictionry with dict()")
+print("e = dict(brand='Ford', model='Mustang', year=[2015, 2019])")
+e = dict(brand='Ford', model='Mustang', year=[2015, 2019])
 print("e = {}\n".format(e))
 
-print("e.pop('brand')")
-e.pop('brand')
-print("e = {}\n".format(e))
+print("f = dict([('brand','Ford'), ('model','Mustang'), ('year',[2015, 2019])])")
+f = dict([('brand','Ford'), ('model','Mustang'), ('year',[2015, 2019])])
+print("f = {}".format(f))
 
-print("e['model']='Sonata'")
-e['model']='Sonata'
-print("e = {}\n".format(e))
+print("\nPress Enter to continue... (1,2)\n")
+input("----------------------------------------\n")
 
-input("\nPress Enter to continue...\n")
-print("----------------------------------------\n")
+print("\n3. Add, change, and remove item")
+print("g = {}  # Empty dictionry")
+g = {}
+print("g['brand']='kia'")
+g['brand']='kia'
+print("g['model']='optima'")
+g['model']='optima'
+print("g = {}\n".format(g))
 
-print("\n3. Define a dictionry with dict()")
-print("f = dict(brand='Ford', model='Mustang', year=2019)")
-f = dict(brand='Ford', model='Mustang', year=2019)
-print("f = {}\n".format(f))
+print("g.pop('brand')  # dict.pop() is different from list.pop()")
+g.pop('brand')
+print("g = {}\n".format(g))
 
-print("g = dict([('brand','Ford'), ('model','Mustang'), ('year',2019)])")
-g = dict([('brand','Ford'), ('model','Mustang'), ('year',2019)])
-print("g = {}".format(g))
+print("h = g  # Copy or not copy?")
+h = g
+print("h['model']='Sonata' \n")
+h['model']='Sonata'
+print("g = {}\n".format(g))
+print("---> Use dict.copy()")
 
-input("\nPress Enter to continue...\n")
-print("----------------------------------------\n")
+
+print("\nPress Enter to continue... (3)\n")
+input("----------------------------------------\n")
+
 
 print("\n4. Membership test")
-print("'Mustang' in g ?")
-print('Mustang' in g)
+print("For a dictionry, g = {} \n".format(g))
+print("'Sonata' in g ?")
+print('Sonata' in g)
 print("\n'model' in g ?")
 print('model' in g)
 print("\n'model' in g.keys() ?")
 print('model' in g.keys())
-print("\n'Mustang' in g.values() ?")
-print('Mustang' in g.values())
+print("\n'Sonata' in g.values() ?")
+print('Sonata' in g.values())
 
-input("\nPress Enter to continue...\n")
-print("----------------------------------------\n")
+print("\nPress Enter to continue... (4)\n")
+input("----------------------------------------\n")
 
 print("\n5. Visit all items")
+print("For a dictionry, f = {}".format(f))
 print("\n5-1. Method1")
-print('''for key in g:
-    print("{}: {}".format(key, g[key]))
+print('''for key in f:  # or f.keys()
+    print("{}: {}".format(key, f[key]))
 ''')
-for key in g: # or g.keys()
-    print("{}: {}".format(key, g[key]))
+for key in f:
+    print("{}: {}".format(key, f[key]))
 
 print("\n5-2. Method2")
-print('''for key, val in g.items():
+print('''for key, val in f.items():
     print("{}: {}".format(key, val))
 ''')
-for key, val in g.items():
+for key, val in f.items():
     print("{}: {}".format(key, val))
 
-print("THE END: Python Basic(3) - Tuple and Dictionary\n")
+print("\nPress Enter to continue... (5)\n")
+input("----------------------------------------\n")
+
+print("\n6. Miscellaneous")
+print("Two stars(**) with Dictionary: An example from A01:")
+multi_lines='''
+Hello, I like to buy a {brand} {model}.
+Do you have model year(s) {year}?
+'''
+print(multi_lines)
+print(multi_lines.format(**f))  # two stars: distribute items of "key:value"
+
+print("\nPress Enter to continue... (6)\n")
+input("----------------------------------------\n")
+
+print("THE END: Python Basic Part3 - Tuple and Dictionary\n")

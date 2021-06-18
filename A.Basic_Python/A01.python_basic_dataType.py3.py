@@ -1,35 +1,37 @@
 '''
 Python Basic Part1
 : Data Types
+: Print Format
 
 By Daeho Jin
 '''
 
 ### Part0: Assignment
 print("\n*** Before Start ***\n")
-print("Allowed letters for Python variable name:")
-print("    Alphabet, lowcase or uppercase (a-z, A-Z; case-sensitive)")
-print("    Digit (0-9)")
-print("    Underscore (_)")
-print("\nCaution:")
-print("    Digit can not be the first letter.")
-print("    Intrinsic function names should be avoided (possible but not recommended)")
-print("    Conventionally lowercases are preferred uppercases")
-print("    e.g., myName or my_name \n")
+print("1. Allowed letters for Python variable name")
+print(": Alphabet, lowcase or uppercase (a-z, A-Z; case-sensitive)")
+print(": Digit (0-9)")
+print(": Underscore (_)")
+print("\n - Caution")
+print(": Digit can not be the first letter.")
+print(": Pre-existing function names should be avoided.")
+print(":: (possible but not recommended, e.g. int, max, sum, etc.)")
+print(": Conventionally lowercases are preferred to uppercases")
+print(":: (e.g., myName or my_name) \n")
 
-print("\nAssignment: left = right")
-print("It means value 'right' is assigned to variable 'left'")
+print("\n2. Assignment: left = right")
+print(": It means value 'right' is assigned to variable 'left'")
 print("\nFor example, ")
 print("a = 1")
 print("a, b, c = 1,2,3")
 a,b,c= 1,2,3; print(a,b,c)
 print("a = b = 1")
 a=b=1; print(a,b)
-input("\nPress Enter to continue... (0)\n")
-print("----------------------------------------\n")
+print("\nPress Enter to continue... (0)\n")
+input("----------------------------------------\n")
 
 ### Part1: Data Types
-print("\n*** Data Types ***")
+print("\n*** Data Types + Print Format ***")
 print("!!! Data Type is defined when a value is assigned !!!")
 ### Integer and float numbers
 print("\n1. Integer and float numbers\n")
@@ -42,13 +44,17 @@ c=a+b
 print("c = {}:\ttype = {} \n".format(c,type(c)))
 print("c = a/b")
 c=a/b
-print("c = {}:\ttype = {}".format(c,type(c)))
-print("---> Division by integer results in float type\n")
-print("d = a//b")
-d=a//b
+print("c = {}:\ttype = {}  # Basically 8-Byte (64bit)\n".format(c,type(c)))
+
+print("Cf. floor divider, //")
+print("d = a//b; d2= float(a)//b \n")
+d=a//b; d2= float(a)//b
 print("d = {}:\ttype = {}".format(d,type(d)))
-input("\nPress Enter to continue... (1)\n")
-print("----------------------------------------\n")
+print("d2 = {}:\ttype = {} \n".format(d2,type(d2)))
+
+print("Ref. Arithmetic Operators: +, -, *, /, %, **, // ")
+print("\nPress Enter to continue... (1)\n")
+input("----------------------------------------\n")
 
 ### String
 print("\n2. String examples\n")
@@ -58,23 +64,23 @@ print(str1,str2,"\n")
 print("d = str(c)  # Change type from float to string; c.f., int(), float()")
 d=str(c)
 print("d = {}:\ttype = {}\n".format(d,type(d)))
-print("len(d), d[0:4], d[-3:]  # Python index starts at 0")
+print("len(d), d[0:4], d[-3:]  # Python index starts at 0; start to end(not including)")
 print("{}, {}, {}\n".format(len(d),d[0:4],d[-3:]))
 print("c+c vs. d+d[:5] vs. d*2")
 print("{} vs. {} vs. {}\n".format(c+c,d+d[:5],d*2))
-print("len(d*2)")
-print(len(d*2))
-input("\nPress Enter to continue... (2)\n")
-print("----------------------------------------\n")
+print("len(d*3)")
+print(len(d*3))
+print("\nPress Enter to continue... (2)\n")
+input("----------------------------------------\n")
 
 ### Printing unicode
 print("\n3. Unicode example\n")
 print("El Ni\u00F1o and La Ni\u00F1a \n")
 print("Delta: {}, epsilon: {}, degree: {} \n".format('\u0394','\u03B5','\u00B0'))
 print("Subscript: x{}, x{}, x{} \n".format('\u2081','\u2082','\u2090'))
-print("Superscript: x{}, x{}, x{} \n".format('\u2071','\u00B2','\u1D43'))
-input("\nPress Enter to continue... (3)\n")
-print("----------------------------------------\n")
+print("Superscript: x{}, x{}, x{} \n".format('\u00B9','\u00B2','\u1D43'))
+print("\nPress Enter to continue... (3)\n")
+input("----------------------------------------\n")
 
 ### Boolean
 print("\n4. Boolean type\n")
@@ -92,39 +98,53 @@ print("'not' {} = {} \n".format(boo1, not boo1))
 
 print("bool(-1) = {}, bool(0) = {}, bool(1) = {}, bool(2) = {}".format(bool(-1),bool(0),bool(1),bool(2)))
 print("bool(-0.1) = {}, bool(0.) = {}, bool(0.1) = {}".format(bool(-0.1),bool(0.),bool(0.1)))
-print("---> Value zero(0) is False, and all others are True")
-input("\nPress Enter to continue... (4)\n")
-print("----------------------------------------\n")
+print("---> Value zero(0) is False, and all others are True \n")
+
+print("""a = 2
+a = bool(a)
+a = int(a)
+print(a)""")
+a = 2; a = bool(a); a = int(a); print(a)
+print("\nPress Enter to continue... (4)\n")
+input("----------------------------------------\n")
 
 ### Print format
 print("\n5. Print format examples")
 print("cf. https://pyformat.info/ \n")
-print("a, b, c = 1, 2, 3.141592")
-a, b, c = 1, 2, 3.141592
+print("a, b, c = 1, 2, 3.666667")
+a, b, c = 1, 2, 3.666667
 print("\nInteger")
 format_test1 = '{}, {:d}, {:3d}, {:03d}'
 print(format_test1)
 print(format_test1.format(a,a,a,a))
 print("\nFloat")
-format_test2 = '{:.0f}, {:.3f}, {:7.3f}'
+format_test2 = '{}, {:.0f}, {:.3f}, {:7.3f}, {:07.3f}'
 print(format_test2)
-print(format_test2.format(c,c,c))
+print(format_test2.format(c,c,c,c,c))
+input("\nPress Enter to continue... (5-1)\n")
 
-print("\nIn case of printing {}, {}, {}".format(a,b,c))
-format_test2 = '{1:d}, {2:.2f}, {0:.1f}'
-print('\n'+format_test2)
+print("\nIn case of input order= {}, {}, {}".format(a,b,c))
+format_test2 = '{1:d}, {2:.2f}, {0:.1f}, {0:d}'
+print('\n'+format_test2+' # We have only 3 inputs!')
 print(format_test2.format(a,b,c))
+print("cf. int-->{:.1f} (o), float-->{:d} (error)")
+
 format_test3 = '{:d}, {other:.2f}, {:.1f}'
 print('\n'+format_test3)
 print(format_test3.format(a,b,other=c))
+print("Keyword must be at the end")
+
 print("\nHow about multi-lines? Use tripple quote mark!")
 multi_lines='''
 Hello, my name is {name}.
 I am {age:d} years old.
 My favorite food is {food}
 '''
+print(multi_lines)
 keywords={"name":"Dave", "age":25, "food":"chococake"}  # This is dictionry!
+print(keywords, type(keywords))
 print(multi_lines.format(**keywords))  # two stars: distribute items of "key:value"
-input("\nPress Enter to continue... (5)\n")
+print("\nPress Enter to continue... (5-2)\n")
+input("----------------------------------------\n")
 
-print("THE END: Python Basic Part1 - Data Types\n")
+print("THE END: Python Basic Part1 - Data Types and Print Format\n")

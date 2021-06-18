@@ -1,5 +1,5 @@
 '''
-Python Basic(4)
+Python Basic Part4
 : IF, FOR, and WHILE
 
 By Daeho Jin
@@ -9,12 +9,14 @@ By Daeho Jin
 ### IF
 print("\n*** IF ***")
 print("\n1. IF basic")
-print("if condition:")
-print("    statement1  # Keep 'consistent' spacing")
-print("elif condition: #optional")
-print("    statement2  # Keep 'consistent' spacing")
-print("else:           #optional")
-print("    statement3  # Keep 'consistent' spacing\n")
+print("""
+if condition:
+    statement1  # Keep 'consistent' spacing
+elif condition: #optional
+    statement2  # Keep 'consistent' spacing
+else:           #optional
+    statement3  # Keep 'consistent' spacing
+""")
 
 print('''Example:
 if True:
@@ -30,13 +32,14 @@ elif False:
 else:
    print("Not printing this")
 
-input("\nPress Enter to continue...\n")
-print("----------------------------------------\n")
+print("\nPress Enter to continue... (1)\n")
+input("----------------------------------------\n")
 
 print("\n2. IF one-line")
-print("if condition: statement")
 print("a = 3")
 a = 3
+
+print("if condition: statement \n")
 print("TEST1: if a>0: print('this')")
 if a>0: print('this')
 print("TEST2: if a>0: print('this'); print('that')")
@@ -44,28 +47,32 @@ if a>0: print('this'); print('that')
 print("TEST3: if a<0: print('this'); print('that')")
 if a<0: print('this'); print('that')
 print("\n---> Multi-statements are possible!")
-input("\nPress Enter to continue...\n")
-print("----------------------------------------\n")
+
+print("\nPress Enter to continue... (2)\n")
+input("----------------------------------------\n")
 
 print("\n3. IF ELSE one-line")
-print("statement1 if condition else statement2")
-print("a = 3")
-a = 3
+print("a = {}".format(a))
+
+print("statement1 if condition else statement2 \n")
+
 print("b = 1 if a>0 else -1")
 b = 1 if a>0 else -1
-print("b = {}".format(b))
-print("\nc = 1 if b<0 else -1")
+print("b = {} \n".format(b))
+print("c = 1 if b<0 else -1")
 c = 1 if b<0 else -1
 print("c = {}".format(c))
 
-input("\nPress Enter to continue...\n")
-print("----------------------------------------\n")
+print("\nPress Enter to continue... (3)\n")
+input("----------------------------------------\n")
 
 ### FOR
 print("\n*** FOR Loop ***")
 print("\n1. FOR basic")
-print("for x in iterable:")
-print("    statement(s)  # Keep 'consistent spacing'\n")
+print("""
+for x in iterable:
+    statement(s)  # Keep 'consistent spacing'
+""")
 
 print("""Example:
 list1, list2 = [], []
@@ -73,7 +80,8 @@ for i in range(10):  # range(10) = range(0,10) = range(0,10,1)
     if i%2==0:
         list1.append(i)
     else:
-        list2.append(i)\n""")
+        list2.append(i)
+""")
 list1, list2 = [], []
 for i in range(10):  # range(10) = range(0,10) = range(0,10,1)
     if i%2==0:
@@ -83,8 +91,8 @@ for i in range(10):  # range(10) = range(0,10) = range(0,10,1)
 print("list1 = {}".format(list1))
 print("list2 = {}".format(list2))
 
-input("\nPress Enter to continue...\n")
-print("----------------------------------------\n")
+print("\nPress Enter to continue... (1)\n")
+input("----------------------------------------\n")
 
 print("\n2. FOR one-line")
 print("* Useful when building a list!")
@@ -101,8 +109,8 @@ print("Example3: c = [ x*x if x%2==0 else -x for x in range(5)]")
 c = [ x*x if x%2==0 else -x for x in range(5)]
 print("c = {}\n".format(c))
 
-input("\nPress Enter to continue...\n")
-print("----------------------------------------\n")
+print("\nPress Enter to continue... (2)\n")
+input("----------------------------------------\n")
 
 ### For + zip, enumerate
 print("\n3. FOR + enumerate, zip")
@@ -127,8 +135,8 @@ for i,(x,y) in enumerate(zip(list1,list2)):
 for i,(x,y) in enumerate(zip(list1,list2)):
    print('{}: {},{}'.format(i,x,y))
 
-input("\nPress Enter to continue...\n")
-print("----------------------------------------\n")
+print("\nPress Enter to continue... (3)\n")
+input("----------------------------------------\n")
 
 
 ### While
@@ -146,8 +154,8 @@ while i<3:
     print(i)
     i+=1
 
-input("\nPress Enter to continue...\n")
-print("----------------------------------------\n")
+print("\nPress Enter to continue... (1)\n")
+input("----------------------------------------\n")
 
 print("\n2. Pass, Continue, and Break test in while loop")
 print("""\nExample code:
@@ -175,8 +183,8 @@ while True:
     print("End of while block")
 print("---> Note that 'continue' and 'pass' are different!")
 
-input("\nPress Enter to continue...\n")
-print("----------------------------------------\n")
+print("\nPress Enter to continue... (2)\n")
+input("----------------------------------------\n")
 
 print("\n3. Break out of multiple loops")
 print("""\nExample code of break:
@@ -217,5 +225,7 @@ try:
             j+=1
 except StopIteration: pass
 
-input("\nPress Enter to continue...\n")
-print("THE END: Python Basic(4) - IF, FOR, and WHILE\n")
+print("\nPress Enter to continue... (3)\n")
+input("----------------------------------------\n")
+
+print("THE END: Python Basic Part4 - IF, FOR, and WHILE\n")
