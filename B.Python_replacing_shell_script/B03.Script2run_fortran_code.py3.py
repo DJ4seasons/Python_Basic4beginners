@@ -14,6 +14,9 @@ fn0 = "estimate_pi"
 fn_x = "{}.x".format(fn0)
 fn_f90 = "./{}.f90".format(fn0)
 
+keywords = dict(prog_name=fn0, n_trial=3, dot_count=1000)
+print(keywords)
+
 f_program = """
 program {prog_name}
   implicit none
@@ -47,9 +50,6 @@ real(8) function quarter_circle_ratio(dot_count)
   return
 end function quarter_circle_ratio
 """
-
-keywords = dict(prog_name=fn0, n_trial=3, dot_count=1000)
-print(keywords)
 
 if os.path.isfile(fn_f90):
     os.remove(fn_f90)

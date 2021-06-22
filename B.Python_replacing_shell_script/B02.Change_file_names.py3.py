@@ -13,8 +13,9 @@ from subprocess import run
 indir='./Text_Box/'
 fnames=glob.glob(indir+'Statement*.txt')  # Get file names using star mark.
 ### Be cautious that result of glob is basically not sorted but random order.
+print(type(fnames))
 
-for fn in fnames:
+for fn in fnames:  # Or sorted(fnames) for a to z order
     print(fn)
     words = fn.strip().split('/')  # Seperate directory name and file name
     fn0 = words[-1]  # File name is the last one
@@ -24,4 +25,6 @@ for fn in fnames:
         words[-1] = fn0  # Replace the file name with new one
         fn2 = '/'.join(words)  # Reconstruct a string containing directory name and file name
         print(fn+" ==> "+fn2)
+
+        # Always do pre-test before excuting 'mv'!
         run("mv {} {}".format(fn,fn2), shell=True)  # Execute shell command 'mv'
