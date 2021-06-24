@@ -101,19 +101,19 @@ print("a[8:1:-2] = {}  # Reversed slicing is working  # = a[-2:1:-2]".format(a[8
 input("\nPress Enter to continue... (2-2a)\n")
 
 print('\nIndexing: Pull out data by providing indices')
-print('index_list = [1,3,5]  # List object')
-index_list=[1,3,5]
+print('index_list = [1,5,3]  # List object')
+index_list=[1,5,3]
 print('a[index_list] = {}'.format(a[index_list]))
 print('a[::-1][index_list] = {}'.format(a[::-1][index_list]))
 
-print('\nindex_arr= np.array([1,3,5])  # numpy array')
-index_arr= np.array([1,3,5])
+print('\nindex_arr= np.array([1,5,3])  # numpy array')
+index_arr= np.array([1,5,3])
 print('a[index_arr] = {}'.format(a[index_arr]))
 print('a[::-1][index_arr] = {}'.format(a[::-1][index_arr]))
 
 print('\nHow about the index of other than integer?')
-print('index_list= np.asfarray([1,3,5])  # numpy float array')
-index_list= np.asfarray([1,3,5])
+print('index_list= np.asfarray([1,5,3])  # numpy float array')
+index_list= np.asfarray([1,5,3])
 try:
     print('a[::-1][index_list] = {}'.format(a[::-1][index_list]))
 except Exception as err:
@@ -183,7 +183,32 @@ print('c3= b[idx]')
 c3= b[idx]
 show_array_info(c3)
 
-print("\nPress Enter to continue... (2-2e)\n")
+input("\nPress Enter to continue... (2-2e)\n")
+
+print("""
+'~' represents 'logical_not()'
+E.g.,
+c4= b[~idx]
+show_array_info(c4)""")
+c4= b[~idx]
+show_array_info(c4)
+
+print("""
+c5= b[np.logical_not(idx)]
+show_array_info(c5)""")
+c5= b[np.logical_not(idx)]
+show_array_info(c5)
+
+print("""
+FYI, Check if two arrays are identical:
+print(np.array_equal(c4,c5))""")
+print(np.array_equal(c4,c5))
+
+print("""
+If print(c4==c5) ?""")
+print(c4==c5)
+
+print("\nPress Enter to continue... (2-2f)\n")
 input("----------------------------------------\n")
 
 print("\n2-3. Numpy.where() function")

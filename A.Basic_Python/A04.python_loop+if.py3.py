@@ -34,7 +34,31 @@ elif False:
 else:
    print("Not printing this")
 
-print("\nPress Enter to continue... (1)\n")
+input("\nPress Enter to continue... (1-1)\n")
+
+print('''
+Conditional Expressions:
+x,y = 0,2''')
+x,y= 0,2
+
+print("\nif x < y: print('yes')  # <, >, <=, >=, ==, !=")
+print("Result:")
+if x<y: print('yes')
+print("\nFYI, '=<' and '=>' are not working!")
+
+print("\nif y: print('yes')  # 0=False, all other=True")
+print("Result:")
+if y: print('yes')
+
+print("\nif x<1 and y>1: print('yes')  # and, or")
+print("Result:")
+if x<1 and y>1: print('yes')
+
+print("\nif 'aa' in 'Hello': print('yes')  # any membership test")
+print("Result:")
+if 'll' in 'Hello': print('yes')
+
+print("\nPress Enter to continue... (1-2)\n")
 input("----------------------------------------\n")
 
 print("\n2. IF one-line")
