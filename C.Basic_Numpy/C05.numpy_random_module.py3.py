@@ -21,48 +21,66 @@ print('version= ',ver)
 if int(ver.split('.')[1])<17:
     sys.exit('Numpy version should be 1.17 or later')
 
-print('\n* Start by initializing')
+print("\nPress Enter to continue... (0)\n")
+input("----------------------------------------\n")
+
+print('1. Start by initializing \n')
 print('rg = np.random.default_rng()  # Initialize "Random Generator" object')
 rg = np.random.default_rng()  # Initialize "Random Generator" object
 
-print('\n* Get integer random numbers in [0,100]')
-print('print(rg.integers(0, 100, size=5, endpoint=True))  # endpoint=True so include 100')
-print(rg.integers(0, 100, size=5, endpoint=True))  # endpoint=True so include 100
+print('\n2-1. Integer random numbers (Uniform distribution)')
+print('print(rg.integers(0, 10, size=10, endpoint=True))  # endpoint=True so include 10')
+print(rg.integers(0, 10, size=10, endpoint=True))  # endpoint=True so include 100
 print('* One more time')
-print('print(rg.integers(0, 100, size=5, endpoint=True))')
-print(rg.integers(0, 100, size=5, endpoint=True))
+print('print(rg.integers(0, 10, size=10, endpoint=False))')
+print(rg.integers(0, 10, size=10, endpoint=False))
+print('---> "Repeat" is allowed, of course.')
 
-print('\n* Get float random numbers in [0.,1.)')
-print('print(rg.random(size=5))  # between [0.0, 1.0)')
-print(rg.random(size=5))  # between [0.0, 1.0)
-print('* One more time with specific dtype')
-print('print(rg.random(size=5, dtype=np.float32))')
-print(rg.random(size=5, dtype=np.float32))  # between [0.0, 1.0)
+print('\n2-2. Float random numbers (Uniform distribution)')
+print('''a= rg.random(size=5)  # between [0.0, 1.0) in default
+print(a)
+print(a[0])''')
+a= rg.random(size=5)  # between [0.0, 1.0) in default
+print(a)
+print(a[0])
 
-input("\nPress Enter to continue...\n")
-print("----------------------------------------\n")
+print('''
+* One more time with specific dtype
+b= rg.random(size=5, dtype=np.float32)
+print(b)
+print(b[0]
+''')
+b= rg.random(size=5, dtype=np.float32)
+print(b)
+print(b[0])
 
-print('* Sub-sampling and shuffle from given array')
+print("\nPress Enter to continue... (1,2)\n")
+input("----------------------------------------\n")
+
+print('3. Sub-sampling and shuffle from given array')
 print('arr1d= np.arange(100)  # Define sample array')
 arr1d= np.arange(100)
 
-print('\n* Randomly select 10 samples from arr1d')
+print('\n3-1 Randomly select 10 samples from arr1d')
 print('''chosen= rg.choice(arr1d, size=10)  # "shuffle=False" can speed up for large size
 print(chosen)''')
 chosen= rg.choice(arr1d, size=10)  # "shuffle=False" can speed up for large size
 print(chosen)
 
-print('\n* Shuffle in-place (while "permutation" returns copy)')
+print('\n3-2 Shuffle in-place')
 print('''rg.shuffle(chosen)
 print(chosen)''')
 rg.shuffle(chosen)
 print(chosen)
 
-input("\nPress Enter to continue...\n")
-print("----------------------------------------\n")
+print("\nFYI, 'permutation()' returns copy")
 
-print('* Set seed in order to repeat results')
-print('''rg2 = np.random.default_rng(123)  # Initialize with seed
+print("\nPress Enter to continue... (3)\n")
+input("----------------------------------------\n")
+
+print('4. Set seed in order to repeat results')
+print('''
+rg2 = np.random.default_rng(123)  # Initialize with seed, 123
 print(rg2.random(size=5))  # between [0.0, 1.0)''')
 rg2 = np.random.default_rng(123)  # Initialize with seed
 print(rg2.random(size=5))  # between [0.0, 1.0)
@@ -73,11 +91,19 @@ print(rg3.random(size=5))  # between [0.0, 1.0)''')
 rg3 = np.random.default_rng(123)  # Anothoer initialization with same seed
 print(rg3.random(size=5))  # between [0.0, 1.0)
 
-input("\nPress Enter to continue...\n")
-print("----------------------------------------\n")
+print('\n* One more time')
+print('print(rg2.random(size=5))')
+print(rg2.random(size=5))  # between [0.0, 1.0)
 
-print('* Get random numbers under specific distribution')
-print('''import matplotlib.pyplot as plt
+print('\nprint(rg3.random(size=5))')
+print(rg3.random(size=5))  # between [0.0, 1.0)
+
+print("\nPress Enter to continue... (4)\n")
+input("----------------------------------------\n")
+
+print('5. Get random numbers under specific distribution')
+print('''
+import matplotlib.pyplot as plt
 xx= rg.standard_normal(size=1000)  # normal distribution with mean=0, std=1
 yy= rg.uniform(size=1000)  # uniform distribution
 plt.scatter(xx,yy)  # draw sactter plot with xx and yy
@@ -90,6 +116,7 @@ plt.scatter(xx,yy)
 plt.show()
 
 print('''\n# Various distributions are available at
-https://numpy.org/doc/stable/reference/random/generator.html''')
+https://numpy.org/doc/stable/reference/random/generator.html#distributions
+''')
 
 print("\nTHE END: Random numbers in Numpy\n")
