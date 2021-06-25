@@ -75,23 +75,29 @@ def quarter_circle_ratio_vectorized(dot_count):
     in_count= (ix**2+iy**2<=1).sum()
     return in_count/(dot_count**2)
 
-#---
-n_trial, dot_count= 3, 3000
+def check_time_q_pi(func, dot_count, n_trial=1):
+    time0= time()
+    for i in range(n_trial):
+        q_pi= func(dot_count+i)
+        print("Trial#{} dot_count={} pi={}".format(i+1, dot_count+i, q_pi*4.))
+    time1= time()
+    return time1-time0
 
-# Style 1
-print("Start element-wise style")
-time0= time()
-for i in range(n_trial):
-    q_pi= quarter_circle_ratio_elementwise(dot_count+i)
-    print("Trial#{} dot_count={} pi={}".format(i+1, dot_count+i, q_pi*4.))
-time1= time()-time0
-print("Run time of element-wise style= {:.3f}".format(time1))
+def main():
+    ##--- Parameters:
+    n_trial, dot_count= 3, 3000
 
-# Style 2
-print("\nStart vectorized style")
-time2= time()
-for i in range(n_trial):
-    q_pi= quarter_circle_ratio_vectorized(dot_count+i)
-    print("Trial#{} dot_count={} pi={}".format(i+1, dot_count+i, q_pi*4.))
-time3= time()-time2
-print("Run time of element-wise style= {:.3f}".format(time3))
+    # Style 1
+    print("Start element-wise style")
+    time_consumed= check_time_q_pi(quarter_circle_ratio_elementwise,dot_count,n_trial)
+    print("Run time of element-wise style= {:.3f}".format(time_consumed))
+
+    # Style 2
+    print("\nStart vectorized style")
+    time_consumed= check_time_q_pi(quarter_circle_ratio_vectorized,dot_count,n_trial)
+    print("Run time of vectorized style= {:.3f} \n".format(time_consumed))
+
+    return
+
+if __name__ == "__main__":
+    main()
