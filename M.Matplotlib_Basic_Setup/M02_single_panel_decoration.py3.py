@@ -8,9 +8,7 @@ by Daeho Jin
 
 ---
 Reference:
-https://matplotlib.org/api/axes_api.html#the-axes-class
-https://matplotlib.org/api/_as_gen/matplotlib.axes.Axes.plot.html
-https://matplotlib.org/examples/ticks_and_spines/tick-locators.html
+https://matplotlib.org/stable/api/axes_api.html
 '''
 
 import numpy as np
@@ -43,7 +41,7 @@ ax1 = fig.add_subplot(1,1,1)   # (# of rows, # of columns, indicater from 1)
 
 ##-- Plot on an axis --##
 props= dict(color='r',ls='-.',lw=1.5,marker='o',markersize=20)  # ls: line_style, lw: line_width
-ax1.plot(x,y,**props)
+ax1.plot(x,y,**props)  # https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.plot.html
 
 ##-- Various Settings for axis --##
 subtit='Panel#1'
@@ -52,25 +50,26 @@ ax1.set_title(subtit,fontsize=12,x=0.,ha='left') #,y=0.9
 ax1.set_xlim(-0.5,4.5)
 ax1.xaxis.set_major_locator(MultipleLocator(1))   # For Major Ticks
 ax1.xaxis.set_minor_locator(AutoMinorLocator(2))   # For minor Ticks
+# https://matplotlib.org/stable/gallery/ticks_and_spines/tick-locators.html
 ax1.set_xlabel('X-axis Label',fontsize=12)
 
 ax1.set_ylim(-1,17)
 ax1.set_ylabel('Y-axis Label',fontsize=12,rotation=90,labelpad=0)
-ax1.set_yticks(range(0,17,4))
+ax1.set_yticks(range(0,17,4))  # Manually set tick locations replacing 'locator'
 ax1.yaxis.set_minor_locator(AutoMinorLocator(2))
-yt_form=FuncFormatter(lambda x, pos: "[{:0.1f}x]".format(x))
-ax1.yaxis.set_major_formatter(yt_form)
+ax1.yaxis.set_major_formatter("[{x:0.1f}+]")  # Working on ver 3.3+
+#yt_form=FuncFormatter(lambda x, pos: "[{:0.1f}+]".format(x))
+#ax1.yaxis.set_major_formatter(yt_form)
+# https://matplotlib.org/stable/gallery/ticks_and_spines/tick-formatters.html
 ax1.yaxis.set_ticks_position('both')
 
 ax1.tick_params(axis='both',labelsize=11)
+# https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.tick_params.html
+
 ax1.axhline(y=0.,color='k',linestyle=':')
 ax1.axvline(x=0.,color='k',ls=':',lw=0.5)
 
-
 ##-- Seeing or Saving Pic --##
-
-#- If want to see on screen -#
-#plt.show()
 
 #- If want to save to file
 outdir = "../Pics/"
@@ -79,7 +78,8 @@ print(outfnm)
 #fig.savefig(outfnm,dpi=100)   # dpi: pixels per inch
 #fig.savefig(outfnm,dpi=100,facecolor='0.8')
 #fig.savefig(outfnm,dpi=100,facecolor='0.8',transparent=True)
-
 fig.savefig(outfnm,dpi=100,bbox_inches='tight')   # dpi: pixels per inch
-
 # Defalut: facecolor='w', edgecolor='w', transparent=False
+
+#- If want to see on screen -#
+plt.show()
