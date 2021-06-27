@@ -1,15 +1,17 @@
 '''
-Matplotlib Basic(5)
-: Apply various decorating skills of M02 to multi-panels
+Matplotlib Basic(6)
+: Apply various decorating skills of M03 to multi-panels
+: Tune some decoratoins adjusting to multi-panel environment
 
 by Daeho Jin
 
 ---
 Reference:
-https://matplotlib.org/3.3.0/api/_as_gen/matplotlib.figure.Figure.html#matplotlib.figure.Figure.add_axes
-https://matplotlib.org/api/_as_gen/matplotlib.axes.Axes.plot.html
-https://matplotlib.org/examples/ticks_and_spines/tick-locators.html
+https://matplotlib.org/stable/api/figure_api.html#matplotlib.figure.Figure.add_subplot
+https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.plot.html
+https://matplotlib.org/stable/gallery/ticks_and_spines/tick-locators.html
 '''
+
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.ticker import AutoMinorLocator, MultipleLocator, FuncFormatter
@@ -20,21 +22,22 @@ def plot_common(ax, subtit=''):
     ax.set_xlim(-0.5,4.5)
     ax.xaxis.set_major_locator(MultipleLocator(1))   # For Major Ticks
     ax.xaxis.set_minor_locator(AutoMinorLocator(2))   # For minor Ticks
-    xt_form=FuncFormatter(lambda x, pos: "{:0.1f}".format(x))
-    ax.xaxis.set_major_formatter(xt_form)
-    ax.set_xlabel('X-axis Label',fontsize=12)
+    #xt_form=FuncFormatter(lambda x, pos: "{:0.1f}".format(x))
+    #ax.xaxis.set_major_formatter(xt_form)
+    ax.xaxis.set_major_formatter("{x:0.1f}")  # Working on ver 3.3+
+    ax.set_xlabel('X-axis Label',fontsize=10)
 
     ax.set_ylim(-1,17)
-    ax.set_ylabel('Y-axis Label',fontsize=12,rotation=90,labelpad=7)
+    ax.set_ylabel('Y-axis Label',fontsize=10,rotation=90,labelpad=2)
     ax.set_yticks(range(0,17,4))
     ax.yaxis.set_minor_locator(AutoMinorLocator(2))
     ax.yaxis.set_ticks_position('both')
 
 
-    ax.tick_params(axis='both',labelsize=11)
+    ax.tick_params(axis='both',labelsize=9)
     ax.axhline(y=0.,color='k',linestyle=':')
     ax.axvline(x=0.,color='k',ls=':',lw=0.5)
-
+    return
 
 ###--- Synthesizing data to be plotted ---###
 x = np.arange(5)
@@ -51,45 +54,42 @@ abc='abcdefghijklmn'
 fig = plt.figure()
 fig.set_size_inches(8.5,6)    # Physical page size in inches, (lx,ly)
 
+fig.subplots_adjust(left=0.05,right=0.95,top=0.92,bottom=0.05,
+                    #hspace=0.6,wspace=0.5)
+                    hspace=0.3,wspace=0.2)  ### Margins, etc.
+'''
+wspace: float, optional
+    The width of the padding between subplots, as a fraction of the average Axes width.
+hspace: float, optional
+    The height of the padding between subplots, as a fraction of the average Axes height.
+'''
+
 ##-- Title for the page --##
-suptit="Multi-Panel Setting"
+suptit="Multi-Panel Setting with Deco1"
 fig.suptitle(suptit,fontsize=15,va='bottom',y=0.975)  #,ha='left',x=0.,stretch='semi-condensed')
 
 nrow, ncol= 3,4
-
-left,right,top,bottom = 0.05,0.95,0.925,0.05
-npnx=ncol; gapx=0.05
-npny=nrow; gapy=0.08
-lpnx= (right-left-(npnx-1)*gapx)/npnx
-lpny= (top-bottom-(npny-1)*gapy)/npny
-
-ix=left; iy=top
 for i in range(nrow*ncol):
     ##-- Set up an axis --##
-    ax1 = fig.add_axes([ix,iy-lpny,lpnx,lpny])  # [left,bottom,width,height]
+    ax1 = fig.add_subplot(nrow,ncol,i+1)   # (# of rows, # of columns, indicater from 1)
 
     ##-- Plot on an axis --##
-    ax1.plot(x,y,color='{:.1f}'.format(i/(nrow*ncol)))
+    ax1.plot(x,y)
 
     ##-- Title for each panel --##
     subtit='({}) Panel#{}'.format(abc[i],i+1)
     plot_common(ax1,subtit)
 
-    ix=ix+lpnx+gapx
-    if ix+lpnx > 1.:
-       ix=left
-       iy=iy-lpny-gapy
 
 ##-- Seeing or Saving Pic --##
 
-#- If want to see on screen -#
-plt.show()
-
 #- If want to save to file
 outdir = "../Pics/"
-outfnm = outdir+"M05_multi_panel3.png"
+outfnm = outdir+"M06_multi_panel_wDeco1.png"
 print(outfnm)
 #fig.savefig(outfnm,dpi=100)   # dpi: pixels per inch
-#fig.savefig(outfnm,dpi=100,bbox_inches='tight')   # dpi: pixels per inch
-
+fig.savefig(outfnm,dpi=100,bbox_inches='tight')   # dpi: pixels per inch
 # Defalut: facecolor='w', edgecolor='w', transparent=False
+
+#- If want to see on screen -#
+plt.show()

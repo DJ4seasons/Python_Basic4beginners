@@ -1,13 +1,13 @@
 '''
-Matplotlib Basic(4)
+Matplotlib Basic(5)
 : Produce multi-panels using fig.add_axes()
 
 by Daeho Jin
 
 ---
 Reference:
-https://matplotlib.org/3.3.0/api/_as_gen/matplotlib.figure.Figure.html#matplotlib.figure.Figure.add_axes
-https://matplotlib.org/api/_as_gen/matplotlib.axes.Axes.plot.html
+https://matplotlib.org/stable/api/figure_api.html#matplotlib.figure.Figure.add_subplot
+https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.plot.html
 '''
 
 import numpy as np
@@ -29,7 +29,7 @@ fig = plt.figure()
 fig.set_size_inches(8.5,6)    # Physical page size in inches, (lx,ly)
 
 ##-- Title for the page --##
-suptit="Multi-Panel Setting"
+suptit="Multi-Panel Setting with fig.add_axes()"
 fig.suptitle(suptit,fontsize=15,va='bottom',y=0.975)  #,ha='left',x=0.,stretch='semi-condensed')
 
 ##-- Subplot Setting --##
@@ -47,26 +47,25 @@ for i in range(nrow*ncol):
     ax1 = fig.add_axes([ix,iy-lpny,lpnx,lpny])  # [left,bottom,width,height]
 
     ##-- Plot on an axis --##
-    ax1.plot(x,y,color='{:.1f}'.format(i/(nrow*ncol)))
+    ax1.plot(x,y)
     ax1.set_title('({}) Panel#{:d}'.format(abc[i],i+1))
 
     ##-- Update panel location
     ix=ix+lpnx+gapx
-    if ix+lpnx > 1.:
+    if ix > right:
        ix=left
        iy=iy-lpny-gapy
 
 
 ##-- Seeing or Saving Pic --##
 
-#- If want to see on screen -#
-plt.show()
-
 #- If want to save to file
 outdir = "../Pics/"
-outfnm = outdir+"M04_multi_panel2.png"
+outfnm = outdir+"M05_multi_panel2.png"
 print(outfnm)
 #fig.savefig(outfnm,dpi=100)   # dpi: pixels per inch
-#fig.savefig(outfnm,dpi=100,bbox_inches='tight')   # dpi: pixels per inch
-
+fig.savefig(outfnm,dpi=100,bbox_inches='tight')   # dpi: pixels per inch
 # Defalut: facecolor='w', edgecolor='w', transparent=False
+
+#- If want to see on screen -#
+plt.show()
