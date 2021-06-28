@@ -35,13 +35,13 @@ fig.set_size_inches(4.5,6)    # Physical page size in inches, (lx,ly)
 suptit="Single Panel Setting"
 fig.suptitle(suptit,fontsize=15)  #,ha='left',x=0.,y=0.98,stretch='semi-condensed')
 
-##-- Set up axis1 --##
+##-- Set up axes1 --##
 ax1 = fig.add_subplot(1,1,1)   # (# of rows, # of columns, indicater from 1)
 ### These are also working:
 #ax1 = fig.add_subplot()
 #ax1 = fig.add_subplot(111)
 
-##-- Plot on an axis --##
+##-- Plot on an axes --##
 ax1.plot(x,y)
 
 ##-- Seeing or Saving Pic --##

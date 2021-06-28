@@ -70,10 +70,10 @@ fig.suptitle(suptit,fontsize=15,va='bottom',y=0.975)  #,ha='left',x=0.,stretch='
 
 nrow, ncol= 3,4
 for i in range(nrow*ncol):
-    ##-- Set up an axis --##
+    ##-- Set up an axes --##
     ax1 = fig.add_subplot(nrow,ncol,i+1)   # (# of rows, # of columns, indicater from 1)
 
-    ##-- Plot on an axis --##
+    ##-- Plot on an axes --##
     ax1.plot(x,y)
 
     ##-- Title for each panel --##

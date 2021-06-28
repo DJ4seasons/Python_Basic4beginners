@@ -36,13 +36,13 @@ fig.subplots_adjust(left=0.1,right=0.95,top=0.9,bottom=0.1) #,hspace=0.2,wspace=
 suptit="Text and Annotation"
 fig.suptitle(suptit,fontsize=15)  #,ha='left',x=0.,y=0.98,stretch='semi-condensed')
 
-##-- Set up axis1 --##
+##-- Set up axes1 --##
 ax1 = fig.add_subplot(1,1,1)   # (# of rows, # of columns, indicater from 1)
 
-##-- Plot on an axis --##
+##-- Plot on an axes --##
 ax1.plot(x,y)
 
-##-- Various Settings for axis --##
+##-- Various Settings for axes --##
 subtit='Panel#1'
 ax1.set_title(subtit,fontsize=12,x=0.,ha='left') #,y=0.9
 

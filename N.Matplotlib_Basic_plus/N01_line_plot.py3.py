@@ -1,12 +1,12 @@
 '''
-Matplotlib Basic_Lv2(3)
+Matplotlib Basic_Lv2: 1. Line Plot
 : Change properties of line graph
 
 by Daeho Jin
 
 ---
 Reference:
-https://matplotlib.org/api/_as_gen/matplotlib.axes.Axes.plot.html
+https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.plot.html
 '''
 import numpy as np
 import matplotlib.pyplot as plt
@@ -18,8 +18,10 @@ def plot_common2(ax,subtit='',ytlab=True,ytright=False):
     ax.set_xlim(-0.5,4.5)
     ax.xaxis.set_major_locator(MultipleLocator(1))   # For Major Ticks
     ax.xaxis.set_minor_locator(AutoMinorLocator(2))   # For minor Ticks
-    xt_form=FuncFormatter(lambda x, pos: "{:0.1f}".format(x))
-    ax.xaxis.set_major_formatter(xt_form)
+    #xt_form=FuncFormatter(lambda x, pos: "{:0.1f}".format(x))
+    #ax.xaxis.set_major_formatter(xt_form)
+    ax.xaxis.set_major_formatter("{x:0.1f}")  # Working on ver 3.3+
+
 
     ax.set_ylim(-1,17)
     ax.set_yticks(range(0,17,4))
@@ -50,14 +52,8 @@ abc='abcdefghijklmnopqr'
 
 ##-- Line setting for plot --##
 color_names = ['b','g','r','c','m','y','k','0.7'];lcn=len(color_names)
-markers = ['o','v','^','d','s','D','*','+','x',];lmk=len(markers)
-line_styles = ['-','--','-.',':',];lls=len(line_styles)
-
-### These are working, too ###
-#color='salmon'
-#color='#FA8072'
-#color=(250/255.,128/255.,114/255.)
-
+markers = ['o','^','d','s','D','*','+','x',''];lmk=len(markers)
+line_styles = ['-','--',':','-.',''];lls=len(line_styles)
 
 ###--- Plotting Start ---###
 
@@ -79,10 +75,10 @@ lpny= (top-bottom-(npny-1)*gapy)/npny
 
 ix=left; iy=top
 for i in range(nrow*ncol):
-    ##-- Set up an axis --##
+    ##-- Set up an axes --##
     ax1 = fig.add_axes([ix,iy-lpny,lpnx,lpny])  # [left,bottom,width,height]
 
-    ##-- Plot on an axis --##
+    ##-- Plot on an axes --##
     props=dict(color=color_names[i%lcn],marker=markers[i%lmk],
             linestyle=line_styles[i%lls],markersize=2+i,linewidth=0.5+i*0.3)
     ax1.plot(x,y,**props)
@@ -113,14 +109,13 @@ for i in range(nrow*ncol):
 
 ##-- Seeing or Saving Pic --##
 
-#- If want to see on screen -#
-plt.show()
-
 #- If want to save to file
 outdir = "../Pics/"
-outfnm = outdir+"N03_line_plot1.png"
+outfnm = outdir+"N01_line_plot_ex1.png"
 print(outfnm)
 #fig.savefig(outfnm,dpi=100)   # dpi: pixels per inch
-#fig.savefig(outfnm,dpi=100,bbox_inches='tight')   # dpi: pixels per inch
-
+fig.savefig(outfnm,dpi=100,bbox_inches='tight')   # dpi: pixels per inch
 # Defalut: facecolor='w', edgecolor='w', transparent=False
+
+#- If want to see on screen -#
+plt.show()

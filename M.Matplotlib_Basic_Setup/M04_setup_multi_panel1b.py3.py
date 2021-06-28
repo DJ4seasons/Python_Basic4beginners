@@ -42,7 +42,7 @@ axes.append(fig.add_subplot(4,4,4))
 axes.append(fig.add_subplot(4,4,8))
 axes.append(fig.add_subplot(4,1,3))
 
-##-- Plot on an axis --##
+##-- Plot on an axes --##
 for i,ax1 in enumerate(axes):
     ax1.plot(x,y)
     ax1.set_title('({}) Panel#{:d}'.format(abc[i],i+1))

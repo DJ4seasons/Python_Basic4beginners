@@ -153,6 +153,19 @@ print("sorted(e) = {}".format(sorted(e)))
 print("Still, e = {} \n".format(e))
 print("min(e), max(e), sum(e) = {}, {}, {}".format(min(e), max(e), sum(e)))
 print("mean = sum(e)/len(e) = {}".format(sum(e)/len(e)))
+
+print("""
+'eval' function: evaluate string as a python variable
+x1= 1
+x2= 10
+x3= 'a'
+xx= [eval('x{}'.format(i)) for i in range(3)]  # Same as xx=[x1,x2,x3]""")
+x1= 1
+x2= 10
+x3= 'a'
+xx= [eval('x{}'.format(i)) for i in range(3)]  # Same as xx=[x1,x2,x3]
+print(xx)
+
 input("\nPress Enter to continue... (8-1)\n")
 
 print("'map' function: map(func, iter); apply func to each member of iter")

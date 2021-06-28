@@ -36,14 +36,14 @@ fig.subplots_adjust(left=0.08,right=0.97,top=0.92,bottom=0.05) #,hspace=0.2,wspa
 suptit="Single Panel Setting"
 fig.suptitle(suptit,fontsize=15)  #,ha='left',x=0.,y=0.98,stretch='semi-condensed')
 
-##-- Set up axis1 --##
+##-- Set up axes1 --##
 ax1 = fig.add_subplot(1,1,1)   # (# of rows, # of columns, indicater from 1)
 
-##-- Plot on an axis --##
+##-- Plot on an axes --##
 props= dict(color='r',ls='-.',lw=1.5,marker='o',markersize=20)  # ls: line_style, lw: line_width
 ax1.plot(x,y,**props)  # https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.plot.html
 
-##-- Various Settings for axis --##
+##-- Various Settings for axes --##
 subtit='Panel#1'
 ax1.set_title(subtit,fontsize=12,x=0.,ha='left') #,y=0.9
 

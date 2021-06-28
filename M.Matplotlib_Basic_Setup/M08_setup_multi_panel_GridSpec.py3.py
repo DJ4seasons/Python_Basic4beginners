@@ -77,7 +77,7 @@ axes.append(fig.add_subplot(gs0[1,3]))
 axes.append(fig.add_subplot(gs1[0]))
 
 for i,ax1 in enumerate(axes):
-    ##-- Plot on an axis --##
+    ##-- Plot on an axes --##
     ax1.plot(x,y)
 
     ##-- Title for each panel --##

@@ -73,10 +73,10 @@ lpny= (top-bottom-(npny-1)*gapy)/npny
 
 ix=left; iy=top
 for i in range(nrow*ncol):
-    ##-- Set up an axis --##
+    ##-- Set up an axes --##
     ax1 = fig.add_axes([ix,iy-lpny,lpnx,lpny])  # [left,bottom,width,height]
 
-    ##-- Plot on an axis --##
+    ##-- Plot on an axes --##
     line1=ax1.plot(x,ysin,label='sin(x)')  # plotting line graph1
     line2=ax1.plot(x,ycos,label='cos(x)')  # plotting line graph2
 

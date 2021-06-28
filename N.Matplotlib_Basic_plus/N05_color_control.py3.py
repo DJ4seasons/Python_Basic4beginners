@@ -66,7 +66,7 @@ suptit="Color Map Example"
 fig.suptitle(suptit,fontsize=18)   # Title for the page
 fig.subplots_adjust(left=0.05,right=0.95,bottom=0.05,top=0.92,wspace=-0.05,hspace=0.25)
 
-##-- Plotting for axis1 --##
+##-- Plotting for axes1 --##
 for i in range(20):
     ax = fig.add_subplot(4,5,i+1)   # subplot(# of rows, # of columns, indicater)
 
