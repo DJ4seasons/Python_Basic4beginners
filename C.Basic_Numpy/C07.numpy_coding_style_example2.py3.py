@@ -29,14 +29,20 @@ def check_time_lin_eq(func, A,y,x, n_trial=1):
     time0= time()
     for i in range(n_trial):
         x_calc= func(A,y)
-        print("Trial#{} x == x_calc ? {}".format(i+1, np.allclose(x,x_calc)))
-        # np.allclose(): Element-wise comparison with tolerance
     time1= time()
+
+    equal_test= np.array_equal(x,x_calc)
+    print("Trial#{} x == x_calc ? {}".format(i+1, equal_test))
+    if not equal_test:
+        print("Trial#{} x ~= x_calc ? {}".format(i+1, np.allclose(x,x_calc)))
+        # np.allclose(): Element-wise comparison with tolerance
+        print("Max. Diff = {}".format(np.absolute(x-x_calc).max()))
+
     return time1-time0
 
 def main():
     n_trial= 3
-    arr_size= 2000
+    arr_size= 2500
 
     A,x,y= build_array(arr_size)
 

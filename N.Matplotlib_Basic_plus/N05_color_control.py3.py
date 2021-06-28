@@ -16,6 +16,11 @@ https://matplotlib.org/users/colormaps.html#choosing-colormaps
 Stauffer, R., G. J. Mayr, M. Dabernig, and A. Zeileis, 2015: Somewhere Over the Rainbow: How to Make Effective Use of Colors in Meteorological Visualizations. Bull. Amer. Meteor. Soc., 96, 203–216, https://doi.org/10.1175/BAMS-D-13-00155.1.
 Tips for designing scientific figures for color blind readers[https://www.somersault1824.com/tips-for-designing-scientific-figures-for-color-blind-readers/]
 http://hclwizard.org/hclwizard/
+
+cm = plt.cm.get_cmap('magma_r',80) #'CMRmap_r' 'YlOrBr' 'Accent' 'afmhot_r'
+cmnew = cm(np.arange(80)) #; print(cmnew[0,:])
+cmnew = np.concatenate((np.array([1,1,1,1]).reshape([1,-1]),cmnew[:-1,:])) #print cmnew[0,:],cmnew[-1,:]
+newcm = cls.LinearSegmentedColormap.from_list("newCMR",cmnew)
 '''
 
 import numpy as np

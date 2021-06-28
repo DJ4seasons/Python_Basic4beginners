@@ -7,6 +7,10 @@ by Daeho Jin
 ---
 Reference:
 https://matplotlib.org/3.1.0/tutorials/intermediate/legend_guide.html
+
+fig.legend(bbox_to_anchor=(ix+lx, iy-ly-0.08), loc='right',fontsize=11,
+           ncol=3, borderaxespad=0.)
+twinx()?
 '''
 import numpy as np
 import matplotlib.pyplot as plt
