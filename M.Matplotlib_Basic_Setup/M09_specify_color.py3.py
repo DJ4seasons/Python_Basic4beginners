@@ -44,7 +44,7 @@ color4= [(0, 191/255, 1), (1,0.5,0.1),'#00ff00','#c5b0d5','crimson','aquamarine'
 #<--- (r,g,b), hex code, or any HTML color names (X11/CSS4 colors)
 
 ### Pick colors from pre-defined colormap; https://matplotlib.org/stable/tutorials/colors/colormaps.html
-cmap= plt.get_cmap('magma',10)
+cmap= plt.cm.get_cmap('magma',10)
 cmap= cmap(np.arange(10))  # Results in np.ndarray, [10,4]
 color5= list(cmap)
 

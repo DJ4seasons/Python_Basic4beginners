@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 ###--- Synthesizing data to be plotted ---###
 xx = np.arange(5)+0.5
 yy = [1.5,0.5,3,1.25,4.3]
-sz = np.arange(5)*20+10
+sz = np.arange(5)*30+10
 cc = yy
 
 ###---
@@ -37,10 +37,10 @@ fig.suptitle(suptit,fontsize=15,va='bottom',y=0.975)  #,ha='left',x=0.,stretch='
 
 
 ### Pick colors from pre-defined colormap; https://matplotlib.org/stable/tutorials/colors/colormaps.html
-cmap= plt.get_cmap('jet')
+#cmap= plt.cm.get_cmap('magma')
 
 panel_names= ['(X, Y) only','(X, Y) + Marker Size', '(X, Y) + Markersize + Colors']
-prop_settings= [dict(), dict(s=sz,marker='^'), dict(s=sz,marker='^',c=yy,vmin=0,vmax=5,cmap=cmap)]
+prop_settings= [dict(), dict(s=sz,marker='^'), dict(s=sz,marker='^',c=yy,vmin=0,vmax=5,cmap='magma')]
 nrow, ncol= 2,2
 for i,(tit,props) in enumerate(zip(panel_names,prop_settings)):
     ##-- Set up an axes --##
