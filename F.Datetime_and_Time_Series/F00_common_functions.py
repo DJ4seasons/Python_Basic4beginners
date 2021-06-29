@@ -7,7 +7,7 @@ By Daeho Jin
 import sys
 import os.path
 import numpy as np
-from datetime import date
+from datetime import date, datetime, timedelta
 
 def bin_file_read2mtx(fname, dtype=np.float32):
     """ Open a binary file, and read data
@@ -39,7 +39,7 @@ def get_months(time0,time1,include_end=False):
     times=[]
     yr,mm= iyr,imo
     for t in range(nmon):
-        times.append(date(yr,mm,1))
+        times.append(date(yr,mm,15))
         mm+=1
         if mm>12: mm-=12; yr+=1
     return times
@@ -166,3 +166,47 @@ def read_nn34_text(infn,tgt_dates):
         outdata= outdata[imon:emon] if emon<0 else outdata[imon:]
 
     return outdata
+
+def get_nn34_daily(infn, t_list):
+    tdd0= t_list[0]-timedelta(days=16)
+    tdd1= t_list[-1]+timedelta(days=16)
+    nn34ano= read_nn34_text(infn,(tdd0,tdd1))  # Need buffers before and after the period
+    print(nn34ano.shape, nn34ano.mean())
+
+    ms_idx= nn34ano<-99
+    if ms_idx.sum()>0:
+        sys.exit('Missing data is found!')
+        ### Or some treatment needed (removing, duplication, etc.)
+
+    nn34ano_dy= Interp_mon2day(nn34ano,t_list,(tdd0,tdd1))
+    return nn34ano_dy
+
+from scipy.interpolate import interp1d
+def Interp_mon2day(vals,t_list,val_dates):
+    ### Interpolate Monthly data to Daily data
+    ### vals: 1-D, wrapping t_list period
+
+    ## First, we need to decide exact time where the monthly data is located
+    xx=[]
+    iyr,imon= val_dates[0].year, val_dates[0].month
+    mdays=0
+    for yy in range(iyr,val_dates[1].year+1,1):
+        imm=imon if yy==iyr else 1
+        for mm in range(imm,13,1):
+            mm2, yy2 = mm+1, yy  # Idenfity next month to identify dy_per_mon
+            if mm2>12:
+                mm2-=12; yy2=yy+1
+            dy_per_mon=(date(yy2,mm2,1)-date(yy,mm,1)).days
+            xx.append(dy_per_mon/2+0.5+mdays)  # Center of a month's days
+            mdays+=dy_per_mon
+            if mm==val_dates[1].month and yy==val_dates[1].year: break
+    xx=np.asarray(xx)
+    print(vals.shape,xx.shape)
+
+    f= interp1d(xx,vals,kind='cubic')  # Set up the interpolation coefficients
+
+    xnew= [(dd-date(iyr,imon,1)).days for dd in t_list]  # Date points to be interpolated
+    xnew= np.asarray(xnew)
+    f2= f(xnew)
+    print(f2.shape)
+    return f2

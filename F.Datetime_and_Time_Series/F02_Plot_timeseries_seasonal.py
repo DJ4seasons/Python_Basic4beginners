@@ -19,7 +19,7 @@ def main():
     ### Parameters
     tgt_dates= (datetime(2010,11,1),datetime(2021,3,1))
     tgt_dates_str= [dd.strftime('%Y/%m') for dd in tgt_dates]  # See Reference above
-    mon_per_yr= 12
+    
     times= fns.get_months(*tgt_dates,include_end=True)
     nmons= len(times); print(nmons)
     indir = '../Data/'
@@ -87,7 +87,7 @@ def plot_main(pdata):
     ### Plot time series
     ax1= fig.add_subplot(111)
     ax1b= ax1.twinx()
-    ax1.bar(xt,yy[0],width=90,color='C0',label=data_labels[0],alpha=0.7)  # Use left y-axis
+    ax1.bar(xt,yy[0],width=360,color='C0',label=data_labels[0],alpha=0.7)  # Use left y-axis
     ax1b.plot(xt,yy[1],c='C1',lw=1.5,alpha=0.9,label=data_labels[1])  # Use right y-axis
     ax1b.plot(xt,yy[2]*2,c='C5',lw=1.5,alpha=0.9,label=data_labels[2]+'x2') # Use right y-axis
 

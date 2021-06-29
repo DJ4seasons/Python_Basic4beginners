@@ -19,7 +19,7 @@ def main():
     ### Parameters
     tgt_dates= (datetime(2010,11,1),datetime(2021,3,1))
     tgt_dates_str= [dd.strftime('%Y/%m') for dd in tgt_dates]  # See Reference above
-    mon_per_yr= 12
+    
     times= fns.get_months(*tgt_dates,include_end=True)
     nmons= len(times); print(nmons)
     indir = '../Data/'

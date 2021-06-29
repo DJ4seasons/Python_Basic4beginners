@@ -135,8 +135,15 @@ print("\nIf given just one index to 2-D array?")
 print("b[0] = {}".format(b[0]))
 print("b[-1] = {}".format(b[-1]))
 print('b[idx] = {}'.format(b[idx]))
-print("---> It is interpreted as the index of the first axis (axis=0)")
+print("""---> It is interpreted as the index of the first axis (axis=0)
 
+FYI, test these:
+for i in b.reshape(-1): print(i)
+vs.
+for i in b: print(i)
+""")
+for i in b.reshape(-1): print(i)
+for i in b: print(i)
 input("\nPress Enter to continue... (2-2c)\n")
 
 print("\nIf multiple indexes are given?")
