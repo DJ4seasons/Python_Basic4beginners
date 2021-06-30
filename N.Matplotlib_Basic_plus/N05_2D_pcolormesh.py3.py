@@ -43,7 +43,7 @@ fig.subplots_adjust(left=0.05,right=0.95,bottom=0.05,top=0.925,wspace=0.2,hspace
 suptit="Imshow Example"
 fig.suptitle(suptit,fontsize=15,y=0.98,va='bottom')  #,ha='left',x=0.,y=0.98,stretch='semi-condensed')
 
-panel_names= ['Defalut',"shading='gouraud'",'Defalut',"shading='gouraud'",]
+panel_names= ['Default',"shading='gouraud'",'Default',"shading='gouraud'",]
 prop_settings= [dict(), dict(shading='gouraud'), dict(), dict(shading='gouraud')]
 
 

@@ -13,7 +13,6 @@ import os.path
 import numpy as np
 from datetime import date, datetime, timedelta
 import F00_common_functions as fns
-import matplotlib.pyplot as plt
 
 '''
 def get_nn34_daily(infn, t_list):

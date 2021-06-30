@@ -36,7 +36,7 @@ fig.subplots_adjust(left=0.05,right=0.95,bottom=0.05,top=0.94,wspace=0.2,hspace=
 suptit="Imshow Example"
 fig.suptitle(suptit,fontsize=15,y=1.0)  #,ha='left',x=0.,y=0.98,stretch='semi-condensed')
 
-panel_names= ['Defalut','origin="lower"', 'interpolation="bilinear"',
+panel_names= ['Default','origin="lower"', 'interpolation="bilinear"',
                 'extent=[2,5,-1,1]','aspect="auto"']
 prop_settings= [dict(), dict(origin='lower'), dict(interpolation='bilinear'),
                 dict(extent=[2,5,-1,1]),dict(aspect="auto")]

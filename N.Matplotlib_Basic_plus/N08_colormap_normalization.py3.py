@@ -21,6 +21,8 @@ cm = plt.cm.get_cmap('magma_r',80) #'CMRmap_r' 'YlOrBr' 'Accent' 'afmhot_r'
 cmnew = cm(np.arange(80)) #; print(cmnew[0,:])
 cmnew = np.concatenate((np.array([1,1,1,1]).reshape([1,-1]),cmnew[:-1,:])) #print cmnew[0,:],cmnew[-1,:]
 newcm = cls.LinearSegmentedColormap.from_list("newCMR",cmnew)
+default,  norm, lognorm, boundary, centered, twoslope
+default, set_over/under,cm_r, cm_cut, cm_concatenate, cm_concatenate2
 '''
 
 import numpy as np
@@ -66,14 +68,14 @@ cmap_names=['viridis','plasma','inferno','magma','magma_r','YlOrBr', 'RdPu', 'Yl
 ###--- Plotting Start ---###
 ##-- Page Setup --##
 fig = plt.figure()            # Define "figure" instance
-fig.set_size_inches(10,12)    # Physical page size in inches, (lx,ly)
+fig.set_size_inches(8.5,6)    # Physical page size in inches, (lx,ly)
 suptit="Color Map Example"
-fig.suptitle(suptit,fontsize=18)   # Title for the page
+fig.suptitle(suptit,fontsize=15)   # Title for the page
 fig.subplots_adjust(left=0.05,right=0.95,bottom=0.05,top=0.92,wspace=-0.05,hspace=0.25)
 
-##-- Plotting for axes1 --##
-for i in range(20):
-    ax = fig.add_subplot(4,5,i+1)   # subplot(# of rows, # of columns, indicater)
+nrow, ncol= 2,3
+for i,(tit,colors) in enumerate(zip(panel_names,[eval('color'+str(num)) for num in range(6)])):
+    ax1 = fig.add_subplot(nrow,ncol,i+1)   # subplot(# of rows, # of columns, indicater)
 
     if i<19:
         subtit='({}) {}'.format(i+1,cmap_names[i])

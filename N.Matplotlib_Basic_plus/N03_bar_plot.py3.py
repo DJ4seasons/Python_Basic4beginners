@@ -32,7 +32,7 @@ fig.subplots_adjust(left=0.05,right=0.95,top=0.92,bottom=0.05,
 suptit = "Bar Plot Examples"
 fig.suptitle(suptit,fontsize=15,va='bottom',y=0.975)  #,ha='left',x=0.,stretch='semi-condensed')
 
-panel_names= ['Defalut','width=0.4', 'align="edge"', 'Different Colors']
+panel_names= ['Default','width=0.4', 'align="edge"', 'Different Colors']
 prop_settings= [dict(), dict(width=0.4), dict(align='edge'),dict()]
 
 xloc= np.arange(len(yy))  # Need to specify bar location on x-axis
