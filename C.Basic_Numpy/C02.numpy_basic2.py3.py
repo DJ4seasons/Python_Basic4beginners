@@ -142,8 +142,7 @@ for i in b.reshape(-1): print(i)
 vs.
 for i in b: print(i)
 """)
-for i in b.reshape(-1): print(i)
-for i in b: print(i)
+
 input("\nPress Enter to continue... (2-2c)\n")
 
 print("\nIf multiple indexes are given?")

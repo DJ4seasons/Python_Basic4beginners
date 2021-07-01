@@ -27,6 +27,7 @@ def plot_common2(ax,subtit='',ytlab=True,ytright=False):
 
     ax.set_ylim(-1,17)
     ax.set_yticks(range(0,17,4))
+    ax.set_yticklabels([0,1,2,'a','b'])
     ax.yaxis.set_minor_locator(AutoMinorLocator(2))
 
     if not ytlab:

@@ -1,34 +1,25 @@
 '''
-Matplotlib Basic_Lv2(5)
-:
+Matplotlib Basic_Lv2: 8. Normalizing for colormap
+: Various normalizing method to match between data and colormap
 
 by Daeho Jin
 
 ---
 Reference:
-### Color Map Reference
-https://matplotlib.org/examples/color/colormaps_reference.html
+### Color Map Normalization
+https://matplotlib.org/stable/tutorials/colors/colormapnorms.html
 
 ### Color Map Guide
 https://matplotlib.org/users/colormaps.html#choosing-colormaps
 
-### Other references
-Stauffer, R., G. J. Mayr, M. Dabernig, and A. Zeileis, 2015: Somewhere Over the Rainbow: How to Make Effective Use of Colors in Meteorological Visualizations. Bull. Amer. Meteor. Soc., 96, 203–216, https://doi.org/10.1175/BAMS-D-13-00155.1.
-Tips for designing scientific figures for color blind readers[https://www.somersault1824.com/tips-for-designing-scientific-figures-for-color-blind-readers/]
-http://hclwizard.org/hclwizard/
-
-cm = plt.cm.get_cmap('magma_r',80) #'CMRmap_r' 'YlOrBr' 'Accent' 'afmhot_r'
-cmnew = cm(np.arange(80)) #; print(cmnew[0,:])
-cmnew = np.concatenate((np.array([1,1,1,1]).reshape([1,-1]),cmnew[:-1,:])) #print cmnew[0,:],cmnew[-1,:]
-newcm = cls.LinearSegmentedColormap.from_list("newCMR",cmnew)
-default,  norm, lognorm, boundary, centered, twoslope
-default, set_over/under,cm_r, cm_cut, cm_concatenate, cm_concatenate2
+### Caution:
+"CenteredNorm" is a new feature on matplotlib version 3.4
 '''
 
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.colors as cls
-#from matplotlib.ticker import AutoMinorLocator, MultipleLocator
+from matplotlib.ticker import AutoMinorLocator, MultipleLocator, ScalarFormatter
 
 def draw_colorbar(ax,pic1,type='vertical',size='panel',gap=0.06,width=0.02,extend='neither'):
     '''
@@ -55,67 +46,65 @@ def draw_colorbar(ax,pic1,type='vertical',size='panel',gap=0.06,width=0.02,exten
     return cbar
 
 
-
 ###--- Synthesizing data to be plotted ---###
-xlin = np.linspace(-2,4,121)
-ylin = np.linspace(-3,5,161)
-X,Y = np.meshgrid(xlin,ylin)
-Z = 1./(np.exp((X/3.)**2+(Y/5.)**2))
+x = np.linspace(-3,4,141)
+y = np.linspace(-2,3,101)
+X,Y = np.meshgrid(x,y)
+Z1 = np.exp(-X**2 - Y**2)
+Z2 = np.exp(-(X - 1)**2 - (Y - 1)**2)
+Z = (Z1 - 0.4*Z2)
 print(Z.min(), Z.max())
-
-cmap_names=['viridis','plasma','inferno','magma','magma_r','YlOrBr', 'RdPu', 'YlGnBu', 'bone', 'spring', 'cool', 'hot', 'PuOr', 'seismic', 'terrain', 'CMRmap', 'rainbow', 'nipy_spectral', 'jet']
 
 ###--- Plotting Start ---###
 ##-- Page Setup --##
 fig = plt.figure()            # Define "figure" instance
 fig.set_size_inches(8.5,6)    # Physical page size in inches, (lx,ly)
 suptit="Color Map Example"
-fig.suptitle(suptit,fontsize=15)   # Title for the page
-fig.subplots_adjust(left=0.05,right=0.95,bottom=0.05,top=0.92,wspace=-0.05,hspace=0.25)
+fig.suptitle(suptit,fontsize=15,y=0.98,va='bottom')  # Title for the page
+fig.subplots_adjust(left=0.05,right=0.95,bottom=0.05,top=0.93,wspace=0.2,hspace=0.25)
+
+abc='abcdefghijklmn'
+##---
+panel_names= ['Default','Normalize', 'LogNorm', 'BoundaryNorm',
+            'CenteredNorm', 'TwoSlopeNorm']
+
+props_base= dict(extent=[-3,4,-2,3],origin='lower',interpolation='bilinear')
+
+props0= dict(cmap='plasma',**props_base)  # The addition of vmin and vmax is same to "Normalize()"
+props1= dict(norm=cls.Normalize(vmin=-0.3,vmax=0.9),cmap='plasma',**props_base)
+props2= dict(norm=cls.LogNorm(vmin=0.01,vmax=1),cmap='plasma',**props_base)
+
+bounds= np.arange(-0.2,0.81,0.2)
+props3= dict(norm=cls.BoundaryNorm(boundaries=bounds,ncolors=256,extend='both'),cmap='RdYlBu_r',**props_base)
+#<--- Colormaps are composed of total 256 colors usually; contourf() is based on BoundaryNorm 
+props4= dict(norm=cls.CenteredNorm(vcenter=0),cmap='RdYlBu_r',**props_base)
+props5= dict(norm=cls.TwoSlopeNorm(vmin=-0.3,vcenter=0,vmax=0.9),cmap='RdYlBu_r',**props_base)
 
 nrow, ncol= 2,3
-for i,(tit,colors) in enumerate(zip(panel_names,[eval('color'+str(num)) for num in range(6)])):
+for i,(tit,props) in enumerate(zip(panel_names,[eval('props'+str(num)) for num in range(6)])):
     ax1 = fig.add_subplot(nrow,ncol,i+1)   # subplot(# of rows, # of columns, indicater)
+    pic1= ax1.imshow(Z,**props)
+    subtit='({}) {}'.format(abc[i],panel_names[i])
+    ax1.set_title(subtit,fontsize=12)
+    ax1.tick_params(axis='both',which='major',labelsize=10)
 
-    if i<19:
-        subtit='({}) {}'.format(i+1,cmap_names[i])
-        pic1 = ax.imshow(Z,origin='lower',cmap=cmap_names[i],interpolation='nearest')
-        if i==18:
-            cb=draw_colorbar(ax,pic1,type='horizontal',size='page')
-
-    else:
-        subtit='({}) part of jet'.format(i+1)
-        cm = plt.cm.get_cmap('jet',100)
-        cmnew = cm(np.arange(100))[25:75,:]
-        newcm = cls.LinearSegmentedColormap.from_list("middle_jet",cmnew)
-        newcm.set_under("1.");newcm.set_over("0.")
-
-        props = dict(vmin=0.1,vmax=.9,cmap=newcm,alpha=0.9,interpolation='nearest')
-        pic1 = ax.imshow(Z,origin='lower',**props)
-
-        cb= draw_colorbar(ax,pic1,type='vertical',size='panel',extend='both',gap=0.02)
-        cb_yt= np.arange(0.1,1.,0.2)
-        cb_ytl=["a{:.1f}".format(x) for x in cb_yt]
-        cb.set_ticks(cb_yt)
-        cb.ax.set_yticklabels(cb_ytl,size=12,color='b',stretch='semi-condensed')
-
-    ax.set_title(subtit,fontsize=12,x=0.,ha='left')
-    ax.set_xticks(np.linspace(0,len(xlin)-1,4))
-    ax.set_xticklabels([-2,0,2,4])
-    ax.set_yticks(np.linspace(0,len(ylin)-1,5))
-    ax.set_yticklabels([-3,-1,1,3,5])
-    ax.tick_params(axis='both',which='major',labelsize=10)
-
-
-
-##-- Seeing or Saving Pic --##
-plt.show()
+    cb= draw_colorbar(ax1,pic1,type='horizontal',size='panel',extend='both',gap=0.07)
+    if 'Log' in tit:
+        cb.ax.xaxis.set_major_formatter(ScalarFormatter())
+    elif 'Default' in tit or 'Normalize' in tit:
+        cb.ax.xaxis.set_major_locator(MultipleLocator(0.3))
+        cb.ax.xaxis.set_minor_locator(AutoMinorLocator(2))
+    elif 'Center' in tit:
+        tlabs= cb.ax.get_xticklabels()
+        cb.ax.set_xticklabels(tlabs,ha='right',rotation=35)
 
 #- If want to save to file
 outdir = "../Pics/"
-outfnm = outdir+"N05_color_control.png"
+outfnm = outdir+"N08_Colormap_Normalization.png"
 print(outfnm)
 #fig.savefig(outfnm,dpi=100)   # dpi: pixels per inch
-#fig.savefig(outfnm,dpi=100,bbox_inches='tight')   # dpi: pixels per inch
-
+fig.savefig(outfnm,dpi=100,bbox_inches='tight')   # dpi: pixels per inch
 # Defalut: facecolor='w', edgecolor='w', transparent=False
+
+##-- Seeing or Saving Pic --##
+plt.show()

@@ -1,6 +1,8 @@
 '''
-Matplotlib Basic_Lv2(5)
-:
+Matplotlib Basic_Lv2: 7. Colormap and Colorbar
+: Use built-in colormaps
+: Modify colormap to make a custom colormap
+: Add colorbar
 
 by Daeho Jin
 
@@ -16,16 +18,12 @@ https://matplotlib.org/stable/tutorials/colors/colormaps.html
 Stauffer, R., G. J. Mayr, M. Dabernig, and A. Zeileis, 2015: Somewhere Over the Rainbow: How to Make Effective Use of Colors in Meteorological Visualizations. Bull. Amer. Meteor. Soc., 96, 203–216, https://doi.org/10.1175/BAMS-D-13-00155.1.
 Tips for designing scientific figures for color blind readers[https://www.somersault1824.com/tips-for-designing-scientific-figures-for-color-blind-readers/]
 http://hclwizard.org/hclwizard/
-
-
-default,  norm, lognorm, boundary, centered, twoslope
-
 '''
 
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.colors as cls
-#from matplotlib.ticker import AutoMinorLocator, MultipleLocator
+from matplotlib.ticker import AutoMinorLocator, MultipleLocator
 
 def draw_colorbar(ax,pic1,type='vertical',size='panel',gap=0.06,width=0.02,extend='neither'):
     '''
@@ -64,8 +62,8 @@ print(Z.min(), Z.max())
 fig = plt.figure()            # Define "figure" instance
 fig.set_size_inches(8.5,6)    # Physical page size in inches, (lx,ly)
 suptit="Color Map Example"
-fig.suptitle(suptit,fontsize=15,y=0.97,va='bottom')   # Title for the page
-fig.subplots_adjust(left=0.05,right=0.95,bottom=0.05,top=0.92,wspace=0.15,hspace=0.3)
+fig.suptitle(suptit,fontsize=15,y=0.98,va='bottom')   # Title for the page
+fig.subplots_adjust(left=0.05,right=0.95,bottom=0.05,top=0.93,wspace=0.15,hspace=0.45)
 
 abc='abcdefghijklmn'
 ##---
@@ -73,47 +71,49 @@ panel_names= ['cmap="magma"','set_under/over', 'cmap_r', 'Cut a cmap',
             'Combine two cmaps', 'Add white at the end']
 
 cmap1= plt.cm.get_cmap('magma')
-cmap2= plt.cm.get_cmap('magma')
-cmap2.set_under='0.3'; cmap2.set_over='0.7'
-
+cmap2= cmap1.copy()  #plt.cm.get_cmap('magma')
+cmap2.set_under(color='0.8'); cmap2.set_over(color='0.2')
 cmap3= plt.cm.get_cmap('magma_r')
-cmap4= plt.cm.get_cmap('RdYlBu_r')
-cmap4= cmap4(np.arange(30)); print(type(cmap4),cmap4.shape)  # Converted to ndarray
+
+cmap4= plt.cm.get_cmap('magma',50)  # Pick up N samples from default list (Len=256)
+cmap4= cmap4(np.arange(50)); print(type(cmap4),cmap4.shape)  # Converted to ndarray
 cmap4= cls.LinearSegmentedColormap.from_list("newCM",cmap4[10:,:])
 
-cmap5a= plt.cm.get_cmap('plasma')(np.arange(100))  # Converted to ndarray
-cmap5b= plt.cm.get_cmap('viridis_r')(np.arange(100))  # Convert to ndarray
-cmap5= np.concatenate((cmap5a,cmap5b),axis=0)
+cmap5a= plt.cm.get_cmap('plasma',100)(np.arange(100))  # Converted to ndarray
+cmap5b= plt.cm.get_cmap('viridis_r',100)(np.arange(100))  # Convert to ndarray
+cmap5= np.concatenate((cmap5a,cmap5b[:75,:]),axis=0)
 cmap5= cls.LinearSegmentedColormap.from_list("newCM",cmap5)
 
-cmap6= plt.cm.get_cmap('magma_r')(np.arange(50))   # Converted to ndarray
-cmap6= np.concatenate((np.array([1,1,1,1]).reshape([1,-1]),cmap6[:-1,:]))
-cmap6= cls.LinearSegmentedColormap.from_list("newCMR",cmap6)
-
+cmap6= plt.cm.get_cmap('magma_r',50)(np.arange(50))   # Converted to ndarray
+cmap6= np.concatenate((np.array([1,1,1,1]).reshape([1,-1]),cmap6[:-1,:]),axis=0)
+cmap6= cls.LinearSegmentedColormap.from_list("newCM",cmap6)
+#cmaps= [cmap1,cmap2,cmap3,cmap4,cmap5,cmap6]
 ##---
 nrow, ncol= 2,3
 for i,(tit,cm) in enumerate(zip(panel_names,[eval('cmap'+str(num+1)) for num in range(6)])):
     ax1 = fig.add_subplot(nrow,ncol,i+1)   # subplot(# of rows, # of columns, indicater)
 
-    props= dict(cmap=cm,vmin=-1,vmax=1,extent=[-0.1,1.1,-0.1,1.1],
+    props= dict(cmap=cm,vmin=-1,vmax=1,extent=[0,1,0,1],
                 origin='lower',interpolation='bilinear')
     pic1= ax1.imshow(Z,**props)
 
     subtit='({}) {}'.format(abc[i],panel_names[i])
     ax1.set_title(subtit,fontsize=12)
+    ax1.tick_params(axis='both',which='major',labelsize=10)
 
-    #            cb=draw_colorbar(ax,pic1,type='horizontal',size='page')
-    #    cb= draw_colorbar(ax,pic1,type='vertical',size='panel',extend='both',gap=0.02)
-    #    cb_yt= np.arange(0.1,1.,0.2)
-    #    cb_ytl=["a{:.1f}".format(x) for x in cb_yt]
-    #    cb.set_ticks(cb_yt)
-    #    cb.ax.set_yticklabels(cb_ytl,size=12,color='b',stretch='semi-condensed')
+    cb= draw_colorbar(ax1,pic1,type='horizontal',size='panel',extend='both',gap=0.07)
+    if i==nrow*ncol-2:
+        cb.ax.xaxis.set_major_locator(MultipleLocator(0.4))
+        cb.ax.xaxis.set_minor_locator(AutoMinorLocator(2))
+    if i==nrow*ncol-1:
+        cb_yt= np.arange(-1,1.1,0.25)
+        cb_ytlab= ["{:.2f}".format(x) for x in cb_yt]
+        cb.set_ticks(cb_yt)
+        cb.ax.set_xticklabels(cb_ytlab,size=11,color='b',stretch='semi-condensed',
+                                ha='right',rotation=40)
+        cb.ax.set_xlabel("Colorbar Label",fontsize=12)
 
-    #ax.set_xticks(np.linspace(0,len(xlin)-1,4))
-    #ax.set_xticklabels([-2,0,2,4])
-    #ax.set_yticks(np.linspace(0,len(ylin)-1,5))
-    #ax.set_yticklabels([-3,-1,1,3,5])
-    #ax.tick_params(axis='both',which='major',labelsize=10)
+
 
 
 #- If want to save to file

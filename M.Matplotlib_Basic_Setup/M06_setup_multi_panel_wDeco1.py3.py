@@ -30,6 +30,7 @@ def plot_common(ax, subtit=''):
     ax.set_ylim(-1,17)
     ax.set_ylabel('Y-axis Label',fontsize=10,rotation=90,labelpad=2)
     ax.set_yticks(range(0,17,4))
+    ax.set_yticklabels([0,1,2,'a','b'])
     ax.yaxis.set_minor_locator(AutoMinorLocator(2))
     ax.yaxis.set_ticks_position('both')
 
