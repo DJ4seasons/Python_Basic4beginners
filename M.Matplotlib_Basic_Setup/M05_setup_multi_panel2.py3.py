@@ -36,10 +36,9 @@ fig.suptitle(suptit,fontsize=15,va='bottom',y=0.975)  #,ha='left',x=0.,stretch='
 nrow, ncol= 3,4
 
 left,right,top,bottom = 0.05,0.95,0.925,0.05
-npnx,gapx= ncol,0.05
-npny,gapy= nrow,0.08
-lpnx= (right-left-(npnx-1)*gapx)/npnx
-lpny= (top-bottom-(npny-1)*gapy)/npny
+gapx,gapy = 0.05,0.08
+lpnx= (right-left-(ncol-1)*gapx)/ncol
+lpny= (top-bottom-(nrow-1)*gapy)/nrow
 
 ix=left; iy=top
 for i in range(nrow*ncol):

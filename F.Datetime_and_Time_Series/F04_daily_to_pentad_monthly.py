@@ -84,8 +84,9 @@ def daily_to_monthly_wPandas(ts1d,tgt_dates):
 
     df1= pd.DataFrame(data1,index=pd.date_range(*tgt_dates,freq='D'))
     df1= df1.resample('M').mean()
-    data1= df1.to_numpy()
-    return np.squeeze(data1),df1.index.values
+    data1= df1.to_numpy()  # Convert to numpy array
+    xt= df1.index #.values
+    return np.squeeze(data1), xt
 
 def main():
     ### Parameters
@@ -113,24 +114,23 @@ def main():
     #ts_ptd,xt_ptd= daily_to_pentad1(ts0,xt0); print(ts_ptd.shape, len(xt_ptd))
     ## Method2
     ts_ptd,xt_ptd= daily_to_pentad2(ts0,xt0,tgt_dates)
-    print(ts_ptd.shape, len(xt_ptd))
+    print(ts_ptd.shape, len(xt_ptd), xt_ptd[0])
 
     ### Daily to monthly
     ts_mon,xt_mon= daily_to_monthly1(ts0,tgt_dates)
-    print(ts_mon.shape, len(xt_mon))
+    print(ts_mon.shape, len(xt_mon), xt_mon[0])
 
     ### Daily to monthly using Pandas
     ts_mon_p,xt_mon_p= daily_to_monthly_wPandas(ts0,tgt_dates)
-    print(ts_mon_p.shape, len(xt_mon_p))
-    
-    sys.exit()
+    print(ts_mon_p.shape, len(xt_mon_p), xt_mon_p[0])
 
-
+    ### For plotting
     outdir= '../Pics/'
-    fnout= outdir+'F03_monthly_to_daily_ex1.png'
-    suptit= "Monthly and Daily NINO34 Time Series [{}-{}]".format(*tgt_dates_str)
-    pdata=dict(m_data=(mm_times,nn34ano), d_data=(dd_times,nn34ano_dy),
-                data_labels=['Monthly','3-Daily',],
+    fnout= outdir+'F04_daily_to_pentad_and_monthly_ex1.png'
+    suptit= "Daily to Pentad/Monthly Timeseries [{}-{}]".format(*tgt_dates_str)
+    pdata=dict(d_data=(xt0,ts0),
+                ts_data=[(xt_ptd,ts_ptd),(xt_mon,ts_mon),(xt_mon_p,ts_mon_p)],
+                titles=['Pentad','Monthly','Monthly with Pandas',],
                 suptit=suptit,fnout=fnout)
     plot_main(pdata)
     return
@@ -138,43 +138,56 @@ def main():
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator,AutoMinorLocator,FuncFormatter
 from matplotlib.dates import DateFormatter
+def plot_common(ax1,subtit):
+    ax1.set_title(subtit,fontsize=12,x=0,ha='left')
+    ax1.set_ylim(-2.5,3.5)
+    ax1.grid()
+    ax1.axhline(y=0,c='k',lw=0.8)
+    ax1.xaxis.set_major_formatter(DateFormatter("%Y\n%b"))
+    ax1.xaxis.set_minor_locator(AutoMinorLocator(2))
+    ax1.yaxis.set_minor_locator(AutoMinorLocator(2))
+    ax1.set_ylabel('RMM PC1',fontsize=11)
+
 def plot_main(pdata):
-    mx,my= pdata['m_data']
     dx,dy= pdata['d_data']
-    data_labels= pdata['data_labels']
+    titles= pdata['titles']
+    ts_data= pdata['ts_data']
 
     fig= plt.figure()
-    fig.set_size_inches(7.5,5)  ## (xsize,ysize)
+    fig.set_size_inches(6,8.5)  ## (xsize,ysize)
 
     ### Page Title
     suptit= pdata['suptit']
-    fig.suptitle(suptit,fontsize=15,y=0.97,va='bottom',stretch='semi-condensed')
+    fig.suptitle(suptit,fontsize=15,y=0.975,va='bottom',stretch='condensed')
 
     ### Parameters for subplot area
     abc='abcdefgh'
-    fig.subplots_adjust(left=0.05,right=0.95,top=0.92,bottom=0.07)
 
-    wd= (dx[1]-dx[0]).days*0.8
+    lf,rf,tf,bf = 0.04, 0.94, 0.94, 0.07
+    gapx,gapy = 0.05, 0.08
+    nrow,ncol = 3, 1
+    lpnx=(rf-lf-gapx*(ncol-1))/ncol
+    lpny=(tf-bf-gapy*(nrow-1))/nrow
+
     ### Plot time series
-    ax1= fig.add_subplot(111)
-    ax1.bar(dx,dy,width=wd,color='C0',label=data_labels[1],alpha=0.7)
-    ax1.plot(mx,my,c='C1',marker='^',markersize=10,lw=2,alpha=0.9,label=data_labels[0])
+    ix,iy= lf,tf
+    for i,(tit,(xt,ydata)) in enumerate(zip(titles,ts_data)):
+        ax1= fig.add_axes([ix,iy-lpny,lpnx,lpny])  # [left,bottom,width,height]
+        ## Line plots
+        ax1.plot(dx,dy,c='C1',lw=1,alpha=0.9)
+        ax1.plot(xt,ydata,c='C0',lw=3,alpha=0.6)
 
-    ax1.set_ylim(-2.,2.)
-    ax1.grid()
-    ax1.axhline(y=0,c='k',lw=0.8)
-    ax1.xaxis.set_major_formatter(DateFormatter("%Y.%m"))
-    ax1.xaxis.set_minor_locator(AutoMinorLocator(2))
-    ax1.yaxis.set_minor_locator(AutoMinorLocator(2))
-    ax1.set_ylabel('(degC)',fontsize=11)
+        subtit= '({}) {}'.format(abc[i],tit)
+        plot_common(ax1,subtit)
 
-    ax1.legend(loc='upper right',fontsize=11)
+        ix=ix+lpnx+gapx
+        if ix>rf: ix=lf; iy=iy-lpny-gapy
 
-    ###---
+        ###---
     fnout= pdata['fnout']
     fig.savefig(fnout,bbox_inches='tight',dpi=150)
     print(fnout)
-    #plt.show()
+    plt.show()
     return
 
 if __name__ == "__main__":
