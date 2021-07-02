@@ -1,22 +1,18 @@
 '''
-Matplotlib Basic_Lv2(2)
-: Draw legend box
+Matplotlib Basic_Lv2: 10. Legend examples
+: Draw a legend box
 
 by Daeho Jin
 
 ---
 Reference:
-https://matplotlib.org/3.1.0/tutorials/intermediate/legend_guide.html
-
-fig.legend(bbox_to_anchor=(ix+lx, iy-ly-0.08), loc='right',fontsize=11,
-           ncol=3, borderaxespad=0.)
-twinx()?
+https://matplotlib.org/stable/tutorials/intermediate/legend_guide.html
 '''
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.ticker import AutoMinorLocator, MultipleLocator, FuncFormatter
 
-def plot_common2(ax,subtit='',ytlab=True,ytright=False):
+def plot_common(ax,subtit='',ytlab=True,ytright=False):
     ax.set_title(subtit,fontsize=12,stretch='semi-condensed') #,x=0.,ha='left') #,y=0.9
 
     ax.set_xlim(-4,4)
@@ -40,7 +36,9 @@ def plot_common2(ax,subtit='',ytlab=True,ytright=False):
     ax.tick_params(axis='both',labelsize=10)
     ax.axhline(y=0.,color='k',linestyle=':',lw=0.7)
     ax.axvline(x=0.,color='k',ls=':',lw=0.7)
+    return
 
+###--- Legend options
 legend_locs=[
     ['best'     ,0], ['upper right'     ,1], ['upper left'  ,2],
     ['lower left'   ,3], ['lower right'     ,4], ['right'   ,5],
@@ -95,16 +93,20 @@ for i in range(nrow*ncol):
         ax1.legend(loc=legend_locs[2][0],bbox_to_anchor=(1.05,1.),fontsize=9,borderaxespad=0.) #,framealpha=0.7)
 
 
-    if i==ncol*(nrow-1):
-        ax1.set_xlabel('X-axis Label',fontsize=12)
+    if i%ncol==0:
         ax1.set_ylabel('Y-axis Label',fontsize=12,rotation=90,labelpad=0)
+    elif i%ncol==ncol-1:
+        ax1.yaxis.set_label_position('right')
+        ax1.set_ylabel('Y-axis Label',fontsize=12,rotation=-90,labelpad=0,va='bottom')
+    if i >= ncol*(nrow-1):
+        ax1.set_xlabel('X-axis Label',fontsize=12)
 
     if i%ncol==ncol-1:
-        plot_common2(ax1,subtit,ytlab=True,ytright=True)
+        plot_common(ax1,subtit,ytlab=True,ytright=True)
     elif i%ncol!=0:
-        plot_common2(ax1,subtit,False)
+        plot_common(ax1,subtit,False)
     else:
-        plot_common2(ax1,subtit)
+        plot_common(ax1,subtit)
 
     ix=ix+lpnx+gapx
     if ix+lpnx > 1.0:
@@ -113,14 +115,13 @@ for i in range(nrow*ncol):
 
 ##-- Seeing or Saving Pic --##
 
-#- If want to see on screen -#
-plt.show()
-
 #- If want to save to file
 outdir = "../Pics/"
 outfnm = outdir+"N02_legend_ex.png"
 print(outfnm)
 #fig.savefig(outfnm,dpi=100)   # dpi: pixels per inch
-#fig.savefig(outfnm,dpi=100,bbox_inches='tight')   # dpi: pixels per inch
-
+fig.savefig(outfnm,dpi=100,bbox_inches='tight')   # dpi: pixels per inch
 # Defalut: facecolor='w', edgecolor='w', transparent=False
+
+#- If want to see on screen -#
+plt.show()
