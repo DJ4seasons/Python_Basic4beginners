@@ -6,18 +6,19 @@ By Daeho Jin
 ----
 Reference:
 https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
+https://matplotlib.org/stable/api/dates_api.html
 """
 
 import sys
 import os.path
 import numpy as np
-from datetime import datetime
+from datetime import date, datetime  # datetime includs sub-daily time information
 import F00_common_functions as fns
 
 def main():
     ### Parameters
-    tgt_dates= (datetime(2010,11,1),datetime(2021,3,1))
-    tgt_dates_str= [dd.strftime('%Y/%m') for dd in tgt_dates]  # See Reference above
+    tgt_dates= (date(2010,11,1),date(2021,3,1))
+    tgt_dates_str= [dd.strftime('%Y.%m') for dd in tgt_dates]  # See Reference above
     mon_per_yr= 12
     times= fns.get_months(*tgt_dates,include_end=True)
     nmons= len(times); print(nmons)
@@ -71,27 +72,28 @@ def plot_main(pdata):
     ax1b.plot(xt,yy[1],c='C1',lw=1.5,alpha=0.9,label=data_labels[1])  # Use right y-axis
     ax1b.plot(xt,yy[2]*2,c='C5',lw=1.5,alpha=0.9,label=data_labels[2]+'x2') # Use right y-axis
 
-    ax1.set_ylim(-25,25)
-    ax1b.set_ylim(-2.5,2.75)
     #ax1.set_title('(a) Monthly',fontsize=13,ha='left',x=0)
-    ax1.grid()
-    ax1.axhline(y=0,c='k',lw=0.8)
+    ax1.set_xticks([date(yy,1,1) for yy in range(2011,2022,2)])
     ax1.xaxis.set_major_formatter(DateFormatter("%Y\n%b"))
     # <--- For more information of Date Format, see Reference above
     ax1.xaxis.set_minor_locator(AutoMinorLocator(2))
+
+    ax1.set_ylim(-25,25)
+    ax1b.set_ylim(-2.5,2.75)
     ax1.yaxis.set_minor_locator(AutoMinorLocator(2))
     ax1b.yaxis.set_minor_locator(AutoMinorLocator(2))
     ax1.set_ylabel('(m/s)',fontsize=11)
     ax1b.set_ylabel('(degC)',fontsize=11,rotation=-90,va='bottom')
 
+    ax1.grid()
+    ax1.axhline(y=0,c='k',lw=0.8)
     fig.legend(bbox_to_anchor=(0.06, 0.075), loc='lower left',fontsize=11,
                ncol=3, borderaxespad=0.)
 
     ###---
-    fnout= pdata['fnout']
+    fnout= pdata['fnout']; print(fnout)
     fig.savefig(fnout,bbox_inches='tight',dpi=150)
-    print(fnout)
-    #plt.show()
+    plt.show()
     return
 
 if __name__ == "__main__":

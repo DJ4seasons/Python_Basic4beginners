@@ -115,21 +115,21 @@ def plot_main(pdata):
     ax1.bar(dx,dy,width=wd,color='C0',label=data_labels[1],alpha=0.7)
     ax1.plot(mx,my,c='C1',marker='^',markersize=10,lw=2,alpha=0.9,label=data_labels[0])
 
-    ax1.set_ylim(-2.,2.)
-    ax1.grid()
-    ax1.axhline(y=0,c='k',lw=0.8)
     ax1.xaxis.set_major_formatter(DateFormatter("%Y.%m"))
     ax1.xaxis.set_minor_locator(AutoMinorLocator(2))
+
+    ax1.set_ylim(-2.,2.)
     ax1.yaxis.set_minor_locator(AutoMinorLocator(2))
     ax1.set_ylabel('(degC)',fontsize=11)
 
+    ax1.grid()
+    ax1.axhline(y=0,c='k',lw=0.8)
     ax1.legend(loc='upper right',fontsize=11)
 
     ###---
-    fnout= pdata['fnout']
+    fnout= pdata['fnout']; print(fnout)
     fig.savefig(fnout,bbox_inches='tight',dpi=150)
-    print(fnout)
-    #plt.show()
+    plt.show()
     return
 
 if __name__ == "__main__":

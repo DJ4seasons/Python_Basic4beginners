@@ -140,13 +140,17 @@ from matplotlib.ticker import MultipleLocator,AutoMinorLocator,FuncFormatter
 from matplotlib.dates import DateFormatter
 def plot_common(ax1,subtit):
     ax1.set_title(subtit,fontsize=12,x=0,ha='left')
-    ax1.set_ylim(-2.5,3.5)
-    ax1.grid()
-    ax1.axhline(y=0,c='k',lw=0.8)
+
     ax1.xaxis.set_major_formatter(DateFormatter("%Y\n%b"))
     ax1.xaxis.set_minor_locator(AutoMinorLocator(2))
+
+    ax1.set_ylim(-2.5,3.5)
     ax1.yaxis.set_minor_locator(AutoMinorLocator(2))
     ax1.set_ylabel('RMM PC1',fontsize=11)
+
+    ax1.grid()
+    ax1.axhline(y=0,c='k',lw=0.8)
+    return
 
 def plot_main(pdata):
     dx,dy= pdata['d_data']
@@ -184,9 +188,8 @@ def plot_main(pdata):
         if ix>rf: ix=lf; iy=iy-lpny-gapy
 
         ###---
-    fnout= pdata['fnout']
+    fnout= pdata['fnout']; print(fnout)
     fig.savefig(fnout,bbox_inches='tight',dpi=150)
-    print(fnout)
     plt.show()
     return
 
