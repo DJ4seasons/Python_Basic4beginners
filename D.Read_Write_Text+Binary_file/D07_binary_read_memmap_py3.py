@@ -25,66 +25,15 @@ https://numpy.org/doc/stable/reference/generated/numpy.memmap.html
 import sys
 import os.path
 import numpy as np
-from datetime import date
 
-def bin_file_read2mtx(fname, dtype=np.float32):
-    """ Open a binary file, and read data
-        fname : file name with directory path
-        dtype   : data type; np.float32 or np.float64, etc. """
-
-    if not os.path.isfile(fname):
-        print("File does not exist:"+fname)
-        sys.exit()
-
-    with open(fname,'rb') as fd:
-        bin_mat = np.fromfile(file=fd, dtype=dtype)
-
-    return bin_mat
-
-def bin_file_read_memmap(fname, dtype=np.float32, shape=None, offset=0):
-    """ Open a binary file and read data using np.memmap()
-        fname : file name with directory path
-        dtype : data type; np.float32 or np.float64, etc.
-        shape : dimension of array to be loaded
-        offset: offset value which is the starting point to read """
-
-    if not os.path.isfile(fname):
-        print("File does not exist:"+fname)
-        sys.exit()
-
-    try:
-        bin_mat= np.memmap(fname, dtype=dtype, mode='r', shape=shape, offset=offset)
-    except Exception as e:
-        print("Error on np.memmap()")
-        sys.exit(e)
-    else:
-        return bin_mat
-
-def data_transform(arr_memmap, undef=np.nan):
-    ### Change type to np.array()
-    arr= np.array(arr_memmap)  # Be sure using np.array(), not np.asarray()
-
-    ### Change missing value to NaN
-    if not np.isnan(undef):
-        miss_idx= arr==undef
-        arr[miss_idx]= np.nan
-
-    ### Basic unit is 0.1 mm/day, and change to mm/hr
-    arr/=240
-    return arr
-
-def check_data_imshow(arr2d, origin='lower'):
-    import matplotlib.pyplot as plt
-    plt.imshow(arr2d, origin=origin)
-    plt.colorbar()
-    plt.show()
+from D03_Read_text_file_HadISST_py3 import check_data_imshow
+from D06_Read_binary_file_fromfile_py3 import bin_file_read2mtx
 
 def main():
     ###--- Parameters
     indir= '../Data/'
     #PRCP_CU_GAUGE_V1.0GLB_0.50deg.lnx.20200701.RT
-    tgt_date= date(2020,7,1)
-    tgt_date_name= tgt_date.strftime('%Y%m%d')
+    tgt_date_name= '{}{:02d}{:02d}'.format(2020,7,1)
     nlat, nlon= 360, 720
     nvars= 2  # 'rain' and 'gnum'
     undef= -999.
@@ -128,6 +77,37 @@ def main():
     print(np.nanmax(np.absolute(prcp-prcp2)),np.allclose(prcp, prcp2,equal_nan=True))
     return
 
+def bin_file_read_memmap(fname, dtype=np.float32, shape=None, offset=0):
+    """ Open a binary file and read data using np.memmap()
+        fname : file name with directory path
+        dtype : data type; np.float32 or np.float64, etc.
+        shape : dimension of array to be loaded
+        offset: offset value which is the starting point to read """
+
+    if not os.path.isfile(fname):
+        print("File does not exist:"+fname)
+        sys.exit()
+
+    try:
+        bin_mat= np.memmap(fname, dtype=dtype, mode='r', shape=shape, offset=offset)
+    except Exception as e:
+        print("Error on np.memmap()")
+        sys.exit(e)
+    else:
+        return bin_mat
+
+def data_transform(arr_memmap, undef=np.nan):
+    ### Change type to np.array()
+    arr= np.array(arr_memmap)  # Be sure using np.array(), not np.asarray()
+
+    ### Change missing value to NaN
+    if not np.isnan(undef):
+        miss_idx= arr==undef
+        arr[miss_idx]= np.nan
+
+    ### Basic unit is 0.1 mm/day, and change to mm/hr
+    arr/=240
+    return arr
 
 if __name__ == "__main__":
     main()

@@ -23,25 +23,6 @@ import sys
 import os.path
 import numpy as np
 
-def bin_file_read2mtx(fname, dtype=np.float32):
-    """ Open a binary file, and read data
-        fname : file name with directory path
-        dtype   : data type; np.float32 or np.float64, etc. """
-
-    if not os.path.isfile(fname):
-        print("File does not exist:"+fname)
-        sys.exit()
-
-    with open(fname,'rb') as fd:
-        bin_mat = np.fromfile(file=fd, dtype=dtype)
-
-    return bin_mat
-
-def check_data_plot(arr1d):
-    import matplotlib.pyplot as plt
-    plt.plot(arr1d)
-    plt.show()
-
 def main():
     ###--- Parameters
     indir= '../Data/'
@@ -67,6 +48,25 @@ def main():
     ### Check data using simple plot
     check_data_plot(sst_mean)
     return
+
+def bin_file_read2mtx(fname, dtype=np.float32):
+    """ Open a binary file, and read data
+        fname : file name with directory path
+        dtype   : data type; np.float32 or np.float64, etc. """
+
+    if not os.path.isfile(fname):
+        print("File does not exist:"+fname)
+        sys.exit()
+
+    with open(fname,'rb') as fd:
+        bin_mat = np.fromfile(file=fd, dtype=dtype)
+
+    return bin_mat
+
+def check_data_plot(arr1d):
+    import matplotlib.pyplot as plt
+    plt.plot(arr1d)
+    plt.show()
 
 if __name__ == "__main__":
     main()

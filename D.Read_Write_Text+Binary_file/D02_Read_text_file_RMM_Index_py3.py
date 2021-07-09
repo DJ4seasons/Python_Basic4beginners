@@ -27,6 +27,23 @@ import sys
 import os.path
 import numpy as np
 
+def main():
+    indir= '../Data/'
+    infn= indir+'rmm.74toRealtime.txt'
+    test_idx= 1000
+
+    print("* Method1")
+    rmm_data= read_rmm_manual(infn)
+    for arr in rmm_data:
+        print(arr.shape, arr[test_idx])
+
+    print("\n* Method2")
+    rmm_data2= read_rmm_genfromtxt(infn)
+    for arr in rmm_data2:
+        print(arr.shape, arr[test_idx])
+
+    return
+
 def read_rmm_manual(fname):
     """
     Read RMM Index Text file
@@ -103,23 +120,6 @@ def read_rmm_genfromtxt(fname):
     #data= np.loadtxt(fname,skiprows=2, usecols=range(len(names)))
     '''
     return time_info,pcs,phs,amps
-
-def main():
-    indir= '../Data/'
-    infn= indir+'rmm.74toRealtime.txt'
-    test_idx= 1000
-
-    print("* Method1")
-    rmm_data= read_rmm_manual(infn)
-    for arr in rmm_data:
-        print(arr.shape, arr[test_idx])
-
-    print("\n* Method2")
-    rmm_data2= read_rmm_genfromtxt(infn)
-    for arr in rmm_data2:
-        print(arr.shape, arr[test_idx])
-
-    return
 
 if __name__ == "__main__":
     main()

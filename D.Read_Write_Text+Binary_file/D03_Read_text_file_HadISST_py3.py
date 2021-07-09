@@ -55,40 +55,6 @@ import sys
 import os.path
 import numpy as np
 
-def read_hadisst_manually(fname):
-    """
-    Read Hadley SST Text file
-    fname: include directory
-    """
-    if not os.path.isfile(fname):
-        #print( "File does not exist:"+fname); sys.exit()
-        sys.exit("File does not exist: "+fname)
-
-    time_info, vals = [], []
-    width= 6  # Values are of fixed width in the text file
-    with open(fname,'r') as f:
-        for i,line in enumerate(f):
-            if len(line)<50:  # Distinguish monthly header from sst data
-                ww=line.strip().split()
-                time_info.append([int(item) for item in ww[:3]])
-                dims= [int(ww[3]),int(ww[5])]
-                nct=0
-                temp_array= []  # Initialize storage to save monthly sst data
-            else:
-                ww= [line[i:i+width] for i in range(0,len(line.strip()),width)]
-                temp_array.append(ww)
-                nct+=1
-                if nct==dims[0]:  # If one month map is completed
-                    vals.append(np.array(temp_array,dtype=np.int32))
-
-    return np.asarray(time_info), np.asarray(vals)
-
-def check_data_imshow(arr2d, origin='lower'):
-    import matplotlib.pyplot as plt
-    plt.imshow(arr2d, origin=origin)
-    plt.colorbar()
-    plt.show()
-
 def main():
     indir= '../Data/'
     yrs= [2015,2020]  # Starting year and ending year
@@ -122,6 +88,40 @@ def main():
     ### Check data using simple plot
     check_data_imshow(sst_mean, origin='lower')
     return
+
+def read_hadisst_manually(fname):
+    """
+    Read Hadley SST Text file
+    fname: include directory
+    """
+    if not os.path.isfile(fname):
+        #print( "File does not exist:"+fname); sys.exit()
+        sys.exit("File does not exist: "+fname)
+
+    time_info, vals = [], []
+    width= 6  # Values are of fixed width in the text file
+    with open(fname,'r') as f:
+        for i,line in enumerate(f):
+            if len(line)<50:  # Distinguish monthly header from sst data
+                ww=line.strip().split()
+                time_info.append([int(item) for item in ww[:3]])
+                dims= [int(ww[3]),int(ww[5])]
+                nct=0
+                temp_array= []  # Initialize storage to save monthly sst data
+            else:
+                ww= [line[i:i+width] for i in range(0,len(line.strip()),width)]
+                temp_array.append(ww)
+                nct+=1
+                if nct==dims[0]:  # If one month map is completed
+                    vals.append(np.array(temp_array,dtype=np.int32))
+
+    return np.asarray(time_info), np.asarray(vals)
+
+def check_data_imshow(arr2d, origin='lower'):
+    import matplotlib.pyplot as plt
+    plt.imshow(arr2d, origin=origin)
+    plt.colorbar()
+    plt.show()
 
 if __name__ == "__main__":
     main()

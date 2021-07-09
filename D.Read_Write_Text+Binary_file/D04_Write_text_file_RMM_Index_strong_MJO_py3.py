@@ -22,69 +22,12 @@ import sys
 import os.path
 import numpy as np
 
-def read_rmm_manual(fname):
-    """
-    Read RMM Index Text file
-    fname: include directory
-
-    Assume that we already know the structure of text file.
-    There are 2 lines header.
-    var_names= year, month, day, RMM1, RMM2, phase, amplitude.  Missing Value= 1.E36 or 999
-    """
-
-    if not os.path.isfile(fname):
-        #print( "File does not exist:"+fname); sys.exit()
-        sys.exit("File does not exist: "+fname)
-
-    time_info, pcs, phs, amps= [], [], [], []
-    with open(fname,'r') as f:
-        for i,line in enumerate(f):
-            if i>=2:  # Skip header (2 lines)
-                ww=line.strip().split()
-                time_info.append([int(item) for item in ww[:3]])  # Yr,Mo,Dy
-                pcs.append([float(ww[3]),float(ww[4])]) # RMM PC1 and PC2
-                phs.append(int(ww[5]))  # MJO Phase
-                amps.append(float(ww[6]))  # MJO Strength
-
-    print("Total RMM data record=",len(phs))
-    #return time_info,pcs,phs,amps  # This is also possible
-    return np.asarray(time_info),np.asarray(pcs),np.asarray(phs),np.asarray(amps) ### Return as Numpy array
-
-def write_text_rmm(filename, rmm_data, delimiter='  '):
-    ### First, check the file if already exist
-    if os.path.isfile(filename):
-        print("\n{} already exist".format(filename))
-        answer= input("If want to overwrite, type 'y'; If want to append, type 'a'\n")
-        if answer[0].lower()=='y':
-            mode= 'w'  # '(w)rite'
-        elif answer[0].lower()=='a':
-            mode= 'a'  # '(a)ppend'
-        else:
-            sys.exit("Your input {} is not supported.".format(answer))
-    else:
-        mode='w'
-
-    with open(filename, mode) as f:
-        header1= "RMM Index only for strong MJOs (amplitude>2)\n"
-        header2= "Year,Mon,Day,PC1,PC2,Phase,Amplitude\n"
-        f.write(header1)
-        print(header2[:-1], file=f)  # Print() insert '\n' automatically
-
-        for i in range(rmm_data[-1].shape[0]):
-            time_info= delimiter.join(rmm_data[0][i,:].astype(str))
-            pcs= delimiter.join(rmm_data[1][i,:].astype(str))
-
-            one_line= "{}{delimiter}{}{delimiter}{:d}{delimiter}{:.5f}\n".format(
-                        time_info,pcs,rmm_data[2][i],rmm_data[3][i],
-                        delimiter=delimiter)
-            f.write(one_line)
-    print("{} is written.".format(filename))
-    return
-
 def main():
     indir= '../Data/'
     infn= indir+'rmm.74toRealtime.txt'
 
+    ### Import function from other program file (in the same directory)
+    from D02_Read_text_file_RMM_Index_py3 import read_rmm_manual
     rmm_data= read_rmm_manual(infn)  # Return Time_info, PCs, Phases, Amplitude
     test_idx= 1000
     for arr in rmm_data:
@@ -103,6 +46,37 @@ def main():
     outdir= indir
     outfn= outdir+'rmm.74toRealtime.OnlyStrongMJOs.csv'
     write_text_rmm(outfn, rmm_data, delimiter=',')
+    return
+
+def write_text_rmm(filename, rmm_data, delimiter='  '):
+    ### First, check the file if already exist
+    if os.path.isfile(filename):
+        print("\n{} already exist".format(filename))
+        answer= input("If want to overwrite, type 'y'; If want to append, type 'a'\n")
+        if answer[0].lower()=='y':
+            mode= 'w'  # '(w)rite'
+        elif answer[0].lower()=='a':
+            mode= 'a'  # '(a)ppend'
+        else:
+            sys.exit("Your input '{}' is not supported.".format(answer))
+    else:
+        mode='w'
+
+    with open(filename, mode) as f:
+        header1= "RMM Index only for strong MJOs (amplitude>2)\n"
+        header2= "Year,Mon,Day,PC1,PC2,Phase,Amplitude\n"
+        f.write(header1)
+        print(header2[:-1], file=f)  # Print() insert '\n' automatically
+
+        for i in range(rmm_data[-1].shape[0]):
+            time_info= delimiter.join(rmm_data[0][i,:].astype(str))
+            pcs= delimiter.join(rmm_data[1][i,:].astype(str))
+
+            one_line= "{}{delimiter}{}{delimiter}{:d}{delimiter}{:.5f}\n".format(
+                        time_info,pcs,rmm_data[2][i],rmm_data[3][i],
+                        delimiter=delimiter)
+            f.write(one_line)
+    print("{} is written.".format(filename))
     return
 
 if __name__ == "__main__":

@@ -23,54 +23,9 @@ import sys
 import os.path
 import numpy as np
 
-def read_hadisst_manually(fname):
-    """
-    Read Hadley SST Text file
-    fname: include directory
-    """
-    if not os.path.isfile(fname):
-        #print( "File does not exist:"+fname); sys.exit()
-        sys.exit("File does not exist: "+fname)
-
-    time_info, vals = [], []
-    width= 6  # Values are of fixed width in the text file
-    with open(fname,'r') as f:
-        for i,line in enumerate(f):
-            if len(line)<50:  # Distinguish monthly header from sst data
-                ww=line.strip().split()
-                time_info.append([int(item) for item in ww[:3]])
-                dims= [int(ww[3]),int(ww[5])]
-                nct=0
-                temp_array= []  # Initialize storage to save monthly sst data
-            else:
-                ww= [line[i:i+width] for i in range(0,len(line.strip()),width)]
-                temp_array.append(ww)
-                nct+=1
-                if nct==dims[0]:  # If one month map is completed
-                    vals.append(np.array(temp_array,dtype=np.int32))
-
-    return np.asarray(time_info), np.asarray(vals)
-
-def write_binary_data(filename, data, dtype=np.float32):
-    ### First, check the file if already exist
-    if os.path.isfile(filename):
-        print("\n{} already exist".format(filename))
-        answer= input("If want to overwrite, type 'y'; If want to append, type 'a'\n")
-        if answer[0].lower()=='y':
-            mode= 'wb'  # 'wb' not just 'w'
-        elif answer[0].lower()=='a':
-            mode= 'ab'  # 'append' 'binary'
-        else:
-            sys.exit("Your input {} is not supported.".format(answer))
-    else:
-        mode='wb'
-
-    ### Wirte a ndarray to a binary file
-    with open(filename, mode) as f:
-        data.astype(dtype).tofile(f)
-
-    print("{} is written.".format(filename))
-    return
+### Import function from other program file (in the same directory)
+from D03_Read_text_file_HadISST_py3 import read_hadisst_manually
+# Or, import D03_Read_text_file_HadISST_py3 as fns  # then, call the function: fns.read_hadisst_manually
 
 def main():
     indir= '../Data/'
@@ -104,6 +59,27 @@ def main():
     outdir= indir
     outfn= outdir+'HadISST1.sample.{}-{}.{}x{}x{}.f32dat'.format(*yrs,*sst.shape)  # File info on file name
     write_binary_data(outfn, sst)  # 'dtype=np.float32' option is omitted.
+    return
+
+def write_binary_data(filename, data, dtype=np.float32):
+    ### First, check the file if already exist
+    if os.path.isfile(filename):
+        print("\n{} already exist".format(filename))
+        answer= input("If want to overwrite, type 'y'; If want to append, type 'a'\n")
+        if answer[0].lower()=='y':
+            mode= 'wb'  # 'wb' not just 'w'
+        elif answer[0].lower()=='a':
+            mode= 'ab'  # 'append' 'binary'
+        else:
+            sys.exit("Your input '{}' is not supported.".format(answer))
+    else:
+        mode='wb'
+
+    ### Wirte a ndarray to a binary file
+    with open(filename, mode) as f:
+        data.astype(dtype).tofile(f)
+
+    print("{} is written.".format(filename))
     return
 
 if __name__ == "__main__":

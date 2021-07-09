@@ -16,28 +16,9 @@ https://gpm.nasa.gov/data-access/downloads/gpm
 
 """
 
-
 import sys
 import os.path
 import numpy as np
-
-import h5py
-
-def open_hdf5(fname):
-    if not os.path.isfile(fname):
-        print("File does not exist:"+fname)
-        sys.exit()
-
-    hid=h5py.File(fname,'r')
-    print("Open:",fname)
-    return hid
-
-def hdf_key_details(hdf_fid, key_name):
-    print("\n{}".format(key_name))
-    dset=hdf_fid[key_name]
-    for (name, val) in dset.attrs.items():
-        print("Name: {}".format(name))
-        print("   Values: {}".format(val))
 
 def main():
     ##-- Parameters
@@ -60,6 +41,23 @@ def main():
     hdf_f.close()
     return
 
+import h5py
+def open_hdf5(fname):
+    if not os.path.isfile(fname):
+        print("File does not exist:"+fname)
+        sys.exit()
+
+    hid = h5py.File(fname,'r')
+    print("Open:",fname)
+    return hid
+
+def hdf_key_details(hdf_fid, key_name):
+    print("\n{}".format(key_name))
+    dset=hdf_fid[key_name]
+    for (name, val) in dset.attrs.items():
+        print("Name: {}".format(name))
+        print("   Values: {}".format(val))
+    return
 
 if __name__ == "__main__":
     main()
