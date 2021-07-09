@@ -1,5 +1,5 @@
 '''
-Read text file
+Read text file (with RMM data)
 
 1. Reading manually
 2. Using Numpy.genfromtxt() [can treat missing data; more complex than loadtxt()]
@@ -98,6 +98,9 @@ def read_rmm_genfromtxt(fname):
     pcs= data[:,3:5]
     phs= data[:,5].astype(int)
     amps= data[:,6]
+
+    ### Or, you can use np.loadtxt() for this example
+    #data= np.loadtxt(fname,skiprows=2, usecols=range(len(names)))
     '''
     return time_info,pcs,phs,amps
 
