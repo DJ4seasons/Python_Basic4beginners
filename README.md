@@ -12,12 +12,12 @@ Custom version: [Miniconda](https://docs.conda.io/en/latest/miniconda.html)
 (Test: type "python" or "python3" in the command window)  
 
 ## Python (and packages) Version Info (July 2021)
-Current version for code testing (recommended version)  
-python: 3.8.10 (3.5+)  
-matplotlib: 3.4.2 (3.2+)  
-cartopy: 0.19 (0.18+)  
-numpy: 1.20 (1.17+)  
-scipy: 1.6.3 (1.4+)  
+Current version for code testing (recommended minimum version)  
+python:     3.8.10  (3.5+)  
+matplotlib: 3.4.2   (3.2+)  
+cartopy:    0.19    (0.18+)  
+numpy:      1.20    (1.17+)  
+scipy:      1.6.3   (1.4+)  
 
 To check the version, type the command "conda list" (for conda system) or "pip list"  
 
