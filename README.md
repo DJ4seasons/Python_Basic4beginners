@@ -53,6 +53,7 @@ import cartopy
 
 import scipy
 from sklearn import linear_model
+import statsmodels
 
 ### Optionally,
 import xarray
