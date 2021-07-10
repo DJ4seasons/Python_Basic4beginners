@@ -126,26 +126,30 @@ def read_rmm_text(date_range=[]):
 
     return time_info, pcs, phs, strs, miss_idx
 
-def read_sst_from_HadISST(yrs=[2015,2019]):
+def read_sst_from_HadISST(yrs=[2015,2020],include_ice=False):
     ###--- Parameters
     indir= '../Data/'
-    yrs0= [2015,2019]
+    yrs0= [2015,2020]
     lon0,dlon,nlon= -179.5,1.,360
     lat0,dlat,nlat=  -89.5,1.,180
     mon_per_yr= 12
     nt= (yrs0[1]-yrs0[0]+1)*mon_per_yr
 
-    infn= indir+"HadISST1.sample.{}-{}.{}x{}x{}.f32dat".format(*yrs,nt,nlat,nlon)
+    infn= indir+"HadISST1.sample.{}-{}.{}x{}x{}.f32dat".format(*yrs0,nt,nlat,nlon)
     sst= bin_file_read2mtx(infn)  # 'dtype' option is omitted because 'f32' is basic dtype
     sst= sst.reshape([nt,nlat,nlon]).astype(float)  # Improve precision of calculation
 
     it= (yrs[0]-yrs0[0])*mon_per_yr
     nmons= (yrs[1]-yrs[0]+1)*mon_per_yr
-    sst= sst[it:it+nmons,:,:]
+    if (it != 0) or (nmons != nt):
+        sst= sst[it:it+nmons,:,:]
     print(sst.shape)
 
     ### We already know that missings are -999.9, and ice-cover value is -10.00.
-    miss_idx= sst<-9.9
+    if include_ice:
+        miss_idx= sst<-11
+    else:
+        miss_idx= sst<-9.9
     sst[miss_idx]= np.nan
 
     lats= dict(lat0=lat0,dlat=dlat,nlat=nlat)

@@ -2,7 +2,7 @@
 Matplotlib Application(5)
 Difference between masked_array and other indexing method
 +
-Applying backgroudn image (Need to check directory for BGimg folder)
+Applying background image (Need to check directory for BGimg folder)
 Ref: http://earthpy.org/cartopy_backgroung.html
 
 By Daeho Jin
@@ -16,25 +16,22 @@ import O00_Functions as fns
 
 def main():
     ### Read HadISST
-    yrs=[2015,2019]
+    yrs=[2015,2020]
     sst,lats,lons= fns.read_sst_from_HadISST(yrs)
-    print(sst.shape)
-    print(np.isnan(sst).sum()/sst.shape[0])
 
     ##-- Sampling for limited regiosn
     lon_deg_range=[-60,30]
-    lat_deg_range=[40,75]
+    lat_deg_range=[45,80]
 
-    lon_idx= [fns.lon_deg2x(lon,lons['lon0'],lons['dlon']) for lon in lon_deg_range]
-    lat_idx= [fns.lat_deg2y(lat,lats['lat0'],lats['dlat']) for lat in lat_deg_range]
-    print(lon_idx,lat_idx)
-    if lon_idx[0]>=lon_idx[1]:
-        tmpidx= list(range(lon_idx[0],lons['nlon']))+list(range(0,lon_idx[1]))
-        sst= sst[:,lat_idx[0]:lat_idx[1],tmpidx]
-    else:
-        sst= sst[:,lat_idx[0]:lat_idx[1],lon_idx[0]:lon_idx[1]]
+    latlons= dict(latinfo=(lats['lat0'],lats['dlat'],lats['nlat']),
+                    loninfo=(lons['lon0'],lons['dlon'],lons['nlon']))
+    lat_idx, lon_ids = fns.get_tgt_latlon_idx(latlons, lat_deg_range, lon_deg_range)
 
-    ##-- If change to masked array
+    sst= sst[:,lat_idx[0]:lat_idx[1],lon_ids]
+    print(sst.shape)
+    print(np.isnan(sst).sum()/sst.shape[0])
+
+    ##-- Masked array counterpart
     sst_masked= np.ma.masked_invalid(sst)
 
     ##-- Mean for all time
@@ -59,11 +56,7 @@ def main():
     plot_data= dict(data=[sstmean1,sstmean2], var_names=var_names, out_fnm=out_fig_nm,
                     img_bound=img_bound,suptit=suptit)
     plot_map(plot_data)
-
-###--------
-
-
-
+    return
 
 ###--- Map Plot
 import matplotlib.pyplot as plt

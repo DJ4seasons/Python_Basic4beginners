@@ -3,7 +3,7 @@ Matplotlib Application(1)
 : Display Bar plot and Stacked Bar plot
 
 Data
-: HadISST1 sample binary file (obtained from D04)
+: HadISST1 sample binary file (obtained from D05)
 : Make a histogram and display via bar plot
 
 by Daeho Jin
@@ -19,20 +19,16 @@ def main():
     ###--- Prepare Data ---###
 
     ###--- Parameters
-    indir= '../Data/'
-    #HadISST1.sample.2017-2019.36x180x360.f32dat
-    yrs= [2015,2019]  # Starting year and ending year
+    yrs= [2015,2020]  # Starting year and ending year
     nyears= yrs[1]-yrs[0]+1
     mon_per_yr= 12
-    nt= nyears*mon_per_yr
-    nlat, nlon= 180, 360
 
-    infn= indir+"HadISST1.sample.{}-{}.{}x{}x{}.f32dat".format(*yrs,nt,nlat,nlon)
-    sst= fns.bin_file_read2mtx(infn)  # 'dtype' option is omitted because 'f32' is basic dtype
+    sst, lats, lons = fns.read_sst_from_HadISST(yrs, include_ice=True)
+    nlat,nlon = lats['nlat'],lons['nlon']
     sst= sst.reshape([nyears,mon_per_yr*nlat*nlon])
     print(sst.shape)
 
-    ### We already know that missings are -999.9, and ice-cover value is -10.00.
+    ### We already know that missings are changed to NaN, and ice-cover value is -10.00.
     bin_bounds=[-15,-2]+list(range(2,33,6))  # Ice, then every 6 degC
     bin_bounds[-1]= 40  # End includes extreme values
 
@@ -45,11 +41,13 @@ def main():
 
     ### Call a function to draw the bar chart
     data_labels= list(range(yrs[0],yrs[1]+1))
+    suptit= "Ice+SST Histogram of Monthly HadISST (Global)"
     outdir= '../Pics/'
     fig_filename= outdir+'O01_HadISST1_histogram_bar.png'
 
-    plot_data= dict(fig_data=hist_data[-3:], bin_bounds=bin_bounds,
-                data_labels=data_labels[-3:], outfn=fig_filename)
+    plot_data= dict(fig_data=hist_data[1::2], bin_bounds=bin_bounds,
+                data_labels=data_labels[1::2], suptit= suptit,
+                outfn=fig_filename)
     plot_main(plot_data)
     return
 
@@ -68,25 +66,26 @@ def plot_main(plot_data):
     fig.set_size_inches(6,8.5)  ## (xsize,ysize)
 
     ### Page Title
-    suptit= "Monthly HadISST1 Histogram"
-    fig.suptitle(suptit,fontsize=17,y=0.97,va='bottom') #stretch='semi-condensed'
+    fig.suptitle(plot_data['suptit'],fontsize=17,y=0.97,va='bottom') #stretch='semi-condensed'
 
     ### Parameters for subplot area
+    ncol, nrow = 1, 2.3
+
     left,right,top,bottom= 0.05, 0.95, 0.925, 0.05
-    npnx,gapx,npny,gapy= 1, 0.03, 2.3, 0.09
+    npnx,gapx,npny,gapy= ncol, 0.03, nrow, 0.09
     lx= (right-left-gapx*(npnx-1))/npnx
-    ly= (top-bottom-gapy*(npny-1))/npny; ly2=ly*1.3
+    ly= (top-bottom-gapy*(npny-1))/npny; ly2=ly*(nrow-1)
     ix,iy= left, top
 
     nvars= len(plot_data['fig_data'])
     nbins= len(plot_data['fig_data'][0])
 
     ###-- Top Panel
-    ### Compare strength distribution of phase 3 and 6
+    ### Compare year-to-year distribution
     ax1=fig.add_axes([ix,iy-ly,lx,ly])
     wd=0.8/nvars  # Width of bar
     xlocs= fns.bar_x_locator(wd, data_dim=[nvars,nbins])
-    cc=['deeppink','skyblue','gold','0.7']  # Preset colors for each bars
+    cc=['deeppink','DarkSlateBlue','gold','0.7']  # Preset colors for each bars
 
     ### Draw Bar Plot
     for i,(data,d_label) in enumerate(zip(plot_data['fig_data'],plot_data['data_labels'])):
@@ -94,7 +93,7 @@ def plot_main(plot_data):
                 alpha=0.8, label=d_label)
 
     ### Fine tuning and decorating
-    y_range=[0,25]
+    y_range=[0,28]
     subtit='(a) SST Histogram by Year'
     bar_common(ax1,subtit,x_dim=nbins,xt_labs=plot_data['bin_bounds'],y_range=y_range)
     ax1.set_xlabel('SST (degC)', fontsize=12) #,labelpad=0)
@@ -103,7 +102,7 @@ def plot_main(plot_data):
 
     iy=iy-ly-gapy
     ###-- Bottom Panel
-    ### Stacked bar for all years
+    ### Stacked bar
     ax2=fig.add_axes([ix,iy-ly2,lx,ly2])
     wd=0.8  # Width of bar
     xlocs= fns.bar_x_locator(wd, data_dim=[1, nbins])
@@ -119,7 +118,7 @@ def plot_main(plot_data):
 
     ### Fine tuning and decorating
     y_range=[0,80]
-    subtit='(b) SST Histogram for all years'
+    subtit='(b) SST Histogram stacked'
     bar_common(ax2,subtit, x_dim=nbins, xt_labs=plot_data['bin_bounds'], y_range=y_range)
     ax2.set_xlabel('SST (degC)', fontsize=12) #,labelpad=0)
     ax2.set_ylabel('Percent(%)', fontsize=12)
@@ -127,19 +126,16 @@ def plot_main(plot_data):
 
     ##-- Seeing or Saving Pic --##
 
-    #- If want to see on screen -#
-    plt.show()
-
     #- If want to save to file
     outfnm= plot_data['outfn']
     print(outfnm)
     #fig.savefig(outfnm,dpi=100)   # dpi: pixels per inch
-    #fig.savefig(outfnm,dpi=100,bbox_inches='tight')   # dpi: pixels per inch
-
+    fig.savefig(outfnm,dpi=100,bbox_inches='tight')   # dpi: pixels per inch
     # Defalut: facecolor='w', edgecolor='w', transparent=False
+
+    #- If want to see on screen -#
+    plt.show()
     return
-
-
 
 def bar_common(ax,subtit,x_dim=10,xt_labs=[],y_range=[]):
     """
@@ -172,7 +168,6 @@ def bar_common(ax,subtit,x_dim=10,xt_labs=[],y_range=[]):
     ax.yaxis.set_minor_locator(AutoMinorLocator(2))
     ax.grid(axis='y',color='0.7', linestyle=':', linewidth=1)
     return
-
 
 if __name__ == "__main__":
     main()

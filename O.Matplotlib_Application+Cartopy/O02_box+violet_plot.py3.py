@@ -29,14 +29,16 @@ def main():
     var_names= ['uwnd', 'vwnd']
     wnd_data=[]
     for vn in var_names:
-        data1= fns.read_nc_variable(fid,vn).reshape(-1)
+        data1= fns.read_nc_variable(fid,vn).reshape(-1)  # Return as MaskedArray
         data1= data1.compressed()  # Transform Masked_array into numpy array by removing missings
         wnd_data.append(data1)
 
+    ###--- Plot information
+    suptit="CCMP Surface Wind distribution on 2019.01.01"
     outdir= '../Pics/'
     outfn= outdir+'O02_CCMP_Wind_daily_distribution.{}.box+violin.png'.format(date_txt)
 
-    plot_data= dict(data=wnd_data,var_names=var_names,outfn=outfn)
+    plot_data= dict(data=wnd_data,var_names=var_names,outfn=outfn,suptit=suptit)
     plot_main(plot_data)
 
 
@@ -50,14 +52,14 @@ import matplotlib.patches as mpatches
 def plot_main(plot_data):
     ###--- Plotting Start ---###
     abc='abcdefghijklmn'
+
     ##-- Page Setup --##
     fig = plt.figure()
     fig.set_size_inches(6,8.5)    # Physical page size in inches, (lx,ly)
     fig.subplots_adjust(left=0.06,right=0.94,top=0.92,bottom=0.05,hspace=0.25) #,wspace=0.15)  ### Margins, etc.
 
     ##-- Title for the page --##
-    suptit="CCMP Surface Wind distribution on 2019.01.01"
-    fig.suptitle(suptit,fontsize=17,va='bottom',y=0.975)  #,ha='left',x=0.,stretch='semi-condensed')
+    fig.suptitle(plot_data['suptit'],fontsize=17,va='bottom',y=0.975)  #,ha='left',x=0.,stretch='semi-condensed')
 
     nbins=len(plot_data['data'])
     xind=np.arange(nbins)
@@ -71,7 +73,6 @@ def plot_main(plot_data):
     meanprops = dict(marker='x',markeredgecolor='k',markerfacecolor='k',markersize=10,markeredgewidth=2)
     capprops = dict(linewidth=1.5,color='k')
     whiskerprops= dict(linewidth=1.5,linestyle='-')
-
 
     boxes=[]
     for i in range(nbins):
@@ -119,14 +120,16 @@ def plot_main(plot_data):
     plot_common(ax2,subtit,xind,plot_data['var_names'],y_range)
 
     ##-- Seeing or Saving Pic --##
-    #- If want to see on screen -#
-    plt.show()
 
     #- If want to save to file
     outfnm= plot_data['outfn']
     print(outfnm)
     #fig.savefig(outfnm,dpi=100)   # dpi: pixels per inch
-    #fig.savefig(outfnm,dpi=100,bbox_inches='tight')   # dpi: pixels per inch
+    fig.savefig(outfnm,dpi=100,bbox_inches='tight')   # dpi: pixels per inch
+
+    #- If want to see on screen -#
+    plt.show()
+
     return
 
 def plot_common(ax,subtit,xind,x_ticklabels,y_range):

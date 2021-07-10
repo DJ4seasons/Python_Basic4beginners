@@ -38,10 +38,13 @@ def main():
         print("Shapes are not same:", uwnd.shape, vwnd.shape)
         sys.exit()
 
+    ###--- Plot information
+    suptit="CCMP Surface Wind distribution on 2019.01.01"
+
     outdir= '../Pics/'
     outfn= outdir+'O03_CCMP_Wind_daily_u_vs_v.{}.Scatter+2Dhist.png'.format(date_txt)
 
-    plot_data= dict(data=[uwnd,vwnd],var_names=var_names,outfn=outfn)
+    plot_data= dict(data=[uwnd,vwnd],var_names=var_names,outfn=outfn,suptit=suptit)
     plot_main(plot_data)
 
 
@@ -55,14 +58,14 @@ import matplotlib.patches as mpatches
 def plot_main(plot_data):
     ###--- Plotting Start ---###
     abc='abcdefghijklmn'
+
     ##-- Page Setup --##
     fig = plt.figure()
     fig.set_size_inches(10,5)    # Physical page size in inches, (lx,ly)
     fig.subplots_adjust(left=0.05,right=0.95,top=0.92,bottom=0.1,wspace=0.15)  ### Margins, etc. ,hspace=0.35
 
     ##-- Title for the page --##
-    suptit="CCMP Surface Wind distribution on 2019.01.01"
-    fig.suptitle(suptit,fontsize=16,va='bottom',y=0.98)  #,ha='left',x=0.,stretch='semi-condensed')
+    fig.suptitle(plot_data['suptit'],fontsize=16,va='bottom',y=0.98)  #,ha='left',x=0.,stretch='semi-condensed')
 
     cm=plt.cm.get_cmap('plasma')
     x, y= plot_data['data']
@@ -70,6 +73,7 @@ def plot_main(plot_data):
 
     ##-- Set up an axis --##
     ax1 = fig.add_subplot(1,2,1)   # (# of rows, # of columns, indicater from 1)
+
     props= dict(s=5,marker='o',alpha=0.8,cmap=cm,vmin=0.,vmax=20)
     pic1 = ax1.scatter(x,y,c=spd,**props)
 
@@ -82,15 +86,16 @@ def plot_main(plot_data):
     cb1=fns.draw_colorbar(fig,ax1,pic1,type='horizontal',size='panel',extend='max',gap=0.15,width=0.03)
     cb1.set_ticks(range(0,21,5))
     cb1.set_label('Wind Speed(m/s)',fontsize=11)
+
     ##-- Set up an axis --##
     ax2 = fig.add_subplot(1,2,2)   # (# of rows, # of columns, indicater from 1)
 
-    cm=plt.cm.get_cmap('viridis'); cm.set_under(color='0.8')
+    cm=plt.cm.get_cmap('viridis').copy(); cm.set_under(color='0.8')
     H, xedges, yedges= np.histogram2d(x,y,bins=(9,8))
     H=(H/H.sum()*100.).T; print(H.max(),H.mean())
     X,Y=np.meshgrid(xedges,yedges)
-    props = dict(edgecolor='none',alpha=0.8,vmin=0.1,vmax=10,cmap=cm)
 
+    props = dict(edgecolor='none',alpha=0.8,vmin=0.1,vmax=10,cmap=cm)
     pic2 = ax2.pcolormesh(X,Y,H,**props)
 
     subtit='(c) 2D Histogram'
@@ -113,14 +118,16 @@ def plot_main(plot_data):
     fns.write_val(ax2,H.reshape(-1),xl.reshape(-1),yl.reshape(-1),crt=4.95)
 
     ##-- Seeing or Saving Pic --##
-    #- If want to see on screen -#
-    plt.show()
 
     #- If want to save to file
     outfnm= plot_data['outfn']
     print(outfnm)
     #fig.savefig(outfnm,dpi=100)   # dpi: pixels per inch
-    #fig.savefig(outfnm,dpi=100,bbox_inches='tight')   # dpi: pixels per inch
+    fig.savefig(outfnm,dpi=100,bbox_inches='tight')   # dpi: pixels per inch
+
+    #- If want to see on screen -#
+    plt.show()
+
     return
 
 def plot_common(ax,subtit='',ytlab=True,ytright=False):
