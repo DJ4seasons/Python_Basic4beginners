@@ -28,11 +28,11 @@ For custom installation, use command "pip" (or pip3); e.g., "pip install cartopy
 
 ## Python package/module update
 For conda system, type "conda update <package_name>"  
-  - For Anaconda system, type "conda update all" for update all available packages/modules  
+  - For Anaconda system, type "conda update all" for updating all available packages/modules  
 
 For systems working with pip, type "pip install <package_name> --upgrade"  
 
-If your computer already had Anaconda, and it is not going to update cartopy to 0.18+, the conda needs to be removed and re-installed with newest download.
+If your computer already had Anaconda, and it is not going to update cartopy to 0.18+, the conda needs to be removed and re-installed with the newest download.
 
 All packages/modules used in the codes
 ---
