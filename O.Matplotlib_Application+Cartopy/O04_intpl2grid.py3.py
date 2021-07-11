@@ -39,15 +39,17 @@ def main():
     ##-- Interpolate to 2D grid --##
     from scipy.interpolate import griddata
     resol= 0.2
-    grid_x= np.arange(x_range[0],x_range[1]+resol/2,resol) # x_res=0.1
-    grid_y= np.arange(y_range[0],y_range[1]+resol/2,resol) # y_res=0.1
+    grid_x= np.arange(x_range[0],x_range[1]+resol/2,resol)
+    grid_y= np.arange(y_range[0],y_range[1]+resol/2,resol)
     X,Y= np.meshgrid(grid_x,grid_y)
     Z= griddata((pcs[:,0],pcs[:,1]),strs,(X,Y),method='cubic',fill_value=np.nan)
     print(X.shape,Y.shape,Z.shape) #;sys.exit()
 
     ## Build boundary grid for pcolormesh
-    grid_xb= np.concatenate((grid_x-resol/2,[grid_x[-1]+resol/2,]))
-    grid_yb= np.concatenate((grid_y-resol/2,[grid_y[-1]+resol/2,]))
+    grid_xb= np.insert(grid_x,0,grid_x[0]-resol) + resol/2
+    grid_yb= np.insert(grid_y,0,grid_y[0]-resol) + resol/2
+    #grid_xb= np.concatenate((grid_x-resol/2,[grid_x[-1]+resol/2,]))
+    #grid_yb= np.concatenate((grid_y-resol/2,[grid_y[-1]+resol/2,]))
     Xb,Yb= np.meshgrid(grid_xb,grid_yb)
 
     ###--- Plotting Start ---###

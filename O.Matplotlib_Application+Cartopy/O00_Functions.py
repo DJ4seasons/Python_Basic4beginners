@@ -184,42 +184,6 @@ def write_val(ax,values,xloc,yloc,crt=0,ha='center',va='center'):
             ax.text(xl,yl,pctxt,ha=ha,va=va,stretch='semi-condensed',fontsize=10)
     return
 
-from matplotlib.ticker import MultipleLocator, FixedLocator
-from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
-def map_common(ax,subtit,proj,gl_lab_locator=[False,True,True,False],yloc=10,xloc=30,lon_range=[-180,179]):
-    """ Decorating Cartopy Map
-    """
-    ### Title
-    ax.set_title(subtit,fontsize=13,ha='left',x=0.0)
-    ### Coast Lines
-    ax.coastlines(color='0.5',linewidth=1.)
-    ### Grid Lines
-    # Trick to draw grid lines over dateline; not necessary in Cartopy 0.18.0 or later
-    gl= ax.gridlines(crs=proj, draw_labels=False,
-                    linewidth=0.6, color='gray', alpha=0.5, linestyle='--')
-    gl.xlocator = MultipleLocator(xloc)
-    gl.ylocator = MultipleLocator(yloc)
-
-    gl= ax.gridlines(crs=proj, draw_labels=True,
-                    linewidth=0.6, color='gray', alpha=0.5, linestyle='--')
-
-    ### x and y-axis tick labels
-    gl.xlabels_top,gl.xlabels_bottom,gl.ylabels_left,gl.ylabels_right = gl_lab_locator
-    #gl.xlocator = MultipleLocator(xloc)
-    lon_locs= np.arange(np.ceil(lon_range[0]/xloc)*xloc,lon_range[1]+0.01,xloc)
-    lon_locs[lon_locs>180]-=360
-    gl.xlocator = FixedLocator(lon_locs)  # Test: [120,180,240,300]
-
-    #gl.xlocator = FixedLocator(range(-180,180,xloc))
-    gl.ylocator = MultipleLocator(yloc)
-    gl.xformatter = LONGITUDE_FORMATTER
-    gl.yformatter = LATITUDE_FORMATTER
-    gl.xlabel_style = {'size': 10, 'color': 'k'}
-    gl.ylabel_style = {'size': 10, 'color': 'k'}
-    ### Aspect ratio of map
-    ax.set_aspect('auto') ### 'auto' allows the map to be distorted and fill the defined axes
-    return
-
 def draw_colorbar(fig,ax,pic1,type='vertical',size='panel',gap=0.06,width=0.02,extend='neither'):
     '''
     Type: 'horizontal' or 'vertical'
