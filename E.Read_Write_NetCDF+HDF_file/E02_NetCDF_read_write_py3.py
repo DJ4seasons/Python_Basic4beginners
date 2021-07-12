@@ -82,6 +82,10 @@ def main():
     ## Data variables
     undef= -999.9
     uwndnc= ncfw.createVariable(vars[2],'f4',('time',vars[1],vars[0]))
+    # Useful options of createVariable()
+    # zlib=True, complevel=N  # N= 1 being fastest, 9 being best compression ratio
+    # fill_value= val or False # val for overriding default _FillValue, and False for disabling
+    # https://unidata.github.io/netcdf4-python/#Dataset.createVariable
     uwndnc[:]= data[2].filled(fill_value=undef)  # Change masked array to ndarray with fill_value
     uwndnc.missing_value= undef
 

@@ -64,6 +64,12 @@ def main():
         dset1 = f.create_dataset("lon", data=lons)
         dset2 = f.create_dataset("lat", data=lats)
         dset3 = f.create_dataset(var_names[3], data=prcp, dtype='f4')
+        ## For compression,
+        ## compression= "gzip", compression_opts=N  # N= 0 to 9
+        ## Other compression methods: "lzf", "szip"
+        ## https://docs.h5py.org/en/stable/high/dataset.html#filter-pipeline
+        ## For fill value,
+        ## fillvalue= val or None
 
         f["lon"].dims[0].label='lon'  # Or dset1.dims[0].label
         f["lat"].dims[0].label='lat'

@@ -1,5 +1,9 @@
 """
-Open HDF4 file and draw a map of data
+Matplotlib Application(10)
+Draw maps of satellite Level2 data
+
+PlateCarree
+Orthographic
 
 ---
 MYD04_L2 (Aqua Level2 Aerosol data)
@@ -14,9 +18,9 @@ Daeho Jin
 import sys
 import os.path
 import numpy as np
+import O00_Functions as fns
 
-#from pyhdf.SD import SD, SDC
-'''
+from pyhdf.SD import SD, SDC
 def open_hdf4(fname):
     if not os.path.isfile(fname):
         print("File does not exist:"+fname)
@@ -25,9 +29,6 @@ def open_hdf4(fname):
     hid=SD(fname, SDC.READ)
     print("Open:",fname)
     return hid
-'''
-
-from E03_HDF4_file_header_info_py3 import open_hdf4
 
 def main():
     ##-- Parameters
@@ -53,11 +54,14 @@ def main():
         d[ms_idx]= np.nan
         d= (d-a['add_offset'])*a['scale_factor']
         data[i]=d
-        print(var_names[i],np.nanmin(d),np.nanmax(d),ms_idx.sum())
+        print(var_names[i],d.shape,np.nanmin(d),np.nanmax(d),ms_idx.sum())
 
-    outdir= '../Pics'
-    out_fig_nm= outdir+'E04_MYD04_L2.A2019001.0420.{}.png'.format(var_names[2])
-    plot_data= dict(data=data, var_names=var_names, out_fnm=out_fig_nm)
+    ##-- Info for a plot
+    suptit= 'MODIS Level-2 {}'.format(var_names[2])
+    outdir= '../Pics/'
+    out_fig_nm= outdir+'O10_MYD04_L2.A2019001.0420.{}_onMap.png'.format(var_names[2])
+    plot_data= dict(latlon= data[:2], data=data[2], var_name=var_names[2],
+                    suptit= suptit, out_fnm=out_fig_nm)
     plot_map(plot_data)
 
     return
@@ -67,61 +71,70 @@ def main():
 ###---
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator
-
 import cartopy.crs as ccrs
-from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
 
-def plot_map(plot_data):
+def plot_map(pdata):
 
     fig=plt.figure()
-    fig.set_size_inches(7,6)  ## (xsize,ysize)
+    fig.set_size_inches(8.5,4.5)  ## (xsize,ysize)
+    fig.suptitle(pdata['suptit'],fontsize=17,y=0.97,va='bottom') #stretch='semi-condensed') ## x=0., ha='left'
 
-    ###--- Map Projection
-    proj = ccrs.PlateCarree()
+    abc= 'abcdefghijklmn'
+    nrow,ncol= 1,2
+    fig.subplots_adjust(left=0.06,right=0.94,top=0.95,bottom=0.1,wspace=0.25) #,hspace=0.3 ### Margins, etc.
 
+    data_crs= ccrs.PlateCarree()
+    cm = plt.cm.get_cmap('magma_r')
 
     ###--- Check range of map
-    lat_min, lat_max= np.nanmin(plot_data['data'][0]),np.nanmax(plot_data['data'][0])
-    lon_min, lon_max= np.nanmin(plot_data['data'][1]),np.nanmax(plot_data['data'][1])
-    #proj= ccrs.Orthographic(central_longitude=(lon_min+lon_max)/2, central_latitude=(lat_min+lat_max)/2)  # Doesn't supprt lat/lon labels yet
-
-    #val_min, val_max= np.nanmin(plot_data['data'][2]),np.nanmax(plot_data['data'][2])
-    val_min, val_max= np.nanpercentile(plot_data['data'][2],[5,95])
+    lats,lons= pdata['latlon']
+    lat_min, lat_max= np.nanmin(lats),np.nanmax(lats)
+    lon_min, lon_max= np.nanmin(lons),np.nanmax(lons)
+    center= [(lat_min+lat_max)/2, (lon_min+lon_max)/2]
 
     lat_space, lon_space= (lat_max-lat_min)*0.05, (lon_max-lon_min)*0.05  # 5% extention of map area
     extent_range= [lon_min-lon_space, lon_max+lon_space, lat_min-lat_space, lat_max+lat_space]
 
-    ###--- Color map
-    cm = plt.cm.get_cmap('magma_r')
-    cm.set_bad('0.85')  # <-- Not working in scatter plot
+    #val_min, val_max= np.nanmin(plot_data['data'][2]),np.nanmax(plot_data['data'][2])
+    val_min, val_max= np.nanpercentile(pdata['data'][2],[5,95])
 
-    ax1= fig.add_subplot(111,projection=proj)
-    ax1.set_extent(extent_range,crs=ccrs.PlateCarree())
-    props= dict(vmin=val_min, vmax=val_max, marker='s',s=1,
-                alpha=0.7,cmap=cm,transform=ccrs.PlateCarree())
-    map1= ax1.scatter(plot_data['data'][1],plot_data['data'][0],c=plot_data['data'][2],**props)
+    ###--- Map Projection
+    proj_nms= ['PlateCarree','Orthographic',]
+    mprojs = [ccrs.PlateCarree(central_longitude= center[1]),
+            ccrs.Orthographic(central_longitude= center[1],central_latitude= center[0]),
+            ]
 
-    ### If want to add missing points
-    ms_idx= np.isnan(plot_data['data'][2])
-    map2= ax1.scatter(plot_data['data'][1][ms_idx],plot_data['data'][0][ms_idx],c='0.85',**props)
+    sct_props= dict(vmin=val_min, vmax=val_max, marker='s',s=1,
+                alpha=0.7,cmap=cm,transform=data_crs)
+    ###--- Plot
+    for i,(proj,proj_name) in enumerate(zip(mprojs,proj_nms)):
+        ax1= fig.add_subplot(nrow,ncol,i+1,projection=proj)
 
-    subtit= plot_data['var_names'][2]
-    map_common(ax1,subtit,ccrs.PlateCarree(),xloc=5,yloc=5)
-    draw_colorbar(fig,ax1,map1,type='horizontal',size='panel',gap=0.08,width=0.03,extend='both')
+        ax1.set_extent(extent_range,crs=data_crs)
+        map1= ax1.scatter(lons,lats,c=pdata['data'],**sct_props)
+
+        ### If want to add missing points
+        ms_idx= np.isnan(pdata['data'])
+        map2= ax1.scatter(lons[ms_idx],lats[ms_idx],c='0.85',**sct_props)
+
+        subtit= '({}) {}'.format(abc[i],proj_name)
+        map_common(ax1,subtit,data_crs,xloc=5,yloc=5)
+
+    cb= fns.draw_colorbar(fig,ax1,map1,type='horizontal',size='page',gap=0.12,width=0.03,extend='both')
+
+    #- If want to save to file
+    outfnm = pdata['out_fnm']
+    print(outfnm)
+    #fig.savefig(outfnm,dpi=100)   # dpi: pixels per inch
+    fig.savefig(outfnm,dpi=100,bbox_inches='tight')   # dpi: pixels per inch
+    # Defalut: facecolor='w', edgecolor='w', transparent=False
 
     ##-- Seeing or Saving Pic --##
     plt.show()
 
-    #- If want to save to file
-    outfnm = plot_data['out_fnm']
-    print(outfnm)
-    #fig.savefig(outfnm,dpi=100)   # dpi: pixels per inch
-    #fig.savefig(outfnm,dpi=100,bbox_inches='tight')   # dpi: pixels per inch
-
-    # Defalut: facecolor='w', edgecolor='w', transparent=False
     return
 
-def map_common(ax,subtit,proj,gl_lab_locator=[False,True,True,False],yloc=10,xloc=30):
+def map_common(ax,subtit,proj,yloc=10,xloc=30):
     """ Decorating Cartopy Map
     """
     ### Title
@@ -133,40 +146,14 @@ def map_common(ax,subtit,proj,gl_lab_locator=[False,True,True,False],yloc=10,xlo
                     linewidth=0.6, color='gray', alpha=0.5, linestyle='--')
 
     ### x and y-axis tick labels
-    gl.xlabels_top,gl.xlabels_bottom,gl.ylabels_left,gl.ylabels_right = gl_lab_locator
+    gl.top_labels= False
     gl.xlocator = MultipleLocator(xloc)
     gl.ylocator = MultipleLocator(yloc)
-    gl.xformatter = LONGITUDE_FORMATTER
-    gl.yformatter = LATITUDE_FORMATTER
     gl.xlabel_style = {'size': 10, 'color': 'k'}
     gl.ylabel_style = {'size': 10, 'color': 'k'}
     ### Aspect ratio of map
     #ax.set_aspect('auto') ### 'auto' allows the map to be distorted and fill the defined axes
     return
-
-def draw_colorbar(fig,ax,pic1,type='vertical',size='panel',gap=0.06,width=0.02,extend='neither'):
-    '''
-    Type: 'horizontal' or 'vertical'
-    Size: 'page' or 'panel'
-    Gap: gap between panel(axis) and colorbar
-    Extend: 'both', 'min', 'max', 'neither'
-    '''
-    pos1=ax.get_position().bounds  ##<= (left,bottom,width,height)
-    if type.lower()=='vertical' and size.lower()=='page':
-        cb_ax =fig.add_axes([pos1[0]+pos1[2]+gap,0.1,width,0.8])  ##<= (left,bottom,width,height)
-    elif type.lower()=='vertical' and size.lower()=='panel':
-        cb_ax =fig.add_axes([pos1[0]+pos1[2]+gap,pos1[1],width,pos1[3]])  ##<= (left,bottom,width,height)
-    elif type.lower()=='horizontal' and size.lower()=='page':
-        cb_ax =fig.add_axes([0.1,pos1[1]-gap,0.8,width])  ##<= (left,bottom,width,height)
-    elif type.lower()=='horizontal' and size.lower()=='panel':
-        cb_ax =fig.add_axes([pos1[0],pos1[1]-gap,pos1[2],width])  ##<= (left,bottom,width,height)
-    else:
-        print('Error: Options are incorrect:',type,size)
-        return
-
-    cbar=fig.colorbar(pic1,cax=cb_ax,extend=extend,orientation=type)  #,ticks=[0.01,0.1,1],format='%.2f')
-    cbar.ax.tick_params(labelsize=10)
-    return cbar
 
 if __name__ == "__main__":
     main()
