@@ -156,14 +156,14 @@ print("mean = sum(e)/len(e) = {}".format(sum(e)/len(e)))
 
 print("""
 'eval' function: evaluate string as a python variable
-x1= 1
-x2= 10
-x3= 'a'
+x0= 1
+x1= 10
+x2= 'a'
 xx= [eval('x{}'.format(i)) for i in range(3)]  # Same as xx=[x1,x2,x3]""")
-x1= 1
-x2= 10
-x3= 'a'
-xx= [eval('x{}'.format(i)) for i in range(3)]  # Same as xx=[x1,x2,x3]
+x0= 1
+x1= 10
+x2= 'a'
+xx= [eval('x{}'.format(i)) for i in range(3)]  # Same as xx=[x0,x1,x2]
 print(xx)
 
 input("\nPress Enter to continue... (8-1)\n")

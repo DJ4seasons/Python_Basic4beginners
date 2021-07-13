@@ -41,10 +41,25 @@ def lon_deg2x(lon,lon0,dlon):
     return x
 lat_deg2y = lambda lat,lat0,dlat: ceil((lat-lat0)/dlat)
 
-def read_sst_from_HadISST(yrs=[2015,2019]):
+def get_tgt_latlon_idx(latlons, tgt_lats, tgt_lons):
+    lon0,dlon,nlon= latlons['loninfo']
+    lat0,dlat,nlat= latlons['latinfo']
+    ##-- Regional index
+    if isinstance(tgt_lons,list):
+        lon_idx= [lon_deg2x(ll,lon0,dlon) for ll in tgt_lons]
+        if lon_idx[1]<lon_idx[0]:
+            lon_ids= list(range(lon_idx[0],nlon,1))+list(range(lon_idx[1]))
+        else:
+            lon_ids= np.arange(lon_idx[0], lon_idx[1], 1)
+    else:
+        lon_ids= np.arange(nlon,dtype=int)
+    lat_idx= [lat_deg2y(ll,lat0,dlat) for ll in tgt_lats]
+    return lat_idx, lon_ids
+
+def read_sst_from_HadISST(yrs=[2015,2020],include_ice=False):
     ###--- Parameters
     indir= '../Data/'
-    yrs0= [2015,2019]
+    yrs0= [2015,2020]
     lon0,dlon,nlon= -179.5,1.,360
     lat0,dlat,nlat=  -89.5,1.,180
     mon_per_yr= 12
@@ -56,18 +71,22 @@ def read_sst_from_HadISST(yrs=[2015,2019]):
 
     it= (yrs[0]-yrs0[0])*mon_per_yr
     nmons= (yrs[1]-yrs[0]+1)*mon_per_yr
-    sst= sst[it:it+nmons,:,:]
+    if (it != 0) or (nmons != nt):
+        sst= sst[it:it+nmons,:,:]
     print(sst.shape)
 
     ### We already know that missings are -999.9, and ice-cover value is -10.00.
-    miss_idx= sst<-9.9
+    if include_ice:
+        miss_idx= sst<-11
+    else:
+        miss_idx= sst<-9.9
     sst[miss_idx]= np.nan
 
-    lats= dict(lat0=lat0,dlat=dlat,nlat=nlat)
-    lons= dict(lon0=lon0,dlon=dlon,nlon=nlon)
-    return sst, lats,lons
+    lat_info= dict(lat0=lat0,dlat=dlat,nlat=nlat)
+    lon_info= dict(lon0=lon0,dlon=dlon,nlon=nlon)
+    return sst, lat_info,lon_info
 
-def get_sst_ano_from_HadISST(area_bound,yrs=[2015,2019],remove_AC=True):
+def get_sst_ano_from_HadISST(area_bound,yrs=[2015,2020],remove_AC=True):
     '''
     area_bound= [west,east,south,north] in degrees
     '''
@@ -75,27 +94,23 @@ def get_sst_ano_from_HadISST(area_bound,yrs=[2015,2019],remove_AC=True):
     ### Read SST
     sst, lats, lons= read_sst_from_HadISST(yrs=yrs)
 
-    ### Cut by given area_bound
+    ### Check validity of given area bound
     if area_bound[2]<lats['lat0'] or area_bound[3]>lats['lat0']+lats['dlat']*lats['nlat']:
         print("area_bound is out of limit", area_bound, lats)
         sys.exit()
 
-    lon_idx= [lon_deg2x(lon,lons['lon0'],lons['dlon']) for lon in area_bound[:2]]
-    lat_idx= [lat_deg2y(lat,lats['lat0'],lats['dlat']) for lat in area_bound[2:]]
-    print(lon_idx,lat_idx)
-    if lon_idx[0]>=lon_idx[1]:
-        tmpidx= list(range(lon_idx[0],lons['nlon']))+list(range(0,lon_idx[1]))
-        sst= sst[:,lat_idx[0]:lat_idx[1],tmpidx]
-    else:
-        sst= sst[:,lat_idx[0]:lat_idx[1],lon_idx[0]:lon_idx[1]]
+    ### Cut by given area_bound
+    latlons= dict(latinfo=(lats['lat0'],lats['dlat'],lats['nlat']),
+                    loninfo=(lons['lon0'],lons['dlon'],lons['nlon']))
+    lat_idx, lon_ids = get_tgt_latlon_idx(latlons, area_bound[2:], area_bound[:2])
+    sst= sst[:,lat_idx[0]:lat_idx[1],lon_ids]
 
     ##- Update parameters
     nt,nlat,nlon= sst.shape
-    lons['lon0']= lons['lon0']+lons['dlon']*lon_idx[0]
+    lons['lon0']= lons['lon0']+lons['dlon']*lon_ids[0]
     lons['nlon']= nlon
     lats['lat0']= lats['lat0']+lats['dlat']*lat_idx[0]
     lats['nlat']= nlat
-
 
     ### Remove annual mean
     sstm= sst.mean(axis=0)
@@ -110,23 +125,24 @@ def get_sst_ano_from_HadISST(area_bound,yrs=[2015,2019],remove_AC=True):
 
     return sstano, lats, lons
 
-def get_sst_areamean_from_HadISST(area_bound,yrs= [2015,2019],remove_AC=True):
+def get_sst_areamean_from_HadISST(area_bound,yrs= [2015,2020],remove_AC=True):
     '''
     area_bound= [west,east,south,north] in degrees
     '''
     ### Read SST
     sst, lats, lons= read_sst_from_HadISST(yrs=yrs)
 
-    ### Calculate area mean
-    lon_idx= [lon_deg2x(lon,lons['lon0'],lons['dlon']) for lon in area_bound[:2]]
-    lat_idx= [lat_deg2y(lat,lats['lat0'],lats['dlat']) for lat in area_bound[2:]]
+    ### Check validity of given area bound
+    if area_bound[2]<lats['lat0'] or area_bound[3]>lats['lat0']+lats['dlat']*lats['nlat']:
+        print("area_bound is out of limit", area_bound, lats)
+        sys.exit()
 
-    if lon_idx[0]>lon_idx[1]:
-        tmpidx= list(range(lon_idx[0],lons['nlon']))+list(range(0,lon_idx[1]))
-        am= np.nanmean(sst[:,lat_idx[0]:lat_idx[1],tmpidx],axis=(1,2))
-    else:
-        am= np.nanmean(sst[:,lat_idx[0]:lat_idx[1],lon_idx[0]:lon_idx[1]],axis=(1,2))
-    print(lon_idx+lat_idx,am.shape, am.min(), am.max())  # Check if NaN exists here
+    ### Calculate area mean
+    latlons= dict(latinfo=(lats['lat0'],lats['dlat'],lats['nlat']),
+                    loninfo=(lons['lon0'],lons['dlon'],lons['nlon']))
+    lat_idx, lon_ids = get_tgt_latlon_idx(latlons, area_bound[2:], area_bound[:2])
+    am= np.nanmean(sst[:,lat_idx[0]:lat_idx[1],lon_ids],axis=(1,2))
+    print([lon_ids[0],lon_ids[-1]]+lat_idx,am.shape, am.min(), am.max())  # Check if NaN exists here
 
     if remove_AC:
         ### Remove seasonal cycle
@@ -179,17 +195,18 @@ def read_rmm_text(date_range=[]):
 
 def get_monthly_dates(date1,date2,day=1,include_date2=True):
     '''
-    From date1 to date2 (include or not)
-    yield date monthly
-    "day" indicate defalut day of month
+    From date1 to date2 (include or not), yield date monthly.
+    "day" indicates default day of each month.
     '''
-    yr1,mo1= date1.year, date1.month
-    yr2,mo2= date2.year, date2.month
     mon_per_year=12
+    ## Make sure date1 is before date2
     if date1>date2:
         tmpdate= date1
         date1= date2
         date2= tmpdate
+    yr1,mo1= date1.year, date1.month
+    yr2,mo2= date2.year, date2.month
+
     outdates=[]
     while True:
         outdates.append(date(yr1,mo1,day))

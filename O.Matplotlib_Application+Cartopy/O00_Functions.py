@@ -152,9 +152,9 @@ def read_sst_from_HadISST(yrs=[2015,2020],include_ice=False):
         miss_idx= sst<-9.9
     sst[miss_idx]= np.nan
 
-    lats= dict(lat0=lat0,dlat=dlat,nlat=nlat)
-    lons= dict(lon0=lon0,dlon=dlon,nlon=nlon)
-    return sst, lats,lons
+    lat_info= dict(lat0=lat0,dlat=dlat,nlat=nlat)
+    lon_info= dict(lon0=lon0,dlon=dlon,nlon=nlon)
+    return sst, lat_info,lon_info
 
 
 def bar_x_locator(width,data_dim=[1,10]):

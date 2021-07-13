@@ -25,7 +25,7 @@ import V00_Functions as vf
 
 def main():
     ### Get Nino3.4 Index
-    yrs= [2015,2019]  # Starting year and ending year
+    yrs= [2015,2020]  # Starting year and ending year
     #Nino3.4 (5N-5S, 170W-120W) [-170,-120,-5,5]
     nn34= vf.get_sst_areamean_from_HadISST([-170,-120,-5,5],yrs,remove_AC=True)
     ### And other region
@@ -39,10 +39,10 @@ def main():
     fig.set_size_inches(6,8.5)  ## (xsize,ysize)
     fig.subplots_adjust(hspace=0.3)
     ###--- Suptitle
-    suptit="Lead-Lag Correlation Example [HadISST,2015-19]"
+    suptit="Lead-Lag Correlation Example [HadISST,2015-20]"
     fig.suptitle(suptit,fontsize=15,y=0.95,va='bottom',stretch='semi-condensed')
 
-    maxlag=7
+    maxlag=7  # in months
 
     ax1= fig.add_subplot(211)
     sub_tit= '(a) Ni{}o3.4 vs. TIO'.format('\u00F1')
@@ -57,13 +57,12 @@ def main():
     llcorr_plot(ax1,data,vnames,sub_tit,maxlag=maxlag)
 
     ### Show or save
-    plt.show()
-
     outdir= '../Pics/'
     out_fig_nm= outdir+'V03.llcorr_example.SST_AM+Nino34.png'
     #fig.savefig(outfnm,dpi=100)   # dpi: pixels per inch
-    #fig.savefig(out_fig_nm,dpi=150,bbox_inches='tight')   # dpi: pixels per inch
+    fig.savefig(out_fig_nm,dpi=150,bbox_inches='tight')   # dpi: pixels per inch
     print(out_fig_nm)
+    plt.show()
     return
 
 def llcorr_plot(ax,data,vnames,subtit,maxlag=5):

@@ -95,7 +95,7 @@ print("Value of {} and {}:".format(boo1,boo2))
 print(int(boo1),int(boo2),'\n')
 print("{}+{} = {}".format(boo1,boo2,boo1+boo2))
 print("{}+{} = {}".format(boo1,boo1,boo1+boo1))
-print("{}+{} = {} \n".format(boo2,boo2,boo2+boo2))
+print("{}-{} = {} \n".format(boo2,boo2,boo2-boo2))
 print("{} 'and' {} = {}".format(boo1,boo2,boo1 and boo2))
 print("{} 'or' {} = {}".format(boo1,boo2,boo1 or boo2))
 print("'not' {} = {} \n".format(boo1, not boo1))
@@ -117,10 +117,12 @@ print("\n5. Print format examples")
 print("cf. https://pyformat.info/ \n")
 print("a, b, c = 1, 2, 3.666667")
 a, b, c = 1, 2, 3.666667
+
 print("\nInteger")
 format_test1 = '{}, {:d}, {:3d}, {:03d}'
 print(format_test1)
 print(format_test1.format(a,a,a,a))
+
 print("\nFloat")
 format_test2 = '{}, {:.0f}, {:.3f}, {:7.3f}, {:07.3f}'
 print(format_test2)

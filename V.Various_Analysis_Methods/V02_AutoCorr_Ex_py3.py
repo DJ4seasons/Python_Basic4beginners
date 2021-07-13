@@ -1,5 +1,6 @@
 """
 Calculate auto-correlation of Nino3.4 and SST indices (area mean)
+Function to use: statsmodels.tsa.stattools.acf()
 
 ---
 Data file:  Hadley Centre Sea Ice and Sea Surface Temperature data set (HadISST)
@@ -23,7 +24,7 @@ import V00_Functions as vf
 
 def main():
     ### Get Nino3.4 Index
-    yrs= [2015,2019]  # Starting year and ending year
+    yrs= [2015,2020]  # Starting year and ending year
     #Nino3.4 (5N-5S, 170W-120W) [-170,-120,-5,5]
     nn34= vf.get_sst_areamean_from_HadISST([-170,-120,-5,5],yrs,remove_AC=True)
     ### And other region
@@ -34,11 +35,11 @@ def main():
     ### Plotting setup
     ###---
     fig=plt.figure()
-    fig.set_size_inches(6,5)  ## (xsize,ysize)
+    fig.set_size_inches(6.4,5)  ## (xsize,ysize)
 
     ###--- Suptitle
-    suptit="Auto-correlation Example [HadISST,2015-19]"
-    fig.suptitle(suptit,fontsize=15,y=0.95,va='bottom',stretch='semi-condensed')
+    suptit="Auto-correlation Example [HadISST, 2015-20]"
+    fig.suptitle(suptit,fontsize=15,y=0.94,va='bottom',stretch='semi-condensed')
 
     ax1= fig.add_subplot(111)
     sub_tit= ''
@@ -47,14 +48,12 @@ def main():
     autocorr_plot(ax1,data,vnames,sub_tit)
 
     ### Show or save
-    plt.show()
-
     outdir= '../Pics/'
     out_fig_nm= outdir+'V02.autocorr_example.SST_AM+Nino34.png'
     #fig.savefig(outfnm,dpi=100)   # dpi: pixels per inch
-    #fig.savefig(out_fig_nm,dpi=150,bbox_inches='tight')   # dpi: pixels per inch
+    fig.savefig(out_fig_nm,dpi=150,bbox_inches='tight')   # dpi: pixels per inch
     print(out_fig_nm)
-
+    plt.show()
     return
 
 def autocorr_plot(ax,data,vnames,subtit):
@@ -64,7 +63,7 @@ def autocorr_plot(ax,data,vnames,subtit):
 
     ### auto-corr plot
     for d,vn in zip(data,vnames):
-        ac= ax.plot(acf(d,nlags=min(len(d)-1,160)),label=vn)
+        ac= ax.plot(acf(d,nlags=min(len(d)-1,160)),label=vn,lw=2,alpha=0.85)
 
     ### Title
     ax.set_title(subtit,fontsize=13,ha='left',x=0.0)
@@ -72,7 +71,7 @@ def autocorr_plot(ax,data,vnames,subtit):
     ### Zero lines
     ylim= ax.get_ylim()
     if ylim[0]*ylim[1]<0:
-        ax.axhline(y=0.,ls='--',lw=1,c='k')
+        ax.axhline(y=0.,ls='--',lw=0.8,c='0.75')
     ax.axhline(y=1/np.exp(1),ls='--',lw=1,c='k')  # 1/e; ref. for e-folding time
 
     ### Misc
@@ -80,7 +79,7 @@ def autocorr_plot(ax,data,vnames,subtit):
     ax.set_xlabel('Lags in months',fontsize=12)
     ax.set_ylabel('Correlation Coeff.',fontsize=12)
     ax.tick_params(axis='both',labelsize=10)
-    ax.grid(axis='x',ls='--')
+    ax.grid(axis='x',ls='--',lw=0.8,c='0.75')
 
     return
 

@@ -1,9 +1,10 @@
 """
 Calculate regression slopes between Nino3.4 and SST indices (area mean)
+Function to use: scipy.stats.linregress()
 
 ---
 Data file:  Hadley Centre Sea Ice and Sea Surface Temperature data set (HadISST)
-Binary data file(HadISST) was produced by D04 code
+Binary data file(HadISST) was produced by D05 code
 Source: https://www.metoffice.gov.uk/hadobs/hadisst/data/download.html
 Referece: Rayner, N. A.; Parker, D. E.; Horton, E. B.; Folland, C. K.; Alexander, L. V.;
  Rowell, D. P.; Kent, E. C.; Kaplan, A. (2003) Global analyses of sea surface temperature,
@@ -25,9 +26,9 @@ import V00_Functions as vf
 
 def main():
     ### Get Nino3.4 Index
-    yrs= [2015,2019]  # Starting year and ending year
+    yrs= [2015,2020]  # Starting year and ending year
     #Nino3.4 (5N-5S, 170W-120W) [-170,-120,-5,5]
-    nn34= vf.get_sst_areamean_from_HadISST([-170,-120,-5,5],yrs,remove_AC=False)
+    nn34= vf.get_sst_areamean_from_HadISST([-170,-120,-5,5],yrs,remove_AC=True)
     ### And other regions
     tio= vf.get_sst_areamean_from_HadISST([240,280,-10,0],yrs,remove_AC=True)
     spo= vf.get_sst_areamean_from_HadISST([-170,-120,-40,-30],yrs,remove_AC=True)
@@ -39,9 +40,9 @@ def main():
     fig.set_size_inches(6,8.5)  ## (xsize,ysize)
 
     ###--- Suptitle
-    suptit="Regr. of SST against Ni{}o3.4 [HadISST,2015-19]".format('\u00F1')
-    fig.suptitle(suptit,fontsize=15,y=0.95,va='bottom',stretch='semi-condensed')
-    fig.subplots_adjust(hspace=0.3)
+    suptit="Regr. of SST against Ni{}o3.4 [HadISST, 2015-20]".format('\u00F1')
+    fig.suptitle(suptit,fontsize=15,y=0.97,va='bottom',stretch='semi-condensed')
+    fig.subplots_adjust(top=0.92,hspace=0.3)
 
     ax1= fig.add_subplot(211)
     sub_tit= '(a) Tropical Indian Ocean'
@@ -52,14 +53,12 @@ def main():
     scatter_and_regr_plot(ax2,nn34,spo,sub_tit)
 
     ### Show or save
-    plt.show()
-
     outdir= '../Pics/'
     out_fig_nm= outdir+'V01.regression_example.SST_AMvsNino34.png'
     #fig.savefig(outfnm,dpi=100)   # dpi: pixels per inch
-    #fig.savefig(out_fig_nm,dpi=150,bbox_inches='tight')   # dpi: pixels per inch
+    fig.savefig(out_fig_nm,dpi=150,bbox_inches='tight')   # dpi: pixels per inch
     print(out_fig_nm)
-
+    plt.show()
     return
 
 def scatter_and_regr_plot(ax,x,y,subtit):
