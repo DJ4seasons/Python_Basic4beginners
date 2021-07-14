@@ -22,7 +22,7 @@ import V00_Functions as vf
 
 def main():
     ### Years to read data
-    yrs= [2015,2019]  # Starting year and ending year
+    yrs= [2015,2020]  # Starting year and ending year
 
     ### Get Nino3.4 Index
     #Nino3.4 (5N-5S, 170W-120W) [-170,-120,-5,5]
@@ -57,7 +57,7 @@ def main():
     regr_coef3= np.copy(regr_map)
 
     ### Prepare for plotting
-    suptit="Regr. coef. of SST against Ni{}o3.4 [HadISST,2015-19]".format('\u00F1')
+    suptit="Regr. coef. of SST against Ni{}o3.4 [HadISST,2015-20]".format('\u00F1')
     data= [regr_coef1, regr_coef2, regr_coef3]
     var_names= ['Calc_manually','Using linregress()','Using sklearn.linear_model']
 
@@ -102,7 +102,8 @@ def regr_linregress_1d_vs_2d(arr1d, arr2d):
     regr: coefficients, 1-d array of shape [n]
     """
     from scipy.stats import linregress
-    regr= np.apply_along_axis(lambda y,x: linregress(x,y)[0],0,arr2d,x=arr1d)
+    f= lambda y,x: linregress(x,y)[0]
+    regr= np.apply_along_axis(f,0,arr2d,x=arr1d)
     return regr
 
 def regr_sklearn_1d_vs_2d(arr1d, arr2d):
@@ -145,7 +146,7 @@ def plot_map(pdata):
 
     ###--- Create a figure
     fig=plt.figure()
-    fig.set_size_inches(7,8.5)  ## (xsize,ysize)
+    fig.set_size_inches(6.4,9.6)  ## (xsize,ysize)
 
     ###--- Suptitle
     suptit= pdata['suptit']
@@ -159,7 +160,7 @@ def plot_map(pdata):
     lon0,dlon,nlon= [val for val in pdata['lon_info'].values()]
     lat0,dlat,nlat= [val for val in pdata['lat_info'].values()]
 
-    map_extent= [70.,279.9,-60.1,60.1]  # Range to be shown
+    map_extent= [30.,300,-60,60]  # Range to be shown
     img_range= [lon0-dlon/2,lon0+dlon*(nlon+0.5),lat0-dlat/2,lat0+dlat*(nlat+0.5)]  # Exact range of data, necessary for imshow()
     #xm,ym= np.meshgrid(np.arange(nlon+1)*dlon+lon0-dlon/2, np.arange(nlat+1)*dlat+lat0-dlat/2)  # For pcolormesh()
 
@@ -169,10 +170,10 @@ def plot_map(pdata):
     val_min, val_max= -vmax, vmax
 
     ###--- Color map
-    cm = plt.cm.get_cmap('plasma') #'RdYlBu_r')
+    cm = plt.cm.get_cmap('plasma').copy() #'RdYlBu_r')
     cm.set_bad('0.9')  # For the gridcell of NaN
 
-    left,right,top,bottom= 0.07, 0.97, 0.93, 0.12
+    left,right,top,bottom= 0.06, 0.94, 0.93, 0.12
     npnx,gapx,npny,gapy= 1, 0.05, len(pdata['data']), 0.06
     lx= (right-left-gapx*(npnx-1))/npnx
     ly= (top-bottom-gapy*(npny-1))/npny
@@ -197,14 +198,11 @@ def plot_map(pdata):
     cb.ax.tick_params(labelsize=10)
 
     ##-- Seeing or Saving Pic --##
-    plt.show()
-
-    #- If want to save to file
     outfnm = pdata['out_fnm']
     print(outfnm)
     #fig.savefig(outfnm,dpi=100)   # dpi: pixels per inch
-    #fig.savefig(outfnm,dpi=150,bbox_inches='tight')   # dpi: pixels per inch
-
+    fig.savefig(outfnm,dpi=150,bbox_inches='tight')   # dpi: pixels per inch
+    plt.show()
     return
 
 

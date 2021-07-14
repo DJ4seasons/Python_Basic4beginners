@@ -22,7 +22,7 @@ import V00_Functions as vf
 
 def main():
     ### Years to read data
-    yrs= [2015,2019]  # Starting year and ending year
+    yrs= [2015,2020]  # Starting year and ending year
 
     ### Get Nino3.4 Index
     #Nino3.4 (5N-5S, 170W-120W) [-170,-120,-5,5]
@@ -57,7 +57,7 @@ def main():
     corr_coef3= np.copy(corr_map)
 
     ### Prepare for plotting
-    suptit= "Corr. coef. between SST and Ni{}o3.4 [HadISST,2015-19]".format('\u00F1')
+    suptit= "Corr. coef. between SST and Ni{}o3.4 [HadISST,2015-20]".format('\u00F1')
     data= [corr_coef1, corr_coef2, corr_coef3]
     var_names= ['Calc_manually','Using pearsonr()','Using corrcoef()']
     #lat_info= dict(lat0=lat0,dlat=dlat,nlat=nlat)
@@ -161,14 +161,14 @@ def plot_map(pdata):
     lon0,dlon,nlon= [val for val in pdata['lon_info'].values()]
     lat0,dlat,nlat= [val for val in pdata['lat_info'].values()]
 
-    map_extent= [0.,359.9,-60.1,60.1]  # Range to be shown
+    map_extent= [0.,359.9,-60,60]  # Range to be shown
     img_range= [lon0-dlon/2,lon0+dlon*(nlon+0.5),lat0-dlat/2,lat0+dlat*(nlat+0.5)]  # Exact range of data, necessary for imshow()
 
     ###--- Set range of values to be shown
     val_min, val_max= -1,1  # Because it's correlation coefficient
 
     ###--- Color map
-    cm = plt.cm.get_cmap('Spectral_r')
+    cm = plt.cm.get_cmap('Spectral_r').copy()
     cm.set_bad('0.9')  # For the gridcell of NaN
 
     left,right,top,bottom= 0.07, 0.97, 0.93, 0.12
@@ -201,15 +201,12 @@ def plot_map(pdata):
     cb.ax.tick_params(labelsize=10)
 
     ##-- Seeing or Saving Pic --##
-    plt.show()
-
-    #- If want to save to file
     outfnm = pdata['out_fnm']
     print(outfnm)
     #fig.savefig(outfnm,dpi=100)   # dpi: pixels per inch
-    #fig.savefig(outfnm,dpi=150,bbox_inches='tight')   # dpi: pixels per inch
-
+    fig.savefig(outfnm,dpi=150,bbox_inches='tight')   # dpi: pixels per inch
     # Defalut: facecolor='w', edgecolor='w', transparent=False
+    plt.show()
     return
 
 if __name__ == "__main__":

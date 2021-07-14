@@ -54,7 +54,7 @@ print("\nif x<1 and y>1: print('yes')  # and, or")
 print("Result:")
 if x<1 and y>1: print('yes')
 
-print("\nif 'aa' in 'Hello': print('yes')  # any membership test")
+print("\nif 'll' in 'Hello': print('yes')  # any membership test")
 print("Result:")
 if 'll' in 'Hello': print('yes')
 

@@ -42,7 +42,13 @@ def get_tgt_latlon_idx(latlons, tgt_lats, tgt_lons):
     ##-- Regional index
     if isinstance(tgt_lons,list):
         lon_idx= [lon_deg2x(ll,lon0,dlon) for ll in tgt_lons]
-        if lon_idx[1]<lon_idx[0]:
+        if lon_idx[0]==lon_idx[1]:
+            if tgt_lons[0]!=tgt_lons[1]:
+                lon_ids= np.arange(nlon)+lon_idx[0]
+                lon_ids[lon_ids>=nlon] -= nlon
+            else:
+                lon_ids= [lon_idx,]
+        elif lon_idx[1]<lon_idx[0]:
             lon_ids= list(range(lon_idx[0],nlon,1))+list(range(lon_idx[1]))
         else:
             lon_ids= np.arange(lon_idx[0], lon_idx[1], 1)

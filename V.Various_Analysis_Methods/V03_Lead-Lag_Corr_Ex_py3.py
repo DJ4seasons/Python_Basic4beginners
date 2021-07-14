@@ -124,7 +124,7 @@ def llcorr(ts1,ts2,tlag):
         #r2= np.corrcoef(ts2[1:],ts2[:-1])[0,1]
         #vsum= (1+r1*r2)/(1-r1*r2)
 
-        print(vsum)
+        print("Dependency_level= ",vsum)
         return vsum
 
     def get_cdf_of_beta_distribution(nn,val):

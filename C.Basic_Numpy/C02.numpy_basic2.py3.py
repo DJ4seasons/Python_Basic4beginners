@@ -21,7 +21,7 @@ def show_array_info(a,show_contents=True):
    return
 
 ###--- Start
-print("\n2. characteristics of numpy array")
+print("\n2. Characteristics of numpy array")
 print("\n2-1. Operation of array(s)")
 
 ### Simple operation

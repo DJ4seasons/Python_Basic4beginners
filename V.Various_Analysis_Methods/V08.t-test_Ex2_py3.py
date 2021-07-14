@@ -28,7 +28,7 @@ import V00_Functions as vf
 
 def main():
     ### Years to read data
-    yrs= [2015,2019]  # Starting year and ending year
+    yrs= [2015,2020]  # Starting year and ending year
 
     ### Get SST anomaly
     area_range= [-180,180,-60,60]  # [lon_range, lat_range]
@@ -51,9 +51,9 @@ def main():
     print(dof_coef2.min(),np.median(dof_coef2))
 
     ### Split data for t-test
-    data_prv, data_post= data2test[:36,:], data2test[36:,:]  # First 3 years and later 2 years
+    data_prv, data_post= data2test[:36,:], data2test[36:,:]  # First 3 years and later 3 years
 
-    ### Calculate signi level of t-test by different dof setting
+    ### Calculate significance level of t-test by different dof setting
     p_vals1= get_ttest_pval_2d(dof_coef1,data_prv,data_post)
     p_vals2= get_ttest_pval_2d(dof_coef2,data_prv,data_post)
     p_vals3= get_ttest_pval_2d(np.ones_like(dof_coef1),data_prv,data_post)  # Assume no dependency
@@ -72,8 +72,8 @@ def main():
     ##-- Above bound is based on previous resolution, but it's ok since no change on area_boundary
 
     ### Prepare for plotting
-    suptit="t-test for Mean Diff., 2015-16 vs. 2017-19 [HadISST]"
-    var_names= ['DoF= -Nlog(r1)','DoF= N/(2*Te)','DoF= N']
+    suptit="t-test for Mean Diff., 2015-17 vs. 2018-20 [HadISST]"
+    var_names= ['DoF= -N*log(r1)','DoF= N/(2*Te)','DoF= N']
 
     outdir= '../Pics/'
     out_fig_nm= outdir+'V08.t-test_example_5deg_box.png'
@@ -153,12 +153,12 @@ def plot_map(pdata):
     proj = ccrs.PlateCarree(central_longitude=center)
     data_crs= ccrs.PlateCarree()
 
-    map_extent= [0.,359.9,-60.1,60.1]  # Range to be shown
+    map_extent= [0.,359.9,-60,60]  # Range to be shown
     img_range= pdata['img_bound']
 
     ###--- Set range of values to be shown
     #val_min, val_max= 0,0.5   <-- it is unnecessary for BoundaryNorm
-    p_val_levels= [-0.0001,0.01, 0.02, 0.05, 0.1, 0.2]
+    p_val_levels= [0,0.01, 0.02, 0.05, 0.1, 0.2]
 
     ###--- Color map
     colors= ['darkred','#FA325A','darkorange','forestgreen','#C9CD71']
@@ -185,21 +185,18 @@ def plot_map(pdata):
         vf.map_common(ax1,subtit,data_crs,xloc=60,yloc=20)
 
         iy=iy-ly-gapy
-    cb= vf.draw_colorbar(fig,ax1,map1,type='horizontal',size='panel',gap=0.06)
+    cb= vf.draw_colorbar(fig,ax1,map1,type='horizontal',size='panel',gap=0.06,extend='max')
     cb.set_label('Significance level',fontsize=11)
     cb.ax.set_xticklabels(['{:.0f}%'.format((1-val)*100) for val in p_val_levels])
     cb.ax.tick_params(labelsize=10)
 
     ##-- Seeing or Saving Pic --##
-    plt.show()
-
-    #- If want to save to file
     outfnm = pdata['out_fnm']
     print(outfnm)
     #fig.savefig(outfnm,dpi=100)   # dpi: pixels per inch
-    #fig.savefig(outfnm,dpi=150,bbox_inches='tight')   # dpi: pixels per inch
-
+    fig.savefig(outfnm,dpi=150,bbox_inches='tight')   # dpi: pixels per inch
     # Defalut: facecolor='w', edgecolor='w', transparent=False
+    plt.show()
     return
 
 if __name__ == "__main__":

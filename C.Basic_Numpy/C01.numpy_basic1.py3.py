@@ -76,7 +76,7 @@ print("\nPress Enter to continue... (1-1)\n")
 input("----------------------------------------\n")
 
 print("\n1-2. Transform to numpy array")
-print("Example: lsit to numpy array")
+print("Example: list to numpy array")
 print("a=[[0,1,2],[4,5,6]]  # A list")
 a=[[0,1,2],[4,5,6]]  ### A list
 print('''

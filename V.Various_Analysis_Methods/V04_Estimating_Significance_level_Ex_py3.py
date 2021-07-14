@@ -26,7 +26,7 @@ import V00_Functions as vf
 
 def main():
     ### Get Nino3.4 Index
-    yrs= [2015,2019]  # Starting year and ending year
+    yrs= [2015,2020]  # Starting year and ending year
     #Nino3.4 (5N-5S, 170W-120W) [-170,-120,-5,5]
     nn34= vf.get_sst_areamean_from_HadISST([-170,-120,-5,5],yrs,remove_AC=True)
     ### And other region
@@ -40,7 +40,7 @@ def main():
     fig.set_size_inches(6,8.5)  ## (xsize,ysize)
     fig.subplots_adjust(hspace=0.3)
     ###--- Suptitle
-    suptit="Lead-Lag Correlation Example [HadISST,2015-19]"
+    suptit="Lead-Lag Correlation Example [HadISST,2015-20]"
     fig.suptitle(suptit,fontsize=15,y=0.95,va='bottom',stretch='semi-condensed')
 
     maxlag=7
@@ -60,13 +60,12 @@ def main():
     llcorr_plot(ax1,data,vnames,sub_tit,maxlag=maxlag,corr_crt=corr_crt)
 
     ### Show or save
-    plt.show()
-
     outdir= '../Pics/'
     out_fig_nm= outdir+'V04.estimate_corr_sig_level_example.SST_AM+Nino34.png'
     #fig.savefig(outfnm,dpi=100)   # dpi: pixels per inch
-    #fig.savefig(out_fig_nm,dpi=150,bbox_inches='tight')   # dpi: pixels per inch
+    fig.savefig(out_fig_nm,dpi=150,bbox_inches='tight')   # dpi: pixels per inch
     print(out_fig_nm)
+    plt.show()
     return
 
 def llcorr_plot(ax,data,vnames,subtit,maxlag=5,corr_crt=-1):
@@ -140,7 +139,7 @@ def estimate_significant_corr_coef(ts1,ts2):
         #r2= np.corrcoef(ts2[1:],ts2[:-1])[0,1]
         #vsum= (1+r1*r2)/(1-r1*r2)
 
-        print(vsum)
+        print("Dependency_level= ",vsum)
         return vsum
 
     N= len(ts1)
@@ -155,7 +154,7 @@ def estimate_significant_corr_coef(ts1,ts2):
         idx_pool= np.random.randint(low=0,high=N-int(dependency_level)-2,size=nrand*2)
     else:
         rg = np.random.default_rng(123)  # Set seed number in order to repeat
-        idx_pool= rg.integers(0, N-int(dependency_level)-2, size=nrand*2, endpoint=True)
+        idx_pool= rg.integers(0, N-int(dependency_level)-2, size=nrand, endpoint=True)
 
     corrs=[]
     idx_k=0

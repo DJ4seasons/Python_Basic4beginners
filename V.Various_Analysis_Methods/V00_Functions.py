@@ -47,7 +47,13 @@ def get_tgt_latlon_idx(latlons, tgt_lats, tgt_lons):
     ##-- Regional index
     if isinstance(tgt_lons,list):
         lon_idx= [lon_deg2x(ll,lon0,dlon) for ll in tgt_lons]
-        if lon_idx[1]<lon_idx[0]:
+        if lon_idx[0]==lon_idx[1]:
+            if tgt_lons[0]!=tgt_lons[1]:
+                lon_ids= np.arange(nlon)+lon_idx[0]
+                lon_ids[lon_ids>=nlon] -= nlon
+            else:
+                lon_ids= [lon_idx,]
+        elif lon_idx[1]<lon_idx[0]:
             lon_ids= list(range(lon_idx[0],nlon,1))+list(range(lon_idx[1]))
         else:
             lon_ids= np.arange(lon_idx[0], lon_idx[1], 1)
@@ -221,8 +227,7 @@ def get_monthly_dates(date1,date2,day=1,include_date2=True):
     return outdates
 
 from matplotlib.ticker import MultipleLocator, FixedLocator
-from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
-def map_common(ax,subtit,proj,gl_lab_locator=[False,True,True,False],yloc=10,xloc=30,lon_range=[-180,179]):
+def map_common(ax,subtit,data_crs,gl_lab_locator=[True,True,False,True],yloc=30,xloc=60,lon_range=[-180,179.9]):
     """ Decorating Cartopy Map
     """
     ### Title
@@ -230,30 +235,23 @@ def map_common(ax,subtit,proj,gl_lab_locator=[False,True,True,False],yloc=10,xlo
     ### Coast Lines
     ax.coastlines(color='0.5',linewidth=1.)
     ### Grid Lines
-    # Trick to draw grid lines over dateline; not necessary in Cartopy 0.18.0 or later
-    gl= ax.gridlines(crs=proj, draw_labels=False,
-                    linewidth=0.6, color='gray', alpha=0.5, linestyle='--')
+    prop_gl= dict(linewidth=0.8, color='gray', alpha=0.7, linestyle='--')
+    import cartopy
+    cartopy_version= float(cartopy.__version__[:4])
+    if cartopy_version < 0.18:
+        print("Cartopy Version= {}".format(cartopy_version))
+        print("Caution: This code is optimized for Cartopy version 0.18+")
+        ax.gridlines(crs=data_crs, **prop_gl)
+    else:
+        gl=ax.gridlines(crs=data_crs,draw_labels=True,**prop_gl)
+        gl.left_labels,gl.right_labels,gl.top_labels,gl.bottom_labels= gl_lab_locator
+
+    gl.xlabel_style = {'size': 10}
+    gl.ylabel_style = {'size': 10}
     gl.xlocator = MultipleLocator(xloc)
     gl.ylocator = MultipleLocator(yloc)
-
-    gl= ax.gridlines(crs=proj, draw_labels=True,
-                    linewidth=0.6, color='gray', alpha=0.5, linestyle='--')
-
-    ### x and y-axis tick labels
-    gl.xlabels_top,gl.xlabels_bottom,gl.ylabels_left,gl.ylabels_right = gl_lab_locator
-    #gl.xlocator = MultipleLocator(xloc)
-    lon_locs= np.arange(np.ceil(lon_range[0]/xloc)*xloc,lon_range[1]+0.01,xloc)
-    lon_locs[lon_locs>180]-=360
-    gl.xlocator = FixedLocator(lon_locs)  # Test: [120,180,240,300]
-
-    #gl.xlocator = FixedLocator(range(-180,180,xloc))
-    gl.ylocator = MultipleLocator(yloc)
-    gl.xformatter = LONGITUDE_FORMATTER
-    gl.yformatter = LATITUDE_FORMATTER
-    gl.xlabel_style = {'size': 10, 'color': 'k'}
-    gl.ylabel_style = {'size': 10, 'color': 'k'}
     ### Aspect ratio of map
-    ax.set_aspect('auto') ### 'auto' allows the map to be distorted and fill the defined axes
+    #ax.set_aspect('auto') ### 'auto' allows the map to be distorted and fill the defined axes
     return
 
 def draw_colorbar(fig,ax,pic1,type='vertical',size='panel',gap=0.06,width=0.02,extend='neither'):
