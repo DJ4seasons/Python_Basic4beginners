@@ -198,6 +198,7 @@ print("""
 np.ma.masked_greater(x, value[, copy])
 np.ma.masked_less_equal(x, value[, copy])
 np.ma.masked_outside(x, v1, v2[, copy])
+np.ma.masked_invalid(x[, copy])
 ...
 """)
 

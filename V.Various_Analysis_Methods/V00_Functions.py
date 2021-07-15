@@ -62,6 +62,24 @@ def get_tgt_latlon_idx(latlons, tgt_lats, tgt_lons):
     lat_idx= [lat_deg2y(ll,lat0,dlat) for ll in tgt_lats]
     return lat_idx, lon_ids
 
+def lon_formatter(x,pos):
+    if x>0 and x<180:
+        return "{:.0f}\u00B0E".format(x)
+    elif x>180 and x<360:
+        return "{:.0f}\u00B0W".format(360-x)
+    elif x>-180 and x<0:
+        return "{:.0f}\u00B0W".format(-x)
+    else:
+        return "{:.0f}\u00B0".format(x)
+
+def lat_formatter(x,pos):
+    if x>0:
+        return "{:.0f}\u00B0N".format(x)
+    elif x<0:
+        return "{:.0f}\u00B0S".format(-x)
+    else:
+        return "{:.0f}\u00B0".format(x)
+
 def read_sst_from_HadISST(yrs=[2015,2020],include_ice=False):
     ###--- Parameters
     indir= '../Data/'
