@@ -8,6 +8,9 @@ Referece: Wheeler, M. C., and H. H. Hendon, 2004: An all-season real-time multiv
 an index for monitoring and prediction. Mon. Wea. Rev., 132, 1917-1932. doi:10.1175/1520-0493(2004)132<1917:AARMMI>2.0.CO;2
 
 Daeho Jin
+
+---
+https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.welch.html
 """
 
 import sys
@@ -19,7 +22,7 @@ import V00_Functions as vf
 
 def main():
     ### Get RMM index
-    tgt_dates=(date(2015,1,1),date(2019,12,31))  # Recent 5 years
+    tgt_dates=(date(2010,1,1),date(2020,12,31))  # Recent 5 years
     time_info, pcs, phs, strs, miss_idx= vf.read_rmm_text(tgt_dates)
 
     ### Check missing
@@ -30,7 +33,7 @@ def main():
         print("No missings")
 
     ### Data collected
-    suptit= "Power Spectral Density of MJO Index [2010-19]"
+    suptit= "Power Spectral Density of MJO Index [2010-20]"
     data= [pcs[:,0], pcs[:,1], strs]
     var_names= ['RMM1','RMM2','Amp']
 
@@ -83,15 +86,12 @@ def plot_PS(pdata):
     ax1.xaxis.set_minor_locator(NullLocator())
 
     ##-- Seeing or Saving Pic --##
-    plt.show()
-
-    #- If want to save to file
     outfnm = pdata['out_fnm']
     print(outfnm)
     #fig.savefig(outfnm,dpi=100)   # dpi: pixels per inch
-    #fig.savefig(outfnm,dpi=150,bbox_inches='tight')   # dpi: pixels per inch
-
+    fig.savefig(outfnm,dpi=150,bbox_inches='tight')   # dpi: pixels per inch
     # Defalut: facecolor='w', edgecolor='w', transparent=False
+    plt.show()
     return
 
 

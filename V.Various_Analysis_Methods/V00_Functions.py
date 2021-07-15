@@ -89,7 +89,7 @@ def read_sst_from_HadISST(yrs=[2015,2020],include_ice=False):
     mon_per_yr= 12
     nt= (yrs0[1]-yrs0[0]+1)*mon_per_yr
 
-    infn= indir+"HadISST1.sample.{}-{}.{}x{}x{}.f32dat".format(*yrs,nt,nlat,nlon)
+    infn= indir+"HadISST1.sample.{}-{}.{}x{}x{}.f32dat".format(*yrs0,nt,nlat,nlon)
     sst= bin_file_read2mtx(infn)  # 'dtype' option is omitted because 'f32' is basic dtype
     sst= sst.reshape([nt,nlat,nlon]).astype(float)  # Improve precision of calculation
 

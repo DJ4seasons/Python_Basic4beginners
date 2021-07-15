@@ -18,6 +18,9 @@ Referece: Rayner, N. A.; Parker, D. E.; Horton, E. B.; Folland, C. K.; Alexander
  J. Geophys. Res.Vol. 108, No. D14, 4407, doi:10.1029/2002JD002670 
 
 Daeho Jin
+
+---
+https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.ttest_ind_from_stats.html
 """
 
 import sys

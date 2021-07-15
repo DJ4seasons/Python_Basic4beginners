@@ -23,6 +23,9 @@ Referece: Rayner, N. A.; Parker, D. E.; Horton, E. B.; Folland, C. K.; Alexander
  J. Geophys. Res.Vol. 108, No. D14, 4407, doi:10.1029/2002JD002670 
 
 Daeho Jin
+
+---
+https://docs.scipy.org/doc/scipy/reference/generated/scipy.linalg.svd.html
 """
 
 import sys
@@ -34,7 +37,7 @@ import V00_Functions as vf
 
 def main():
     ### Years to read data
-    yrs= [2015,2019]  # Starting year and ending year
+    yrs= [2015,2020]  # Starting year and ending year
 
     ### Get SST anomaly
     area_range= [-180,180,-60,60]  # [lon_range, lat_range]
@@ -51,24 +54,30 @@ def main():
     ### Degrading data resolution (for convenience)
     scaler=2
     nlat2, nlon2= nlat//scaler, nlon//scaler
-    sstano= sstano.reshape([-1,nlat2,scaler,nlon2,scaler]).swapaxes(2,3).\
-            reshape([-1,nlat2,nlon2,scaler**2]).mean(axis=-1)
+    sstano= sstano.reshape([-1,nlat2,scaler,nlon2,scaler]).mean(axis=(2,4))
 
-    ### Find location of missing values (and non-missing values, too)
-    ms_idx= np.isnan(sstano[0,:,:])  # missing if more than half is missing
+    ### Find location of missing values
+    ms_idx= np.isnan(sstano.mean(axis=0))  # one missing becomes missing
     print("Missing ratio= {:.2f}%".format(ms_idx.sum()/ms_idx.reshape(-1).shape[0]*100))
 
     ### Get PCs and Eigenvectors
-    maxnum=6
+    maxnum=10
     pc, evec, eval= PC_analysis(sstano[:,~ms_idx],maxnum=maxnum)
 
+    '''### Check if it works
+    n1= sstano[:,~ms_idx][:,3600]
+    n2= np.dot(pc,evec)[:,3600]
+    plt.plot(n1); plt.plot(n2)
+    plt.show() ; sys.exit()'''
+
+    ### Restore to lat-lon format
     ev_map= np.full([maxnum,*ms_idx.shape],np.nan)
     ev_map[:,~ms_idx]= evec
     img_bound= [lon0-dlon/2,lon0+dlon*(nlon+0.5),lat0-dlat/2,lat0+dlat*(nlat+0.5)]  # Exact range of data, necessary for imshow()
     ##-- Above bound is based on previous resolution, but it's ok since no change on area_boundary
 
     ### Prepare for plotting
-    suptit= 'PC and EOF of Global SST [HadISST, 2015-19]'
+    suptit= 'PC and EOF of Global SST [HadISST, 2015-20]'
     tgt_nums= [1,2,3]
     mon_list= vf.get_monthly_dates(date(yrs[0],1,1),date(yrs[1],12,31),day=15,include_date2=True)
 
@@ -100,11 +109,11 @@ def PC_analysis(arr2d, maxnum=10):
     nt,nn= arr2d.shape
 
     ### Perform SVD
-    pc, s, evec = svd(arr2d)
-    print(evec.shape, s.shape, pc.shape)
+    pc, s, evec = svd(arr2d,full_matrices=False)
+    print(pc.shape, s.shape, evec.shape)
 
     ### Eigen values
-    eval= s**2/nt
+    eval= s**2/(nt-1)
     trace= np.sum(eval)
     print("\nTrace Sum= {:.3f}".format(trace))
 
@@ -120,7 +129,7 @@ def PC_analysis(arr2d, maxnum=10):
     evec[flip_idx,:]*=-1  # Set bigger value becomes positive
 
     ### Normalizing PC
-    pc= pc[:,:maxnum]*np.sqrt(nt)
+    pc= pc[:,:maxnum]*np.sqrt(nt-1)
     pc[:,flip_idx]*=-1  # Same flipping as eigenvectors
 
     return pc, evec, eval
@@ -141,7 +150,7 @@ def plot_map(pdata):
 
     ###--- Create a figure
     fig=plt.figure()
-    fig.set_size_inches(6,8.5)  ## (xsize,ysize)
+    fig.set_size_inches(6,10)  ## (xsize,ysize)
 
     ###--- Suptitle
     fig.suptitle(pdata['suptit'],fontsize=16,y=0.97,va='bottom',stretch='semi-condensed')
@@ -158,8 +167,8 @@ def plot_map(pdata):
     ax1= fig.add_axes([ix,iy-ly,lx,ly])
     colors= plt.cm.tab10(np.linspace(0.05,0.95,10))
     for i,k in enumerate(pdata['tgt_nums']):
-        ax1.plot_date(pdata['mon_list'],pdata['pc'][:,k],c=colors[i],marker='',
-                lw=1.5,ls='-',label='PC{}'.format(k))
+        ax1.plot_date(pdata['mon_list'],pdata['pc'][:,k],fmt='-',c=colors[i],
+                lw=2.5,alpha=0.85,label='PC{}'.format(k))
     iy=iy-ly-gapy
     subtit= '(a) '
     ax1.set_title(subtit,fontsize=12,ha='left',x=0.0)
@@ -178,7 +187,7 @@ def plot_map(pdata):
     proj = ccrs.PlateCarree(central_longitude=center)
     data_crs= ccrs.PlateCarree()
 
-    map_extent= [0.,359.9,-60.1,60.1]  # Range to be shown
+    map_extent= [0.,359.9,-61,61]  # Range to be shown
     img_range= pdata['img_bound']
 
     val_max= max(np.nanmin(pdata['ev_map'])*-1,np.nanmax(pdata['ev_map']))
@@ -186,7 +195,7 @@ def plot_map(pdata):
     abc='abcdefgh'
 
     ###--- Color map
-    cm = plt.cm.get_cmap('RdBu_r')
+    cm = plt.cm.get_cmap('RdBu_r').copy()
     cm.set_bad('0.9')  # For the gridcell of NaN
 
     props= dict(vmin=val_min, vmax=val_max, origin='lower',
@@ -198,21 +207,18 @@ def plot_map(pdata):
         map1= ax2.imshow(data,**props)
 
         subtit= '({}) EOF{}'.format(abc[i+1],k)
-        vf.map_common(ax2,subtit,data_crs,xloc=60,yloc=20,gl_lab_locator=[False,True,True,True])
+        vf.map_common(ax2,subtit,data_crs,xloc=60,yloc=20,gl_lab_locator=[True,True,False,True])
 
         iy=iy-ly-gapy
-    vf.draw_colorbar(fig,ax2,map1,type='horizontal',size='panel',gap=0.06,extend='both')
+    vf.draw_colorbar(fig,ax2,map1,type='horizontal',size='panel',gap=0.06,extend='both',width=0.02)
 
     ##-- Seeing or Saving Pic --##
-    plt.show()
-
-    #- If want to save to file
     outfnm = pdata['out_fnm']
     print(outfnm)
     #fig.savefig(outfnm,dpi=100)   # dpi: pixels per inch
-    #fig.savefig(outfnm,dpi=150,bbox_inches='tight')   # dpi: pixels per inch
-
+    fig.savefig(outfnm,dpi=150,bbox_inches='tight')   # dpi: pixels per inch
     # Defalut: facecolor='w', edgecolor='w', transparent=False
+    plt.show()
     return
 
 if __name__ == "__main__":
