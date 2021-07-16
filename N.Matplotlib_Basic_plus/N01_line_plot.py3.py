@@ -52,7 +52,7 @@ abc='abcdefghijklmnopqr'
 
 ##-- Line setting for plot --##
 color_names = ['b','g','r','c','m','y','k','0.7'];lcn=len(color_names)
-markers = ['o','^','d','s','D','*','+','x',''];lmk=len(markers)
+markers = ['o','^','d','s','D','*','+','x',''];lmk=len(markers)  # https://matplotlib.org/stable/api/markers_api.html
 line_styles = ['-','--',':','-.',''];lls=len(line_styles)
 
 ###--- Plotting Start ---###
@@ -78,15 +78,16 @@ for i in range(nrow*ncol):
     ax1 = fig.add_axes([ix,iy-lpny,lpnx,lpny])  # [left,bottom,width,height]
 
     ##-- Plot on an axes --##
+    msize, lw = 2+i, 0.5+i*0.3
     props=dict(color=color_names[i%lcn],marker=markers[i%lmk],
-            linestyle=line_styles[i%lls],markersize=2+i,linewidth=0.5+i*0.3)
+            linestyle=line_styles[i%lls],markersize=msize,linewidth=lw)
     ax1.plot(x,y,**props)
     ### No Marker: just remove "marker=something"
     ### No Line: add "linestyle='None'"
 
 
     ##-- Title for each panel --##
-    subtit='({}) Msize={}, lw={:.1f}'.format(abc[i],2+i,0.5+i*0.2)
+    subtit='({}) Msize={}, lw={:.1f}'.format(abc[i],msize,lw)
     #plot_common2(ax,subtit='',ytlab=True,ytright=False)
 
     if i==ncol*(nrow-1):

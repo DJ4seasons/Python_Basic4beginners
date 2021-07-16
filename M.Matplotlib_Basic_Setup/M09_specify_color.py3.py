@@ -43,8 +43,9 @@ color3+= ['xkcd:{}'.format(cn) for cn in ['maroon','pale pink','grey blue','sage
 color4= [(0, 191/255, 1), (1,0.5,0.1),'#00ff00','#c5b0d5','crimson','aquamarine','mediumseagreen']
 #<--- (r,g,b), hex code, or any HTML color names (X11/CSS4 colors)
 
-### Pick colors from pre-defined colormap; https://matplotlib.org/stable/tutorials/colors/colormaps.html
-cmap= plt.cm.get_cmap('magma',10)
+### Pick colors from pre-defined colormap
+### https://matplotlib.org/stable/tutorials/colors/colormaps.html
+cmap= plt.cm.get_cmap('magma',10)  # Default: 256 RGBA list
 cmap= cmap(np.arange(10))  # Results in np.ndarray, [10,4]
 color5= list(cmap)
 

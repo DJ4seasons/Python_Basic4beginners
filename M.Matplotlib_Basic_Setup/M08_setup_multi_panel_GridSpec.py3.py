@@ -59,10 +59,10 @@ fig.set_size_inches(8.5,6)    # Physical page size in inches, (lx,ly)
 
 gs_spec0= dict(left=0.05,right=0.95,top=0.92,bottom=0.5,hspace=0.75,wspace=0.45)
 gs_spec1= dict(left=0.05,right=0.95,top=0.3,bottom=0.05)
-gs0= fig.add_gridspec(ncols=4,nrows=2,**gs_spec0)  # Matplotlib ver. 3.3+
-gs1= fig.add_gridspec(ncols=1,nrows=1,**gs_spec1)  # Matplotlib ver. 3.3+
-#gs0= gridspec.GridSpec(ncols=4,nrows=2,**gs_spec0)
-#gs1= gridspec.GridSpec(ncols=1,nrows=1,**gs_spec1)
+gs0= fig.add_gridspec(nrows=2,ncols=4,**gs_spec0)  # Matplotlib ver. 3.3+
+gs1= fig.add_gridspec(nrows=1,ncols=1,**gs_spec1)  # Matplotlib ver. 3.3+
+#gs0= gridspec.GridSpec(nrows=2,ncols=4,**gs_spec0)
+#gs1= gridspec.GridSpec(nrows=1,ncols=1,**gs_spec1)
 
 ##-- Title for the page --##
 suptit="GridSpec Example"

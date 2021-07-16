@@ -16,17 +16,19 @@ x = y = np.linspace(0,1,6)  # For 5x5 array
 X,Y = np.meshgrid(x,y)
 Z = np.cos(np.pi/2*X)-np.sin(np.pi/2*Y)
 resol= x[1]-x[0]
-xp = yp = np.concatenate((x-resol/2,[x[-1]+resol/2,]))
-Xp1,Yp1 = np.meshgrid(xp,yp)  # Grid wrapping data points; needed for pcolormesh
+#x_b = y_b = np.concatenate((x-resol/2,[x[-1]+resol/2,]))
+x_b = y_b = np.append(x-resol/2,x[-1]+resol/2)
+X_b1,Y_b1 = np.meshgrid(x_b,y_b)  # Grid wrapping data points; needed for pcolormesh
 
 x2 = y2 = np.linspace(0,1,11)  # For 10x10 array
 X2,Y2 = np.meshgrid(x2,y2)
 Z2 = np.cos(np.pi/2*X2)-np.sin(np.pi/2*Y2)
 resol= x2[1]-x2[0]
-xp2 = yp2 = np.concatenate((x2-resol/2,[x2[-1]+resol/2,]))
-Xp2,Yp2 = np.meshgrid(xp2,yp2)  # Grid wrapping data points; needed for pcolormesh
+#x_b2 = y_b2 = np.concatenate((x2-resol/2,[x2[-1]+resol/2,]))
+x_b2 = y_b2 = np.append(x2-resol/2,x2[-1]+resol/2)
+X_b2,Y_b2 = np.meshgrid(x_b2,y_b2)  # Grid wrapping data points; needed for pcolormesh
 
-data= [(Xp1,Yp1,Z), (X,Y,Z), (Xp2,Yp2,Z2), (X2,Y2,Z2),]
+data= [(X_b1,Y_b1,Z), (X,Y,Z), (X_b2,Y_b2,Z2), (X2,Y2,Z2),]
 ##<---- Different grid information is needed by shading method!
 
 ###---
@@ -40,7 +42,7 @@ fig.set_size_inches(6,6)    # Physical page size in inches, (lx,ly)
 fig.subplots_adjust(left=0.05,right=0.95,bottom=0.05,top=0.925,wspace=0.2,hspace=0.3)
 
 ##-- Title for the page --##
-suptit="Imshow Example"
+suptit="Pcolormesh Example"
 fig.suptitle(suptit,fontsize=15,y=0.98,va='bottom')  #,ha='left',x=0.,y=0.98,stretch='semi-condensed')
 
 panel_names= ['Default',"shading='gouraud'",'Default',"shading='gouraud'",]

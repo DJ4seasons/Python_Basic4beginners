@@ -71,7 +71,7 @@ panel_names= ['cmap="magma"','set_under/over', 'cmap_r', 'Cut a cmap',
             'Combine two cmaps', 'Add white at the end']
 
 cmap1= plt.cm.get_cmap('magma')
-cmap2= cmap1.copy()  #plt.cm.get_cmap('magma')
+cmap2= cmap1.copy()  #plt.cm.get_cmap('magma'); cmap.copy() is from ver. 3.4
 cmap2.set_under(color='0.8'); cmap2.set_over(color='0.2')
 cmap3= plt.cm.get_cmap('magma_r')
 

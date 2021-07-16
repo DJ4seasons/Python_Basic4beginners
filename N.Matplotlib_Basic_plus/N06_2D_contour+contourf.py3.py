@@ -22,7 +22,7 @@ x2 = y2 = np.linspace(0,1,11)  # For 10x10 array
 X2,Y2 = np.meshgrid(x2,y2)
 Z2 = np.cos(np.pi/2*X2)-np.sin(np.pi/2*Y2)
 
-data= [(X,Y,Z), (x2,y2,Z2),]
+data= [(X,Y,Z), (x2,y2,Z2),]  # 2D and 1D, both working!
 
 ###---
 

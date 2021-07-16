@@ -47,9 +47,9 @@ def get_tgt_latlon_idx(latlons, tgt_lats, tgt_lons):
                 lon_ids= np.arange(nlon)+lon_idx[0]
                 lon_ids[lon_ids>=nlon] -= nlon
             else:
-                lon_ids= [lon_idx,]
+                lon_ids= np.array([lon_idx,])
         elif lon_idx[1]<lon_idx[0]:
-            lon_ids= list(range(lon_idx[0],nlon,1))+list(range(lon_idx[1]))
+            lon_ids= np.arange(lon_idx[0]-nlon,lon_idx[1],1)
         else:
             lon_ids= np.arange(lon_idx[0], lon_idx[1], 1)
     else:
@@ -58,6 +58,9 @@ def get_tgt_latlon_idx(latlons, tgt_lats, tgt_lons):
     return lat_idx, lon_ids
 
 def lon_formatter(x,pos):
+    if x<=-180: x+=360
+    elif x>=360: x-=360
+    
     if x>0 and x<180:
         return "{:.0f}\u00B0E".format(x)
     elif x>180 and x<360:
