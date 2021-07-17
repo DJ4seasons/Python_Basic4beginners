@@ -117,7 +117,7 @@ for i in range(nrow*ncol):
 
 #- If want to save to file
 outdir = "../Pics/"
-outfnm = outdir+"N02_legend_ex.png"
+outfnm = outdir+"N10_legend_ex.png"
 print(outfnm)
 #fig.savefig(outfnm,dpi=100)   # dpi: pixels per inch
 fig.savefig(outfnm,dpi=100,bbox_inches='tight')   # dpi: pixels per inch

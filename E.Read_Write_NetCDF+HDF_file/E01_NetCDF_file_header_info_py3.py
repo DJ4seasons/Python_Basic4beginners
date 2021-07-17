@@ -17,10 +17,10 @@ def main():
     indir= '../Data/'
 
     ### netCDF3 example:
-    #fname= indir+'AMO_HADLEY.1870-2010.CLM_1901-1970.nc'
+    fname= indir+'AMO_HADLEY.1870-2010.CLM_1901-1970.nc'
 
     ### netCDF4 example:
-    fname= indir+'CCMP_Wind_Analysis_20190101_V02.0_L3.0_RSS.nc'
+    #fname= indir+'CCMP_Wind_Analysis_20190101_V02.0_L3.0_RSS.nc'
 
     ### Open netcdf file
     nc_f= open_netcdf(fname)
@@ -52,9 +52,19 @@ def print_netcdf_details(nc_fid):
 
     ###--- Variables
     print("\n*** Variables ***")
-    for var in nc_fid.variables:
-        print(nc_fid.variables[var])
-        print('')
+    print(type(nc_fid.variables))
+    var_names= list(nc_fid.variables.keys())
+    for i, vn in enumerate(var_names):
+        print("{:3d}: {}".format(i+1,vn))
+
+    ##-- Select a variable to see the details
+    while True:
+        answer= input("\nIf want to attribute details, type the number of variable.\n")
+        if answer.isnumeric() and (int(answer)>0 and int(answer)<=len(var_names)):
+            vnm= var_names[int(answer)-1]
+            print(nc_fid.variables[vnm])
+        else:
+            break
 
     ###--- Attributes
     print("\n*** Global Attributes ***")

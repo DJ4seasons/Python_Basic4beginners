@@ -10,6 +10,8 @@ Reference:
 https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.text.html
 https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.figtext.html
 https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.annotate.html
+- For mathematical expressions:
+https://matplotlib.org/stable/tutorials/text/mathtext.html
 '''
 import numpy as np
 import matplotlib.pyplot as plt
@@ -56,15 +58,18 @@ ax1.axhline(y=0.,color='k',linestyle=':')
 ax1.axvline(x=0.,color='k',ls=':',lw=0.5)
 
 ##-- Text and Annotation --##
-ax1.text(0.,16.,'Normal Text',ha='left',va='center',color='r')  # Data Coordinate by default
+ax1.text(0.,16.,'Normal Text',ha='left',va='center',color='r',fontsize=12)
+#<-- Data Coordinate by default. For "axes fraction," set "transform=ax.transAxes"
+ax1.annotate('Normal Text by annotate()',xy=(0.1,0.84),xycoords='axes fraction',
+            ha='left',va='center',color='b',fontsize=12)
 
 pos1=ax1.get_position().bounds  ##<= (left,bottom,width,height); Fraction in figure
-plt.figtext(pos1[0]+pos1[2]*0.15,pos1[1]+pos1[3]*0.75,'Figtext: Text in Pink Box',
+plt.figtext(pos1[0]+pos1[2]*0.15,pos1[1]+pos1[3]*0.7,'Figtext: Text in Pink Box',
             backgroundcolor='pink',color='k',fontsize=12,
             ha='left',va='bottom')   # Figure Coordinate by default
 
 ax1.annotate(r'$y=x^2$', xy=(3., 9.),  xycoords='data',
-             xytext=(3.5,4.), textcoords='data', size=12,
+             xytext=(3.5,4.), textcoords='data', fontsize=12,
              arrowprops=dict(arrowstyle="->", connectionstyle="arc3,rad=0.5"))
 ## Coords: 'figure fraction', 'axes fraction', 'data', etc.
 ## For numerical expression in Matplotlib, see https://matplotlib.org/stable/tutorials/text/mathtext.html

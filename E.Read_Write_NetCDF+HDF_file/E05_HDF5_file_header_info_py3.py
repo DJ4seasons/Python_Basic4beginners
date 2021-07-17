@@ -32,11 +32,13 @@ def main():
     for i,key_name in enumerate(h5keys):
         print("{}: {}".format(i,key_name))
 
-    it=2  # Specific number of variable
-    hdf_key_details(hdf_f, h5keys[it])
-
-    it=13
-    hdf_key_details(hdf_f, h5keys[it])
+    ##-- Select a variable to see the details
+    while True:
+        answer= input("\nIf want to attribute details, type the number of variable.\n")
+        if answer.isnumeric() and (int(answer)>0 and int(answer)<=len(h5keys)):
+            hdf_key_details(hdf_f, h5keys[int(answer)-1])
+        else:
+            break
 
     hdf_f.close()
     return

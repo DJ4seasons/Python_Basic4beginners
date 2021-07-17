@@ -92,7 +92,7 @@ def main():
 
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator,AutoMinorLocator,FuncFormatter
-from matplotlib.dates import DateFormatter
+from matplotlib.dates import DateFormatter, MonthLocator
 def plot_main(pdata):
     mx,my= pdata['m_data']
     dx,dy= pdata['d_data']
@@ -116,9 +116,10 @@ def plot_main(pdata):
     ax1.plot(mx,my,c='C1',marker='^',markersize=10,lw=2,alpha=0.9,label=data_labels[0])
 
     ax1.xaxis.set_major_formatter(DateFormatter("%Y.%m"))
-    ax1.xaxis.set_minor_locator(AutoMinorLocator(2))
+    ax1.xaxis.set_major_locator(MonthLocator(interval=2))
+    ax1.xaxis.set_minor_locator(MonthLocator())
 
-    ax1.set_ylim(-2.,2.)
+    ax1.set_ylim(-1.5,1.5)
     ax1.yaxis.set_minor_locator(AutoMinorLocator(2))
     ax1.set_ylabel('(degC)',fontsize=11)
 

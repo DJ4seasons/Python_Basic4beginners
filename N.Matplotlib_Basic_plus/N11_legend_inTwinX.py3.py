@@ -9,6 +9,12 @@ Reference:
 https://matplotlib.org/stable/api/axes_api.html#twinning-and-sharing
 https://matplotlib.org/stable/tutorials/intermediate/legend_guide.html
 https://matplotlib.org/stable/api/figure_api.html#matplotlib.figure.Figure.legend
+
+- For double twinx(), i.e. three(3) y-axis, see:
+https://matplotlib.org/stable/gallery/ticks_and_spines/multiple_yaxis_with_spines.html#sphx-glr-gallery-ticks-and-spines-multiple-yaxis-with-spines-py
+
+- For mathematical expressions:
+https://matplotlib.org/stable/tutorials/text/mathtext.html
 '''
 import numpy as np
 import matplotlib.pyplot as plt
@@ -43,32 +49,34 @@ line1=ax1.plot(x,y1,marker='^',label='1/x')  # plotting line graph1
 line2=ax1.plot(x,y2,marker='o',label='x^2')  # plotting line graph2
 subtit= '(a) Two lines in one axes'
 ax1.set_title(subtit,fontsize=13,x=0,ha='left')
-ax1.legend(loc='best')
+ax1.legend(loc='best',fontsize=11)
 
 ###--- Panel2: Applying twinx()
 ax2 = fig.add_subplot(nrow,ncol,2)
 ax2b = ax2.twinx()  # New axes shares the x-axis of ax1
 
-line1=ax2.plot(x,y1,marker='^',label='1/x')  # plotting line graph1
-line2=ax2b.plot(x,y2,marker='o',label='x^2')  # plotting line graph2
-subtit= '(b) Two lines in x-shared axes'
+line1=ax2.plot(x,y1,marker='v',label=r'$\frac{1}{x}$')  # plotting line graph1
+line2=ax2b.plot(x,y2,marker='s',label=r'$x^2$')  # plotting line graph2
+subtit= '(b) Two lines in twinx() setting'
 ax2.set_title(subtit,fontsize=13,x=0,ha='left')
-ax2.legend(loc='best')
-ax2b.legend(loc='best')
+ax2.legend(loc='best',fontsize=11)
+ax2b.legend(loc='best',fontsize=11)
 
 ###--- Panel3: Same twinx() but with legend handler
 ax3 = fig.add_subplot(nrow,ncol,3)
 ax3b = ax3.twinx()  # New axes shares the x-axis of ax1
 
-line1=ax3.plot(x,y1,marker='^',label='1/x')  # plotting line graph1
-line2=ax3b.plot(x,y2,marker='o',label='x^2')  # plotting line graph2
-subtit= '(c) Two lines in x-shared axes'
+line1=ax3.plot(x,y1,marker='<',label=r'$\frac{1}{x}$')  # plotting line graph1
+line2=ax3b.plot(x,y2,marker='*',label=r'$x^2$')  # plotting line graph2
+subtit= '(c) Two lines in twinx() setting + legend handles'
 ax3.set_title(subtit,fontsize=13,x=0,ha='left')
 
 ## Combine two legend boxes
 lines, labels = ax3.get_legend_handles_labels()
 lines2, labels2 = ax3b.get_legend_handles_labels()
-ax3.legend(lines + lines2, labels + labels2, loc='upper center', ncol=2)
+ax3.legend(lines + lines2, labels + labels2, loc='upper center', ncol=2,fontsize=11)
+# Or simpler version:
+#ax3.legend(handles=[line1[0],line2[0]], loc='upper center', ncol=2)
 
 ###--- Legend for whole figure
 fig.legend(bbox_to_anchor=(0.5, 0.03), loc='upper center',fontsize=11,

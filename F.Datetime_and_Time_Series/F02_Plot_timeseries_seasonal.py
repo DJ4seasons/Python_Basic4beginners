@@ -17,7 +17,7 @@ import F00_common_functions as fns
 
 def main():
     ### Parameters
-    tgt_dates= (date(2010,11,1),date(2021,3,1))
+    tgt_dates= (date(2010,12,1),date(2021,2,28))
     tgt_dates_str= [dd.strftime('%Y/%m') for dd in tgt_dates]  # See Reference above
     mon_per_yr= 12
     times= fns.get_months(*tgt_dates,include_end=True)
@@ -27,7 +27,7 @@ def main():
     sn_names= ['DJF','MAM','JJA','SON']
     sn_idx= 0
     imon_idx= 13-tgt_dates[0].month + sn_idx*3  # Index for center month of season
-    if imon_idx>=12: imon_idx-=12
+    #if imon_idx>=12: imon_idx-=12
 
     ### Read QBO
     infn_qbo= indir+'data_qbo_u50.txt'
@@ -86,8 +86,9 @@ def plot_main(pdata):
 
     ### Plot time series
     ax1= fig.add_subplot(111)
-    ax1b= ax1.twinx()
     ax1.bar(xt,yy[0],width=300,color='C0',label=data_labels[0],alpha=0.7)  # Use left y-axis
+
+    ax1b= ax1.twinx()
     ax1b.plot(xt,yy[1],c='C1',lw=1.5,alpha=0.9,label=data_labels[1])  # Use right y-axis
     ax1b.plot(xt,yy[2]*2,c='C5',lw=1.5,alpha=0.9,label=data_labels[2]+'x2') # Use right y-axis
 
@@ -99,14 +100,16 @@ def plot_main(pdata):
     ax1.xaxis.set_minor_locator(AutoMinorLocator(2))
 
     ax1.set_ylim(-25,25)
-    ax1b.set_ylim(-2.5,2.75)
     ax1.yaxis.set_minor_locator(AutoMinorLocator(2))
-    ax1b.yaxis.set_minor_locator(AutoMinorLocator(2))
     ax1.set_ylabel('(m/s)',fontsize=11)
+
+    ax1b.set_ylim(-2.5,2.75)
+    ax1b.yaxis.set_minor_locator(AutoMinorLocator(2))
     ax1b.set_ylabel('(degC)',fontsize=11,rotation=-90,va='bottom')
 
     ax1.grid()
     ax1.axhline(y=0,c='k',lw=0.8)
+    ### Legend for twinx() case
     fig.legend(bbox_to_anchor=(0.06, 0.075), loc='lower left',fontsize=11,
                ncol=3, borderaxespad=0.)
 
