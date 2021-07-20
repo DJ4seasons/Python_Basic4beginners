@@ -64,16 +64,16 @@ def main():
     ncfw= Dataset(outfn, "w", format="NETCDF4")
 
     ## Dimensions
-    ln= ncfw.createDimension(vars[0],data[0].shape[0])  # Create a container
+    ln= ncfw.createDimension(vars[0],data[0].shape[0])  # Define a dim of container
     lt= ncfw.createDimension(vars[1],data[1].shape[0])
     times= [tgt_date,]
     tm= ncfw.createDimension('time',len(times))
 
-    lonnc= ncfw.createVariable(vars[0],'f4',(vars[0],))
+    lonnc= ncfw.createVariable(vars[0],'f4',(vars[0],))  # Create a container
     latnc= ncfw.createVariable(vars[1],'f4',(vars[1],))
     timenc= ncfw.createVariable('time','f8',('time',))
 
-    lonnc[:], latnc[:]= data[0].astype(np.float32), data[1].astype(np.float32)
+    lonnc[:], latnc[:]= data[0].astype(np.float32), data[1].astype(np.float32)  # Assign values to container
     lonnc.units, latnc.units= 'degrees_east', 'degrees_north'
     timenc.units = 'hours since 0001-01-01 00:00:00.0'
     timenc.calendar = 'gregorian'

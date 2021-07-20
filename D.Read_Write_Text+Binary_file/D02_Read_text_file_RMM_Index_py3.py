@@ -30,7 +30,7 @@ import numpy as np
 def main():
     indir= '../Data/'
     infn= indir+'rmm.74toRealtime.txt'
-    test_idx= 1000
+    test_idx= 1000  # Line number to be printed as a sample
 
     print("* Method1")
     rmm_data= read_rmm_manual(infn)

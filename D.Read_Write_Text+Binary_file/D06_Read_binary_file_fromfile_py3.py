@@ -35,6 +35,9 @@ def main():
     infn= indir+"HadISST1.sample.{}-{}.{}x{}x{}.f32dat".format(*yrs,nt,nlat,nlon)
     sst= bin_file_read2mtx(infn)  # 'dtype' option is omitted because 'f32' is basic dtype
     print("After reading, ",sst.shape)
+    
+    ### The order of grads readable file: x -> y -> z -> var -> t
+    ### In python, dimension order is reversed
     sst= sst.reshape([nt,nlat,nlon])
     print("After reshaping, ",sst.shape)
 

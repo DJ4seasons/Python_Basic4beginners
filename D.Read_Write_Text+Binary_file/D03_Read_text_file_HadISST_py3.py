@@ -101,7 +101,7 @@ def read_hadisst_manually(fname):
     time_info, vals = [], []
     width= 6  # Values are of fixed width in the text file
     with open(fname,'r') as f:
-        for i,line in enumerate(f):
+        for line in f:
             if len(line)<50:  # Distinguish monthly header from sst data
                 ww=line.strip().split()
                 time_info.append([int(item) for item in ww[:3]])

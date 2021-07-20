@@ -64,6 +64,7 @@ def main():
 
     arr1 = np.asarray(all_words)
     print("Method 1: ",arr1.shape)
+    ## Or test "all_words.append(ww)" and "arr1= np.asfarray(all_words)"
 
     ###----
     ### Use np.loadtxt()
@@ -79,6 +80,7 @@ def main():
     ### Transform array to usuable form
     #nrow,ncol= arr1.shape
     arr1= arr1[:,1::2].T.reshape(-1)
+    ## Test: np.set_printoptions(precision=3, suppress=True)
     print("Model Levels: \n", arr1)
 
     ###----

@@ -17,10 +17,10 @@ def main():
     indir= '../Data/'
 
     ### netCDF3 example:
-    fname= indir+'AMO_HADLEY.1870-2010.CLM_1901-1970.nc'
+    #fname= indir+'AMO_HADLEY.1870-2010.CLM_1901-1970.nc'
 
     ### netCDF4 example:
-    #fname= indir+'CCMP_Wind_Analysis_20190101_V02.0_L3.0_RSS.nc'
+    fname= indir+'CCMP_Wind_Analysis_20190101_V02.0_L3.0_RSS.nc'
 
     ### Open netcdf file
     nc_f= open_netcdf(fname)
