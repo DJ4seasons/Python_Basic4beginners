@@ -68,7 +68,7 @@ def main():
 
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator,AutoMinorLocator,FuncFormatter
-from matplotlib.dates import DateFormatter
+from matplotlib.dates import DateFormatter, YearLocator
 def plot_main(pdata):
     xt,yy= pdata['xt'],pdata['yy']
     data_labels= pdata['data_labels']
@@ -97,7 +97,8 @@ def plot_main(pdata):
     ax1.set_xticks([date(yy,1,15) for yy in range(2011,2022,2)])
     ax1.xaxis.set_major_formatter(DateFormatter("%Y\n%b"))
     # <--- For more information of Date Format, see Reference above
-    ax1.xaxis.set_minor_locator(AutoMinorLocator(2))
+    #ax1.xaxis.set_minor_locator(AutoMinorLocator(2))
+    ax1.xaxis.set_minor_locator(YearLocator(base=2))
 
     ax1.set_ylim(-25,25)
     ax1.yaxis.set_minor_locator(AutoMinorLocator(2))

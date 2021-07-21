@@ -36,7 +36,7 @@ def main():
     while True:
         answer= input("\nIf want to attribute details, type the number of variable.\n")
         if answer.isnumeric() and (int(answer)>0 and int(answer)<=len(h5keys)):
-            hdf_key_details(hdf_f, h5keys[int(answer)-1])
+            hdf_key_details(hdf_f, h5keys[int(answer)])
         else:
             break
 

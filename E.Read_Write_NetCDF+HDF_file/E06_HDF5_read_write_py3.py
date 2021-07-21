@@ -22,7 +22,7 @@ import numpy as np
 
 import h5py
 import E05_HDF5_file_header_info_py3 as hdf5_fns
-
+from datetime import datetime
 
 def main():
     ##-- Parameters
@@ -38,7 +38,7 @@ def main():
         hdf_key_test(hdf_f, key)
 
     ## Read data
-    times= hdf_f[h5keys[0]][:]
+    times= hdf_f[h5keys[0]][:]  # datetime.utcfromtimestamp(times[0])
     lons= hdf_f[h5keys[1]][:]
     lats= hdf_f[h5keys[2]][:]  # Now numpy array, same as netCDF, but not MaskedArray
     prcp= hdf_f[h5keys[3]]  # h5py data array
@@ -63,14 +63,14 @@ def main():
         dset0 = f.create_dataset("time", data=times)
         dset1 = f.create_dataset("lon", data=lons)
         dset2 = f.create_dataset("lat", data=lats)
-        dset3 = f.create_dataset(var_names[3], data=prcp, dtype='f4')
+        dset3 = f.create_dataset(var_names[3], data=prcp, dtype='f4')  # dtype is forced
         ## For compression,
         ## compression= "gzip", compression_opts=N  # N= 0 to 9
-        ## Other compression methods: "lzf", "szip"
+        ## Other compression methods: "lzf", "szip" Or, scaleoffset=N
         ## https://docs.h5py.org/en/stable/high/dataset.html#filter-pipeline
         ## For fill value,
-        ## fillvalue= val or None
-
+        ## fillvalue= val or None -> No, note on attribute!
+        
         f["lon"].dims[0].label='lon'  # Or dset1.dims[0].label
         f["lat"].dims[0].label='lat'
 

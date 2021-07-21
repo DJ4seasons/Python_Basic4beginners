@@ -24,7 +24,7 @@ def main():
     ##-- Parameters
     indir='../Data/'
     fname=indir+'3B42.20180218.00.7.HDF'
-    #fname= indir+'MYD04_L2.A2019001.0420.061.2019001165304.hdf'
+    fname= indir+'MYD04_L2.A2019001.0420.061.2019001165304.hdf'
 
     ##-- Open hdf4 file
     hdf_f = open_hdf4(fname)
