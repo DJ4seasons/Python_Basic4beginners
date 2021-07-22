@@ -45,7 +45,7 @@ def get_tgt_latlon_idx(latlons, tgt_lats, tgt_lons):
     lon0,dlon,nlon= latlons['loninfo']
     lat0,dlat,nlat= latlons['latinfo']
     ##-- Regional index
-    if isinstance(tgt_lons,list):
+    if isinstance(tgt_lons,(list,tuple,np.ndarray)):
         lon_idx= [lon_deg2x(ll,lon0,dlon) for ll in tgt_lons]
         if lon_idx[0]==lon_idx[1]:
             if tgt_lons[0]!=tgt_lons[1]:
