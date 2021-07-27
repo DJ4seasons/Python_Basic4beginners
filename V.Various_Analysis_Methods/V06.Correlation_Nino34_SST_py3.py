@@ -181,7 +181,7 @@ def plot_map(pdata):
                 extent=img_range,cmap=cm,transform=data_crs)
     ###--- Add contour plot
     x,y= np.arange(nlon)*dlon+lon0, np.arange(nlat)*dlat+lat0
-    props_contour= dict(levels=[-0.9,-0.5,0.5,0.9],colors=['b','k','b','k',],
+    props_contour= dict(levels=[-0.9,-0.5,0.5,0.9],colors=['b','b','k','k',],
                 linewidths=1.,transform=data_crs)
 
     for i, (data,vnm) in enumerate(zip(pdata['data'],pdata['var_names'])):
