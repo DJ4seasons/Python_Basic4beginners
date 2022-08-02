@@ -149,8 +149,14 @@ My favorite food is {food}
 print(multi_lines)
 keywords={"name":"Dave", "age":25, "food":"chococake"}  # This is dictionry!
 print(keywords, type(keywords))
+dict = { "a": "India","b": "USA")
+keywords.update(dict) #To add the 'dict' dictionary to the keywords dictionary 
 print(multi_lines.format(**keywords))  # two stars: distribute items of "key:value"
 print("\nPress Enter to continue... (5-2)\n")
 input("----------------------------------------\n")
+List = ['apples','bananas','oranges','strawberry'] # This is a list 
+Num_List = [ 1,2,3,4,5,6,7,8,9] # A list of numbers can also be made, a list of both strings and integers can be made 
+Tup = ('football','basketball','volleyball','cricket') #This is a tuple, it is similar to a list but it cannot be mutated/edited
+inp_list = eval(input("enter a list/tuple")) # A list or a tuple can be made using eval 
 
 print("THE END: Python Basic Part1 - Data Types and Print Format\n")
