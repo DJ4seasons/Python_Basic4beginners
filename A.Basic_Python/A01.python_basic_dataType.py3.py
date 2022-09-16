@@ -22,10 +22,12 @@ print(":: (e.g., myName or my_name) \n")
 print("\n2. Assignment: left = right")
 print(": It means value 'right' is assigned to variable 'left'")
 print("\nFor example, ")
-print("a = 1")
-print("a, b, c = 1,2,3")
+print('"a = 1"')
+print(">> a, b, c = 1,2,3")
+print(">> print(a,b,c)")
 a,b,c= 1,2,3; print(a,b,c)
-print("a = b = 1")
+print(">> a = b = 1")
+print(">> print(a,b)")
 a=b=1; print(a,b)
 print("\nPress Enter to continue... (0)\n")
 input("----------------------------------------\n")
@@ -39,15 +41,15 @@ a=17
 b=7
 print("a = {}:\ttype = {}".format(a,type(a)))
 print("b = {}:\ttype = {} \n".format(b,type(b)))
-print("c = a+b")
+print(">> c = a+b")
 c=a+b
 print("c = {}:\ttype = {} \n".format(c,type(c)))
-print("c = a/b")
+print(">> c = a/b")
 c=a/b
 print("c = {}:\ttype = {}  # Basically 8-Byte (64bit)\n".format(c,type(c)))
 
-print("Cf. floor divider, //")
-print("d = a//b; d2= float(a)//b \n")
+print("cf. floor divider, //")
+print(">> d = a//b; d2= float(a)//b \n")
 d=a//b; d2= float(a)//b
 print("d = {}:\ttype = {}".format(d,type(d)))
 print("d2 = {}:\ttype = {} \n".format(d2,type(d2)))
@@ -58,17 +60,18 @@ input("----------------------------------------\n")
 
 ### String
 print("\n2. String examples\n")
-print("str1, str2= 'abc1#', \"abc!2\"")
+print(">> str1, str2= 'abc1#', \"abc!2\"")
+print(">> print(str1,str2)")
 str1,str2= 'abc1#', "abc!2"
 print(str1,str2,"\n")
-print("d = str(c)  # Change type from float to string; c.f., int(), float()")
+print(">> d = str(c)  # Change type from float to string; c.f., int(), float()")
 d=str(c)
 print("d = {}:\ttype = {}\n".format(d,type(d)))
-print("len(d), d[0:4], d[-3:]  # Python index starts at 0; start to end(not including)")
+print(">> len(d), d[0:4], d[-3:]  # Python index starts at 0, and from start to end(not including); see also A02")
 print("{}, {}, {}\n".format(len(d),d[0:4],d[-3:]))
 print("c+c vs. d+d[:5] vs. d*2")
 print("{} vs. {} vs. {}\n".format(c+c,d+d[:5],d*2))
-print("len(d*3)")
+print(">> len(d*3)")
 print(len(d*3))
 print("\nPress Enter to continue... (2)\n")
 input("----------------------------------------\n")
@@ -88,10 +91,11 @@ input("----------------------------------------\n")
 
 ### Boolean
 print("\n4. Boolean type\n")
-print("boo1, boo2 = True, False")
+print(">> boo1, boo2 = True, False")
 boo1, boo2 = True, False
 print("boo1 = {}:\ttype = {} \n".format(boo1,type(boo1)))
 print("Value of {} and {}:".format(boo1,boo2))
+print(">> print(int(boo1),int(boo2))")
 print(int(boo1),int(boo2),'\n')
 print("{}+{} = {}".format(boo1,boo2,boo1+boo2))
 print("{}+{} = {}".format(boo1,boo1,boo1+boo1))
@@ -104,10 +108,10 @@ print("bool(-1) = {}, bool(0) = {}, bool(1) = {}, bool(2) = {}".format(bool(-1),
 print("bool(-0.1) = {}, bool(0.) = {}, bool(0.1) = {}".format(bool(-0.1),bool(0.),bool(0.1)))
 print("---> Value zero(0) is False, and all others are True \n")
 
-print("""a = 2
-a = bool(a)
-a = int(a)
-print(a)""")
+print(""">> a = 2
+>> a = bool(a)
+>> a = int(a)
+>> print(a)""")
 a = 2; a = bool(a); a = int(a); print(a)
 print("\nPress Enter to continue... (4)\n")
 input("----------------------------------------\n")
@@ -115,41 +119,55 @@ input("----------------------------------------\n")
 ### Print format
 print("\n5. Print format examples")
 print("cf. https://pyformat.info/ \n")
-print("a, b, c = 1, 2, 3.666667")
+print(">> a, b, c = 1, 2, 3.666667")
 a, b, c = 1, 2, 3.666667
 
-print("\nInteger")
+print("\nInteger formats with variable a")
 format_test1 = '{}, {:d}, {:3d}, {:03d}'
 print(format_test1)
 print(format_test1.format(a,a,a,a))
 
-print("\nFloat")
+print("\nFloat formats with variable c")
 format_test2 = '{}, {:.0f}, {:.3f}, {:7.3f}, {:07.3f}'
 print(format_test2)
 print(format_test2.format(c,c,c,c,c))
+
+print("\nIn the case of different number of inputs...")
+print(">> print('{}, {:.0f}, {:.3f}'.format(c,c))")
+try:
+    print('{}, {:.0f}, {:.3f}'.format(c,c))
+except Exception as err:
+    print("Error message\n:",err)
+
+print("\n>> print('{}, {:.0f}'.format(c,c,c))")
+print('{}, {:.0f}'.format(c,c,c))
+
 input("\nPress Enter to continue... (5-1)\n")
 
-print("\nIn case of input order= {}, {}, {}".format(a,b,c))
+print("\n'Keyword' can be used!")
+print(">> print(a,b,c)"); print(a,b,c)
 format_test2 = '{1:d}, {2:.2f}, {0:.1f}, {0:d}'
-print('\n'+format_test2+' # We have only 3 inputs!')
+print(">> print('{}'.format(a,b,c))".format(format_test2))
 print(format_test2.format(a,b,c))
-print("cf. int-->{:.1f} (o), float-->{:d} (error)")
+print("\ncf. int-->{:.1f} (o), float-->{:d} (error)")
 
 format_test3 = '{:d}, {other:.2f}, {:.1f}'
-print('\n'+format_test3)
+print('\n>> print("{}".format(a,b,other=c))'.format(format_test3))
 print(format_test3.format(a,b,other=c))
-print("Keyword must be at the end")
+print("-> Keyword must be at the end.")
 
 print("\nHow about multi-lines? Use tripple quote mark!")
 multi_lines='''
-Hello, my name is {name}.
+"""Hello, my name is {name}.
 I am {age:d} years old.
-My favorite food is {food}
+My favorite food is {food}"""
 '''
-print(multi_lines)
-keywords={"name":"Dave", "age":25, "food":"chococake"}  # This is dictionry!
-print(keywords, type(keywords))
+print("Here is a multi-line example:",multi_lines)
+keywords={"name":"Dave", "age":25, "food":"choco cake"}  # This is dictionry!
+print("keywords=",keywords, type(keywords))
+print(">> print(multi_lines.format(**keywords))")
 print(multi_lines.format(**keywords))  # two stars: distribute items of "key:value"
+print("\nFYI, see A03 for '**'")
 print("\nPress Enter to continue... (5-2)\n")
 input("----------------------------------------\n")
 
