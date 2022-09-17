@@ -8,7 +8,7 @@ By Daeho Jin
 ###--- Tuple
 print("\n*** Tuple ***")
 print("\n1. Define a tuple with ()")
-print("a = (1,2,3)  # Define a tuple" )
+print(">> a = (1,2,3)  # Define a tuple" )
 a = (1,2,3)
 print("a = {};\ttype = {}".format(a,type(a)))
 
@@ -33,41 +33,47 @@ input("----------------------------------------\n")
 print("\n*** Dictionary ***")
 print("\n1. Define a dictionry with {}")
 print("ex) a_dict = {key:value}\n")
-print('d = {"brand": "Ford", "model": "Mustang", "year": [2015, 2019] }')
+print('>> d = {"brand": "Ford", "model": "Mustang", "year": [2015, 2019] }')
 d = {"brand": "Ford", "model": "Mustang", "year": [2015, 2019] }
 print("d = {}; type = {}\n".format(d,type(d)))
-print("d['model'] = {}  # Access value by key".format(d['model']))
+print(">> print(d['model']) # Access value by key")
+print(d['model'])
 
 print("\n2. Define a dictionry with dict()")
-print("e = dict(brand='Ford', model='Mustang', year=[2015, 2019])")
+print(">> e = dict(brand='Ford', model='Mustang', year=[2015, 2019])")
+print(">> print(e)")
 e = dict(brand='Ford', model='Mustang', year=[2015, 2019])
-print("e = {}\n".format(e))
+print(e)
 
-print("f = dict([('brand','Ford'), ('model','Mustang'), ('year',[2015, 2019])])")
+print("\n>> f = dict([('brand','Ford'), ('model','Mustang'), ('year',[2015, 2019])])")
+print(">> print(f)")
 f = dict([('brand','Ford'), ('model','Mustang'), ('year',[2015, 2019])])
-print("f = {}".format(f))
+print(f)
 
 print("\nPress Enter to continue... (1,2)\n")
 input("----------------------------------------\n")
 
 print("\n3. Add, change, and remove item")
-print("g = {}  # Empty dictionry")
+print(">> g = {}  # Empty dictionry")
 g = {}
-print("g['brand']='kia'")
+print(">> g['brand']='kia'")
 g['brand']='kia'
-print("g['model']='optima'")
+print(">> g['model']='optima'")
 g['model']='optima'
-print("g = {}\n".format(g))
+print(">> print(g)")
+print(g)
 
-print("g.pop('brand')  # dict.pop() is different from list.pop()")
+print("\n>> g.pop('brand')  # dict.pop() is different from list.pop()")
 g.pop('brand')
-print("g = {}\n".format(g))
+print(">> print(g)")
+print(g)
 
-print("h = g  # Copy or not copy?")
+print("\n>> h = g  # Copy or not copy?")
 h = g
-print("h['model']='Sonata' \n")
+print(">> h['model']='Sonata' \n")
 h['model']='Sonata'
-print("g = {}\n".format(g))
+print(">> print(g)")
+print(g)
 print("---> Use dict.copy()")
 
 
@@ -77,13 +83,13 @@ input("----------------------------------------\n")
 
 print("\n4. Membership test")
 print("For a dictionry, g = {} \n".format(g))
-print("'Sonata' in g ?")
+print(">> 'Sonata' in g ?")
 print('Sonata' in g)
-print("\n'model' in g ?")
+print("\n>> 'model' in g ?")
 print('model' in g)
-print("\n'model' in g.keys() ?")
+print("\n>> 'model' in g.keys() ?")
 print('model' in g.keys())
-print("\n'Sonata' in g.values() ?")
+print("\n>> 'Sonata' in g.values() ?")
 print('Sonata' in g.values())
 
 print("\nPress Enter to continue... (4)\n")
@@ -92,15 +98,15 @@ input("----------------------------------------\n")
 print("\n5. Visit all items")
 print("For a dictionry, f = {}".format(f))
 print("\n5-1. Method1")
-print('''for key in f:  # or f.keys()
-    print("{}: {}".format(key, f[key]))
+print('''>> for key in f:  # or f.keys()
+>>     print("{}: {}".format(key, f[key]))
 ''')
 for key in f:
     print("{}: {}".format(key, f[key]))
 
 print("\n5-2. Method2")
-print('''for key, val in f.items():
-    print("{}: {}".format(key, val))
+print('''>> for key, val in f.items():
+>>     print("{}: {}".format(key, val))
 ''')
 for key, val in f.items():
     print("{}: {}".format(key, val))
@@ -114,7 +120,9 @@ multi_lines='''
 Hello, I like to buy a {brand} {model}.
 Do you have model year(s) {year}?
 '''
+print(">> print(multi_lines)")
 print(multi_lines)
+print(">> print(multi_lines).foramt(**f)")
 print(multi_lines.format(**f))  # two stars: distribute items of "key:value"
 
 print("\nPress Enter to continue... (6)\n")
