@@ -26,8 +26,8 @@ print("\n2-4. Concatenated application of numpy functions")
 
 print('''
 First define a sample array
-arr1= np.arange(24)
-arr1= np.reshape(arr1, [4,6])''')
+>> arr1= np.arange(24)
+>> arr1= np.reshape(arr1, [4,6])''')
 arr1= np.arange(24)
 arr1= np.reshape(arr1, [4,6])
 show_array_info(arr1)
@@ -44,13 +44,13 @@ print('''
 input("\nPress Enter to continue... (2-4a)\n")
 
 print("Example of grid-degrading (e.g., 0.5x0.5deg --> 1x1deg): \n")
-print("c= arr1.reshape([2,2,3,2]).swapaxes(1,2).reshape([2,3,4]).mean(axis=2)")
+print(">> c= arr1.reshape([2,2,3,2]).swapaxes(1,2).reshape([2,3,4]).mean(axis=2)")
 c= arr1.reshape([2,2,3,2]).swapaxes(1,2).reshape([2,3,4]).mean(axis=2)
 show_array_info(c)
 
 print("""
-c2= arr1.reshape([2,2,3,2]).mean(axis=(1,3))  # 'mean' over multiple axes
-print(np.array_equal(c,c2))""")
+>> c2= arr1.reshape([2,2,3,2]).mean(axis=(1,3))  # 'mean' over multiple axes
+>> print(np.array_equal(c,c2))""")
 c2= arr1.reshape([2,2,3,2]).mean(axis=(1,3))
 print(np.array_equal(c,c2))
 
@@ -58,16 +58,20 @@ input("\nPress Enter to continue... (2-4b)\n")
 
 print("""
 Example of calculating monthly anomaly:
-Define new array: d= np.arange(120)  # Assume monthly 10-years time-series
+Define new array: d= np.arange(120)  # Assume it as monthly 10-years time-series
 """)
 d= np.arange(120)
-print("clim_d= d.reshape([-1,12]).mean(axis=0)")
-print("ano= (d.reshape([-1,12]) - clim_d.reshape([1,12])).reshape(-1) \n")
+print(">> clim_d= d.reshape([-1,12]).mean(axis=0)")
+print(">> ano= (d.reshape([-1,12]) - clim_d.reshape([1,12])).reshape(-1) \n")
 clim_d= d.reshape([-1,12]).mean(axis=0)
 ano= (d.reshape([-1,12]) - clim_d.reshape([1,12])).reshape(-1)
 
-print("ano[:12] = {}".format(ano[:12]))
+print("ano[:13] = {}".format(ano[:13]))
 print("ano[::12] = {}".format(ano[::12]))
+
+print("""
+Note that it also works:
+>> ano= (d.reshape([-1,12]) - clim_d[None,:]).reshape(-1)""")
 
 print("\nPress Enter to continue... (2-4c)\n")
 input("----------------------------------------\n")
@@ -81,27 +85,27 @@ show_array_info(e)
 print("""
 ### Copy or not?
 Test1:
-e1= e
-e1[0,0]= 1
-print(e)""")
+>> e1= e
+>> e1[0,0]= 1
+>> print(e)""")
 e1= e
 e1[0,0]= 1
 print(e)
 
 print("""
 Test2:
-e2= np.copy(e)
-e2[0,1]= 2
-print(e)""")
+>> e2= np.copy(e)
+>> e2[0,1]= 2
+>> print(e)""")
 e2=np.copy(e)
 e2[0,1]=2
 print(e)
 
 print("""
 Test3:
-e3= e[:]
-e3[1,0]= 3
-print(e)""")
+>> e3= e[:]
+>> e3[1,0]= 3
+>> print(e)""")
 e3= e[:]
 e3[1,0]= 3
 print(e)
@@ -110,29 +114,29 @@ input("\nPress Enter to continue... (2-5a)\n")
 
 print("""
 Test4:
-e4= e[1,:]
-e4[1]=4
-print(e)""")
+>> e4= e[1,:]
+>> e4[1]=4
+>> print(e)""")
 e4= e[1,:]
 e4[1]=4
 print(e)
 
 print("""
 Test5:
-e5= e.reshape(-1)  # 'copy' characteristic varies by numpy functions
-e5[0]= -9
-print(e)""")
+>> e5= e.reshape(-1)  # 'copy or not' characteristic varies by numpy functions
+>> e5[0]= -9
+>> print(e)""")
 e5= e.reshape(-1)
 e5[0]= -9
 print(e)
 
 print("""
 Test6: Define a function
-def function1(arr):
-    arr[0]=-1
-    return
-function1(e[:,1])
-print(e)""")
+>> def function1(arr):
+>>     arr[0]=-1
+>>     return
+>> function1(e[:,1])
+>> print(e)""")
 def function1(arr):
     arr[0]=-1
     return
@@ -144,7 +148,7 @@ print("""
 # With numpy, please make sure that it is copied when necessary.
 # Particularly be cautious when passing array to function(s).
 #
-# It is also interesting that, in the case of 'List,' '[:]' plays a role of copy,
+# It is also interesting that, in the case of 'List,' '[:]' works as copying,
 # but not in numpy.
 """)
 
@@ -155,36 +159,36 @@ print("\n2-6. Tiling/Joining Arrays")
 
 print('''
 Define a sample array
-a= np.arange(4)''')
+>> a= np.arange(4)''')
 a= np.arange(4)
 print(a)
 
-print('\nb= np.tile(a,3)  # Repeat as a whole')
+print('\n>> b= np.tile(a,3)  # Repeat as a whole')
 b= np.tile(a,3)
 show_array_info(b)
 
-print('\nb2= np.tile(a,[2,2])  # Repeat as a whole')
+print('\n>> b2= np.tile(a,[2,2])  # Repeat as a whole')
 b2= np.tile(a,[2,2])
 show_array_info(b2)
 
-print('\nc= np.repeat(a,3)  # Repeat by element')
+print('\n>> c= np.repeat(a,3)  # Repeat by element')
 c= np.repeat(a,3)
 show_array_info(c)
 
 print('\nIn the case of 2-D array,')
-print('a= np.arange(4).reshape([2,2])')
+print('>> a= np.arange(4).reshape([2,2])')
 a= np.arange(4).reshape([2,2])
 print(a)
 
-print('\nb= np.tile(a,2)  # Repet as a whole')
+print('\n>> b= np.tile(a,2)  # Repet as a whole')
 b= np.tile(a,2)
 show_array_info(b)
 
-print('\nc= np.repeat(a,2)  # Repet by element')
+print('\n>> c= np.repeat(a,2)  # Repet by element')
 c= np.repeat(a,2)
 show_array_info(c)
 
-print('\nc2= np.repeat(a,2,axis=1)  # Repet by element')
+print('\n>> c2= np.repeat(a,2,axis=1)  # Repet by element')
 c2= np.repeat(a,2,axis=1)
 show_array_info(c2)
 
@@ -192,14 +196,14 @@ input("\nPress Enter to continue... (2-6a)\n")
 
 print('''
 Define two sample arrays
-d1= np.arange(6).reshape([2,3])
-d2= d1+10''')
+>> d1= np.arange(6).reshape([2,3])
+>> d2= d1+10''')
 d1= np.arange(6).reshape([2,3])
 d2= d1+10
 show_array_info(d1)
 show_array_info(d2)
 
-print("\ne= np.stack((d1,d2))  # 'stack'")
+print("\n>> e= np.stack((d1,d2))  # 'stack'")
 e= np.stack((d1,d2))
 show_array_info(e)
 
@@ -209,7 +213,7 @@ show_array_info(e)
 
 input("\nPress Enter to continue... (2-6b)\n")
 
-print("\ne= np.hstack((d1,d2))  # 'hstack'")
+print("\n>> e= np.hstack((d1,d2))  # 'hstack'")
 e= np.hstack((d1,d2))
 show_array_info(e)
 
@@ -219,7 +223,7 @@ show_array_info(e)
 
 input("\nPress Enter to continue... (2-6c)\n")
 
-print("f= np.vstack((d1,d2))  # 'vstack'")
+print(">> f= np.vstack((d1,d2))  # 'vstack'")
 f= np.vstack((d1,d2))
 show_array_info(f)
 
@@ -229,7 +233,7 @@ show_array_info(f)
 
 input("\nPress Enter to continue... (2-6d)\n")
 
-print("g= np.dstack((d1,d2))  # 'dstack'")
+print(">> g= np.dstack((d1,d2))  # 'dstack'")
 g= np.dstack((d1,d2))
 show_array_info(g)
 

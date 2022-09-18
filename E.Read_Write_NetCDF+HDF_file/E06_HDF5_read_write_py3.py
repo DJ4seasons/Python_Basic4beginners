@@ -67,10 +67,10 @@ def main():
         ## For compression,
         ## compression= "gzip", compression_opts=N  # N= 0 to 9
         ## Other compression methods: "lzf", "szip" Or, scaleoffset=N
-        ## https://docs.h5py.org/en/stable/high/dataset.html#filter-pipeline
+        ## https://docs.h5py.org/en/stable/high/dataset.html#lossless-compression-filters
         ## For fill value,
-        ## fillvalue= val or None -> No, note on attribute!
-        
+        ## Note on attribute! (since it is based on ndarray, not masked array)
+
         f["lon"].dims[0].label='lon'  # Or dset1.dims[0].label
         f["lat"].dims[0].label='lat'
 

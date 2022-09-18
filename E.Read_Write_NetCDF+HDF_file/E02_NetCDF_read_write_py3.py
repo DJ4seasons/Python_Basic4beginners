@@ -86,12 +86,11 @@ def main():
     # zlib=True, complevel=N  # N= 1 being fastest, 9 being best compression ratio
     # fill_value= val or False # val for overriding default _FillValue, and False for disabling
     # https://unidata.github.io/netcdf4-python/#Dataset.createVariable
-    uwndnc[:]= data[2].filled(fill_value=undef)  # Change masked array to ndarray with fill_value
-    uwndnc.missing_value= undef
+    uwndnc[:]= data[2] ## It can accept masked array
 
-    vwndnc= ncfw.createVariable(vars[3],'f4',('time',vars[1],vars[0]))
-    vwndnc[:]= data[3] #.filled(fill_value=undef)
-    #vwndnc.missing_value= undef
+    vwndnc= ncfw.createVariable(vars[3],'f4',('time',vars[1],vars[0]),fill_value= undef)
+    vwndnc[:]= data[3].filled(fill_value=undef)  ## Change masked array to ndarray with fill_value
+    # <-- Identify missing cells of ndarray by given "fill_value" option
 
     uwndnc.units, vwndnc.units= [f_id.variables[vv].units for vv in vars[2:]]
 

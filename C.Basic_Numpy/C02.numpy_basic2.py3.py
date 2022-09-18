@@ -27,18 +27,18 @@ print("\n2-1. Operation of array(s)")
 ### Simple operation
 print('''
 First define sample arrays:
-arr1= np.arange(6).reshape([2,3])
-arr2= (np.arange(6)-1.).reshape([2,3])
+>> arr1= np.arange(6).reshape([2,3])
+>> arr2= (np.arange(6)-1.).reshape([2,3])
 ''')
 arr1= np.arange(6).reshape([2,3])
 arr2= (np.arange(6)-1.).reshape([2,3])
 show_array_info(arr1)
 show_array_info(arr2)
-print('\nAdd: add1 = arr1 + arr1')
+print('\nAddition: add1 = arr1 + arr1')
 add1 = arr1+arr1
 show_array_info(add1)
 
-print('\nAdd: i_plus_f = arr1(dtype=int) + arr2(dtype=float)')
+print('\nAddition: i_plus_f = arr1(dtype=int) + arr2(dtype=float)')
 i_plus_f = arr1+arr2
 show_array_info(i_plus_f)
 
@@ -53,19 +53,24 @@ print('---> Element-wise operation!')
 
 input("\nPress Enter to continue... (2-1a)\n")
 
-print('\nMulitplication: mult3 = arr1(2D) * array_1d')
-print('\narr_1d = arr2[0,:]')
+print('\nMulitplication: mult3 = arr1_2D * array_1D')
+print('\n>> arr_1d = arr2[0,:]')
 arr_1d = arr2[0,:]
 show_array_info(arr_1d)
-print('\nmult3= arr1 * arr_1d')
+
+print('\n>> mult3= arr1 * arr_1d')
 mult3= arr1*arr_1d
 show_array_info(mult3)
 
-print('\narr_1d = arr2[:,0]')
+print('\n>> mult3b= arr_1d * arr1')
+mult3b= arr_1d*arr1
+show_array_info(mult3b)
+
+print('\n>> arr_1d = arr2[:,0]')
 arr_1d = arr2[:,0]
 show_array_info(arr_1d)
 try:
-    print('mult4= arr1 * arr_1d')
+    print('>> mult4= arr1 * arr_1d')
     mult4= arr1*arr_1d
 except Exception as err:
     print("Error message\n:",err)
@@ -78,7 +83,7 @@ print("Method1: mult4= arr1 * arr_1d.reshape([-1,1])")
 mult4= arr1*arr_1d.reshape([-1,1])
 show_array_info(mult4)
 
-print("\nMethod2: mult4= arr1 * arr_1d[:,None]")
+print("\nMethod2: mult4= arr1 * arr_1d[:,None]  # Adding an empty axis with 'None'")
 mult4= arr1*arr_1d[:,None]
 show_array_info(mult4)
 
@@ -89,7 +94,7 @@ input("----------------------------------------\n")
 print("\n2-2. Slicing and Indexing")
 
 print('\nSlicing: Same as shown with "List"')
-print('a= np.arange(10) # Define a numpy array')
+print('>> a= np.arange(10) # Define a numpy array')
 a= np.arange(10)
 show_array_info(a)
 print("\na[2:5] = {}  # = a[2:5:1]".format(a[2:5]))
@@ -101,18 +106,18 @@ print("a[8:1:-2] = {}  # Reversed slicing is working  # = a[-2:1:-2]".format(a[8
 input("\nPress Enter to continue... (2-2a)\n")
 
 print('\nIndexing: Pull out data by providing indices')
-print('index_list = [1,5,3]  # List object')
+print('>> index_list = [1,5,3]  # List object')
 index_list=[1,5,3]
 print('a[index_list] = {}'.format(a[index_list]))
 print('a[::-1][index_list] = {}'.format(a[::-1][index_list]))
 
-print('\nindex_arr= np.array([1,5,3])  # numpy array')
+print('\n>> index_arr= np.array([1,5,3])  # numpy array')
 index_arr= np.array([1,5,3])
 print('a[index_arr] = {}'.format(a[index_arr]))
 print('a[::-1][index_arr] = {}'.format(a[::-1][index_arr]))
 
 print('\nHow about the index of other than integer?')
-print('index_list= np.asfarray([1,5,3])  # numpy float array')
+print('>> index_list= np.asfarray([1,5,3])  # numpy float array')
 index_list= np.asfarray([1,5,3])
 try:
     print('a[::-1][index_list] = {}'.format(a[::-1][index_list]))
@@ -123,13 +128,15 @@ input("\nPress Enter to continue... (2-2b)\n")
 
 print('''
 In the case of 2-D array,
-idx= [0,2]  # List
-b= np.arange(12).reshape([4,3])''')
+>> idx= [0,2]  # List
+>> b= np.arange(12).reshape([4,3])''')
 idx= [0,2]  # List
 b= np.arange(12).reshape([4,3])
 show_array_info(b)
-print('\nb[idx,:] = {}'.format(b[idx,:]))
-print('\nb[:,idx] = {}'.format(b[:,idx]))
+print('\n>> print(b[idx,:])')
+print(b[idx,:])
+print('\n>> print(b[:,idx])')
+print(b[:,idx])
 
 print("\nIf given just one index to 2-D array?")
 print("b[0] = {}".format(b[0]))
@@ -138,9 +145,9 @@ print('b[idx] = {}'.format(b[idx]))
 print("""---> It is interpreted as the index of the first axis (axis=0)
 
 FYI, test these:
-for i in b.reshape(-1): print(i)
+>> for i in b.reshape(-1): print(i)
 vs.
-for i in b: print(i)
+>> for i in b: print(i)
 """)
 
 input("\nPress Enter to continue... (2-2c)\n")
@@ -167,16 +174,18 @@ show_array_info(b)
 print('\nOne condition: idx= b>2')
 idx= b>2
 show_array_info(idx)
-print('c1= b[idx]')
+print('>> c1= b[idx]')
 c1= b[idx]
+print("show_array_info of c1:")
 show_array_info(c1)
 print('# Output of indexing is 1-D array!')
 
 print('\nTwo conditions: idx= np.logical_and(b>2, b<9)')
 idx= np.logical_and(b>2,b<9)
 show_array_info(idx)
-print('c2= b[idx]')
+print('>> c2= b[idx]')
 c2= b[idx]
+print("show_array_info of c2:")
 show_array_info(c2)
 
 print('''
@@ -185,33 +194,35 @@ idx= np.logical_and.reduce((b>2, b<9, b%2==0))
 * This is same to: idx= np.logical_and(np.logical_and(b>2, b<9), b%2==0)''')
 idx= np.logical_and.reduce((b>2,b<9,b%2==0))
 show_array_info(idx)
-print('c3= b[idx]')
+print('>> c3= b[idx]')
 c3= b[idx]
+print("show_array_info of c3:")
 show_array_info(c3)
 
 input("\nPress Enter to continue... (2-2e)\n")
 
 print("""
-'~' represents 'logical_not()'
+'~' represents 'np.logical_not()'
 E.g.,
-c4= b[~idx]
-show_array_info(c4)""")
+>> c4= b[~idx]
+show_array_info of c4:""")
 c4= b[~idx]
 show_array_info(c4)
 
 print("""
-c5= b[np.logical_not(idx)]
-show_array_info(c5)""")
+>> c5= b[np.logical_not(idx)]
+show_array_info of c5:""")
 c5= b[np.logical_not(idx)]
 show_array_info(c5)
 
 print("""
 FYI, Check if two arrays are identical:
-print(np.array_equal(c4,c5))""")
+>> print(np.array_equal(c4,c5))""")
 print(np.array_equal(c4,c5))
 
 print("""
-If print(c4==c5) ?""")
+How about this?
+>> print(c4==c5) """)
 print(c4==c5)
 
 print("\nPress Enter to continue... (2-2f)\n")
@@ -219,21 +230,22 @@ input("----------------------------------------\n")
 
 print("\n2-3. Numpy.where() function")
 
-print('\nUsage1: When want to know index location of certain condition')
+print('\nUsage1: When want to know index location of certain condition(s)')
 print('\nUse array "b" again')
 show_array_info(b)
 
-print('\nloc= np.where(np.logical_and(b>=3, b<8)) # np.where(condition)')
+print('\n>> loc= np.where(np.logical_and(b>=3, b<8)) # np.where(condition)')
 loc= np.where(np.logical_and(b>=3, b<8))
 print('\ntype(loc)= {}; len(loc)= {}; type(loc[0])= {}'.format(type(loc),len(loc),type(loc[0])))
 print('''
-for i,j in zip(*loc):
-    print("i={}, j={}, value={}".format(i,j,b[i,j]))''')
+>> for i,j in zip(*loc):
+>>     print("i={}, j={}, value={}".format(i,j,b[i,j]))''')
 for i,j in zip(*loc):
     print("i={}, j={}, value={}".format(i,j,b[i,j]))
 
 print("""
-b[loc]= {}
+>> print(b[loc])
+{}
 ---> For this purpose, 'b[np.logical_and(b>=3, b<8)]' is more efficient.""".format(b[loc]))
 input("\nPress Enter to continue... (2-3a)\n")
 
@@ -241,7 +253,7 @@ print('\nUsage2: When want to replace values by certain condition(s)')
 print('\nUse array "b" again')
 show_array_info(b)
 
-print('\nd= np.where(b%3==1,-1,b)  # np.where(condition, val if True, val if False)')
+print('\n>> d= np.where(b%3==1,-1,b)  # np.where(condition, val if True, val if False)')
 d= np.where(b%3==1,-1,b)
 show_array_info(d)
 

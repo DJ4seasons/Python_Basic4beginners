@@ -101,7 +101,7 @@ def read_rmm_genfromtxt(fname):
     ### https://numpy.org/doc/stable/user/basics.rec.html
     ### Hence, transforming process is added in order to match output format
 
-    time_info= data[['yr','mon','day']].view() #.astype(int)
+    time_info= data[['yr','mon','day']].view() 
     pcs= data[['pc1','pc2']].view()
     phs= data['phs'].view()
     amps= data['amp'].view()
