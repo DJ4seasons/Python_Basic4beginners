@@ -46,7 +46,7 @@ def main():
     ### By slicing, netCDF_variable object changes to numpy.MaskedArray
     lons = lons[:]
     print(type(lons))
-
+    
     ### It's also possible to pull out data by one line
     data= [f_id.variables[vv][:] for vv in vars]
 

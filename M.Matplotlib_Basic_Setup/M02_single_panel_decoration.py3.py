@@ -50,7 +50,7 @@ ax1.set_title(subtit,fontsize=12,x=0.,ha='left') #,y=0.9
 ax1.set_xlim(-0.5,4.5)
 ax1.xaxis.set_major_locator(MultipleLocator(1))   # For Major Ticks
 ax1.xaxis.set_minor_locator(AutoMinorLocator(2))   # For minor Ticks
-# https://matplotlib.org/stable/gallery/ticks_and_spines/tick-locators.html
+# https://matplotlib.org/stable/gallery/ticks/tick-locators.html
 ax1.set_xlabel('X-axis Label',fontsize=12)
 
 ax1.set_ylim(-1,17)
@@ -58,9 +58,10 @@ ax1.set_ylabel('Y-axis Label',fontsize=12,rotation=90,labelpad=0)
 ax1.set_yticks(range(0,17,4))  # Manually set tick locations replacing 'locator'
 ax1.yaxis.set_minor_locator(AutoMinorLocator(2))
 ax1.yaxis.set_major_formatter("[{x:0.1f}+]")  # Working on ver 3.3+
+#ax1.yaxis.set_major_formatter(lambda x, pos: "[{:0.1f}+]".format(x))  # Working on ver 3.4+
 #yt_form=FuncFormatter(lambda x, pos: "[{:0.1f}+]".format(x))
 #ax1.yaxis.set_major_formatter(yt_form)
-# https://matplotlib.org/stable/gallery/ticks_and_spines/tick-formatters.html
+# https://matplotlib.org/stable/gallery/ticks/tick-formatters.html
 ax1.yaxis.set_ticks_position('both')
 
 ax1.tick_params(axis='both',labelsize=11)

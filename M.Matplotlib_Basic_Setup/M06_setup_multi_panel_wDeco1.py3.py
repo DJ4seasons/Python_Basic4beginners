@@ -22,9 +22,10 @@ def plot_common(ax, subtit=''):
     ax.set_xlim(-0.5,4.5)
     ax.xaxis.set_major_locator(MultipleLocator(1))   # For Major Ticks
     ax.xaxis.set_minor_locator(AutoMinorLocator(2))   # For minor Ticks
+    ax.xaxis.set_major_formatter("{x:0.1f}")  # Working on ver 3.3+
+    #ax.xaxis.set_major_formatter(lambda x, pos: "{:0.1f}".format(x))  # Working on ver 3.4+
     #xt_form=FuncFormatter(lambda x, pos: "{:0.1f}".format(x))
     #ax.xaxis.set_major_formatter(xt_form)
-    ax.xaxis.set_major_formatter("{x:0.1f}")  # Working on ver 3.3+
     ax.set_xlabel('X-axis Label',fontsize=10)
 
     ax.set_ylim(-1,17)
