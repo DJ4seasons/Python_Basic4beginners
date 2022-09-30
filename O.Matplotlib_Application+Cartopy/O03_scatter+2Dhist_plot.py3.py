@@ -98,7 +98,7 @@ def plot_main(plot_data):
     props = dict(edgecolor='none',alpha=0.8,vmin=0.1,vmax=10,cmap=cm)
     pic2 = ax2.pcolormesh(X,Y,H,**props)
 
-    subtit='(c) 2D Histogram'
+    subtit='(b) 2D Histogram'
     ax2.set_title(subtit,fontsize=12,x=0.,ha='left')
     plot_common(ax2,subtit=subtit,ytright=True)
     ax2.set_xlabel(plot_data['var_names'][0].upper(),fontsize=12)

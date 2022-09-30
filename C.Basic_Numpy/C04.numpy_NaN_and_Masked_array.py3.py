@@ -24,7 +24,7 @@ def show_array_info(a,show_contents=True):
 print('''
 Before start, define a sample array first
 >> arr0= np.arange(12, dtype=float)
->> arr0= np.reshape(arr0, [3,4]''')
+>> arr0= np.reshape(arr0, [3,4])''')
 arr0= np.arange(12, dtype=float)
 arr0= np.reshape(arr0, [3,4])
 show_array_info(arr0)

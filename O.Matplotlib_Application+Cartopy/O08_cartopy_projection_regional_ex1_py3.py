@@ -110,12 +110,13 @@ def main():
             ccrs.SouthPolarStereo(central_longitude=center[0])]
 
     ##-- Bottom Panels for the SH
-    for i, (proj_name, map_proj) in enumerate(zip(proj_nms, projs)):
+    i+=1
+    for i2, (proj_name, map_proj) in enumerate(zip(proj_nms, projs)):
         ax2=fig.add_axes([ix,iy-ly,lx,ly],projection=projs[i])  ### Now it's GeoAxes, not just Axes
         ax2.set_extent(map_bound,crs=data_crs)
         pic2= ax2.contourf(xlon,ylat,sstmean1,clevels,**props_contour)
 
-        subtit= '({}) {}'.format(abc[i],proj_name)
+        subtit= '({}) {}'.format(abc[i+i2],proj_name)
         ax2.set_title(subtit,fontsize=13,ha='left',x=0.0)
 
         ax2.add_feature(LAND)

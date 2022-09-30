@@ -9,7 +9,7 @@ by Daeho Jin
 Reference:
 https://matplotlib.org/stable/api/figure_api.html#matplotlib.figure.Figure.add_subplot
 https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.plot.html
-https://matplotlib.org/stable/gallery/ticks_and_spines/tick-locators.html
+https://matplotlib.org/stable/gallery/ticks/tick-locators.html
 '''
 
 import numpy as np
