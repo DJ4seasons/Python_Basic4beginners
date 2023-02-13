@@ -12,6 +12,12 @@ Referece: Rayner, N. A.; Parker, D. E.; Horton, E. B.; Folland, C. K.; Alexander
  J. Geophys. Res.Vol. 108, No. D14, 4407, doi:10.1029/2002JD002670 
 
 Daeho Jin
+---
+
+Revised on 2023.02.13
+Add the calculation of p-value considering effective number of samples, Neff
+Neff= N*(1-r)/(1+r), where r= Lag1 autocorrelation of 'y' (Breatherton, 1999)
+
 """
 
 import sys
@@ -26,7 +32,7 @@ import V00_Functions as vf
 
 def main():
     ### Get Nino3.4 Index
-    yrs= [2015,2020]  # Starting year and ending year
+    yrs= [2015,2021]  # Starting year and ending year
     #Nino3.4 (5N-5S, 170W-120W) [-170,-120,-5,5]
     nn34= vf.get_sst_areamean_from_HadISST([-170,-120,-5,5],yrs,remove_AC=True)
     ### And other regions
@@ -86,6 +92,23 @@ def scatter_and_regr_plot(ax,x,y,subtit):
         else:
             ax.annotate(atxt,xy=(0.98,yloc),xycoords='axes fraction',ha='right',fontsize=11,stretch='semi-condensed')
 
+    ##--- Consider the effective number of samples
+    Neff= get_new_dof_ts1(y) #len(y) #
+    p_val, sf_level= get_pval_regr_slope(x,y,slope,intercept,Neff=Neff)
+    anntxt= r'$N={}$'.format(len(y))
+    anntxt2= r'$N_{eff}=$'+r'${:.2f}$'.format(Neff)
+    anntxt3= r'$Revised\ p={:.3f}$'.format(p_val)
+    for i,atxt in enumerate([anntxt3,anntxt2,anntxt]):
+        yloc= 0.03+i*0.07
+        if slope<0:
+            ax.text(0.02,yloc,atxt,transform=ax.transAxes,ha='left',va='bottom',c='b',fontsize=11,stretch='semi-condensed')
+        else:
+            ax.text(0.98,yloc,atxt,transform=ax.transAxes,ha='right',va='bottom',c='b',fontsize=11,stretch='semi-condensed')
+
+    ##--- Compare to the p value from linregress
+    print("\nFrom LinRegress: p_val=",pvalue)
+    print("From own calculation with Neff=N: p_val=",get_pval_regr_slope(x,y,slope,intercept)[0])
+
     ### Title
     ax.set_title(subtit,fontsize=13,ha='left',x=0.0)
 
@@ -102,6 +125,23 @@ def scatter_and_regr_plot(ax,x,y,subtit):
     if ylim[0]*ylim[1]<0:
         ax.axhline(y=0.,ls='--',lw=1)
     return
+
+def get_new_dof_ts1(ts1):
+    r= np.corrcoef(ts1[:-1],ts1[1:])[1,0]
+    N= len(ts1)
+    Neff= N*((1-r)/(1+r)) if r>0 else N
+    return Neff
+
+import scipy.stats as st
+def get_pval_regr_slope(x,y,slope,intercept,Neff=None):
+    if Neff==None:
+        Neff= len(y)
+    var_residual= np.sum((y-slope*x-intercept)**2,axis=0) / (Neff-2)
+    t= slope/np.sqrt(var_residual/np.sum(x**2))
+    sf_level= 1-st.t.sf(np.absolute(t),df=Neff-2)*2  ## two-tailed, 1-p_val
+    p_val= 1-sf_level
+    if t<0: sf_level*=-1
+    return p_val, sf_level
 
 if __name__ == "__main__":
     main()
