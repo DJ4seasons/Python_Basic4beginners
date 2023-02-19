@@ -18,6 +18,8 @@ Revised on 2023.02.13
 Add the calculation of p-value considering effective number of samples, Neff
 Neff= N*(1-r)/(1+r), where r= Lag1 autocorrelation of 'y' (Breatherton, 1999)
 
+For two timeseries if they are correlated,
+Neff= N*(1-r1*r2)/(1+r1*r2)
 """
 
 import sys
@@ -93,7 +95,8 @@ def scatter_and_regr_plot(ax,x,y,subtit):
             ax.annotate(atxt,xy=(0.98,yloc),xycoords='axes fraction',ha='right',fontsize=11,stretch='semi-condensed')
 
     ##--- Consider the effective number of samples
-    Neff= get_new_dof_ts1(y) #len(y) #
+    #Neff= get_new_dof_ts1(y)  # This is for the regression over time (i.e., trend)
+    Neff= get_new_dof_two_tseries(x,y)  # This is for the regression of two variables
     p_val, sf_level= get_pval_regr_slope(x,y,slope,intercept,Neff=Neff)
     anntxt= r'$N={}$'.format(len(y))
     anntxt2= r'$N_{eff}=$'+r'${:.2f}$'.format(Neff)
@@ -129,7 +132,15 @@ def scatter_and_regr_plot(ax,x,y,subtit):
 def get_new_dof_ts1(ts1):
     r= np.corrcoef(ts1[:-1],ts1[1:])[1,0]
     N= len(ts1)
-    Neff= N*((1-r)/(1+r)) if r>0 else N
+    Neff= N*(1-r)/(1+r) if r>0 else N
+    return Neff
+
+def get_new_dof_two_tseries(ts1,ts2):
+    ### In the case of AR1 red noise
+    N= len(ts1)
+    r1= np.corrcoef(ts1[1:],ts1[:-1])[0,1]
+    r2= np.corrcoef(ts2[1:],ts2[:-1])[0,1]
+    Neff= N*(1-r1*r2)/(1+r1*r2) if r1*r2>0 else N
     return Neff
 
 import scipy.stats as st
