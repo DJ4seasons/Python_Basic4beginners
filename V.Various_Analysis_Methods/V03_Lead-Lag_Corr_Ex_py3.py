@@ -131,6 +131,10 @@ def llcorr(ts1,ts2,tlag):
         '''
         Beta distribution is used to calculate p-value of correlation coefficient
         https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.pearsonr.html
+
+        This is actually same to this way:
+        t= r*np.sqrt(Neff-2)/np.sqrt(1-r**2)  where r= corr. coef.
+        p= scipy.stats.t.sf(np.abs(t),Neff-2)
         '''
         dist = st.beta(nn/2 - 1, nn/2 - 1, loc=-1, scale=2)
         return dist.cdf(-abs(val))

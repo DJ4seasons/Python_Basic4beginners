@@ -85,7 +85,7 @@ def scatter_and_regr_plot(ax,x,y,subtit):
 
     ##-- Write regression info
     anntxt=r'$R^2={:.3f}$'.format(rvalue**2)
-    anntxt2='Coef.={:.2f}'.format(slope)
+    anntxt2='Slope={:.2f}'.format(slope)
     anntxt3='p_value={:.3f}'.format(pvalue)
     for i,atxt in enumerate([anntxt,anntxt2,anntxt3]):
         yloc= 0.92-i*0.07
@@ -148,7 +148,7 @@ def get_pval_regr_slope(x,y,slope,intercept,Neff=None):
     if Neff==None:
         Neff= len(y)
     var_residual= np.sum((y-slope*x-intercept)**2,axis=0) / (Neff-2)
-    t= slope/np.sqrt(var_residual/np.sum(x**2))
+    t= slope/np.sqrt(var_residual/np.sum((x-x.mean())**2))
     sf_level= 1-st.t.sf(np.absolute(t),df=Neff-2)*2  ## two-tailed, 1-p_val
     p_val= 1-sf_level
     if t<0: sf_level*=-1
