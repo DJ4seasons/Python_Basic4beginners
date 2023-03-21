@@ -101,32 +101,6 @@ def llcorr_plot(ax,data,vnames,subtit,maxlag=5):
 
 def llcorr(ts1,ts2,tlag):
     import scipy.stats as st
-    from statsmodels.tsa.stattools import acf
-    def get_dependency_level(ts1,ts2):
-        '''
-        Calculate dependency_level in order to estimate "Effective Degrees of Freedom"
-
-        Bayley & Hammersley 1946, http://doi.org/10.2307/2983560
-        Bretherton et al. 1999, https://doi.org/10.1175/1520-0442(1999)012<1990:TENOSD>2.0.CO;2
-        https://stats.stackexchange.com/questions/151604/what-is-bartletts-theory
-
-        Tend to overestimate dependency_level (underestimate dof) if two series are correlated
-        '''
-        N= len(ts1)
-        for i,(val1,val2) in enumerate(zip(acf(ts1,nlags=len(ts1)-1),acf(ts2,nlags=len(ts2)-1))):
-            if i==0:
-                vsum= 1 #val1*val2
-            else:
-                vsum+= 2*(1-i/N)*val1*val2
-
-        ### In the case of AR1 red noise
-        #r1= np.corrcoef(ts1[1:],ts1[:-1])[0,1]
-        #r2= np.corrcoef(ts2[1:],ts2[:-1])[0,1]
-        #vsum= (1+r1*r2)/(1-r1*r2)
-
-        print("Dependency_level= ",vsum)
-        return vsum
-
     def get_cdf_of_beta_distribution(nn,val):
         '''
         Beta distribution is used to calculate p-value of correlation coefficient
@@ -141,7 +115,7 @@ def llcorr(ts1,ts2,tlag):
 
     ###---
     N= len(ts1)
-    dependency_level= get_dependency_level(ts1,ts2)
+    Neff= vf.get_Eff_DOF(ts1,ts2)
 
     coef,pp = [], []
     for it in tlag:
@@ -153,7 +127,7 @@ def llcorr(ts1,ts2,tlag):
             cc=np.corrcoef(ts1,ts2)[0,1]
 
         coef.append(cc)
-        new_dof= (N-abs(it))/dependency_level
+        new_dof= Neff-2-abs(it)
         pp.append(get_cdf_of_beta_distribution(new_dof,cc)*2)  # two-tailed
     return np.asarray(coef), np.asarray(pp)
 

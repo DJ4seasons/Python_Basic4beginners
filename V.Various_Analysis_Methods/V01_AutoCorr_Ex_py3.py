@@ -1,6 +1,8 @@
 """
 Calculate auto-correlation of Nino3.4 and SST indices (area mean)
-Function to use: statsmodels.tsa.stattools.acf()
+
+Simple method using auto-covariance is implmented in V00_Functions.
+If want to use FFT method, try statsmodels.tsa.stattools.acf()
 
 ---
 Data file:  Hadley Centre Sea Ice and Sea Surface Temperature data set (HadISST)
@@ -31,6 +33,29 @@ def main():
     tio= vf.get_sst_areamean_from_HadISST([240,280,-10,0],yrs,remove_AC=True)
     spo= vf.get_sst_areamean_from_HadISST([-170,-120,-40,-30],yrs,remove_AC=True)
 
+    ### Calculate AC
+    nlags= min(len(nn34)-1,100)  ## Prevent too long record
+    ac_nn34,xx= vf.acf(nn34,nlags=nlags)
+    data=[ac_nn34,]+[vf.acf(ts1)[0] for ts1 in [tio,spo]]
+    vnames=['Ni\u00F1o3.4','Trop. IO','S. Pacific']
+
+    ## Add AR1 example
+    ar1= [ac_nn34[1]**val for val in xx]
+    data.append(ar1)
+    vnames.append(vnames[0]+'_AR(1)')
+    ## Adjusted AR1
+    ac1= []
+    for k in range(1,25,1):
+        if ac_nn34[k]<0.05:
+            break
+        else:
+            ac1.append(ac_nn34[k]**(1/k))
+    #print(ac1)
+    ac1= np.array(ac1).mean()
+    ar2= [ac1**val for val in xx]
+    data.append(ar2)
+    vnames.append(vnames[0]+'_AR(1)\nAdjusted')
+
     ###---
     ### Plotting setup
     ###---
@@ -43,27 +68,28 @@ def main():
 
     ax1= fig.add_subplot(111)
     sub_tit= ''
-    data=[nn34,tio,spo]
-    vnames=['Ni{}o3.4'.format('\u00F1'),'Trop. IO','S. Pacific']
-    autocorr_plot(ax1,data,vnames,sub_tit)
+    props= dict(lw=2,alpha=0.8)
+    simple_plot(ax1,xx,data,vnames,sub_tit,props)
 
     ### Show or save
     outdir= '../Pics/'
-    out_fig_nm= outdir+'V02.autocorr_example.SST_AM+Nino34.png'
+    out_fig_nm= outdir+'V01.autocorr_example.SST_AM+Nino34.png'
     #fig.savefig(outfnm,dpi=100)   # dpi: pixels per inch
     fig.savefig(out_fig_nm,dpi=150,bbox_inches='tight')   # dpi: pixels per inch
     print(out_fig_nm)
     plt.show()
     return
 
-def autocorr_plot(ax,data,vnames,subtit):
-    from statsmodels.tsa.stattools import acf
+
+def simple_plot(ax,xx,data,vnames,subtit,props=dict()):
+
     if not isinstance(data,list):
         data= [data,]
 
-    ### auto-corr plot
+    ### Plot
     for d,vn in zip(data,vnames):
-        ac= ax.plot(acf(d,nlags=min(len(d)-1,160)),label=vn,lw=2,alpha=0.85)
+        ls='--' if 'AR' in vn else '-'
+        ac= ax.plot(xx,d,label=vn,ls=ls,**props)
 
     ### Title
     ax.set_title(subtit,fontsize=13,ha='left',x=0.0)
@@ -71,15 +97,16 @@ def autocorr_plot(ax,data,vnames,subtit):
     ### Zero lines
     ylim= ax.get_ylim()
     if ylim[0]*ylim[1]<0:
-        ax.axhline(y=0.,ls='--',lw=0.8,c='0.75')
-    ax.axhline(y=1/np.exp(1),ls='--',lw=1,c='k')  # 1/e; ref. for e-folding time
+        ax.axhline(y=0.,ls='-',lw=0.8,c='k')
+    ## Reference for e-folding time
+    ax.axhline(y=1/np.exp(1),ls='--',lw=2,c='0.6')
 
     ### Misc
     ax.legend(loc='upper right',fontsize=11)
     ax.set_xlabel('Lags in months',fontsize=12)
     ax.set_ylabel('Correlation Coeff.',fontsize=12)
     ax.tick_params(axis='both',labelsize=10)
-    ax.grid(axis='x',ls='--',lw=0.8,c='0.75')
+    ax.grid(axis='x',ls='--',lw=0.8,c='0.2')
 
     return
 

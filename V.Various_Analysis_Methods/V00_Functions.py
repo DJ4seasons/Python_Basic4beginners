@@ -247,6 +247,149 @@ def get_monthly_dates(date1,date2,day=1,include_date2=True):
         outdates.append(date(yr1,mo1,day))
     return outdates
 
+def acf(ts1,nlags=None):
+    """
+    Calculate a series of auto-correlation
+    ts1: 1-d time series having no missings
+    nlags: maximum number of lag to calculate auto-correlation
+    """
+    if nlags==None:
+        nlags= len(ts1)-1
+    else:
+        nlags= min(nlags,len(ts1)-1)
+    xx,ac= [],[]
+    for lag in range(nlags+1):
+        xx.append(lag)
+        if lag>0:
+            ac.append(((ts1[lag:]-ts1[lag:].mean())*(ts1[:-lag]-ts1[:-lag].mean())).sum())
+        else:
+            ac.append(((ts1-ts1.mean(axis=0))**2).sum())
+    ac,xx= np.asarray(ac), np.asarray(xx)
+    ac= ac/ac[0]
+
+    return ac,xx
+
+import scipy.stats as st
+def get_Eff_DOF(ts1,ts2=[],is_ts1_AR1=True,adjust_AR1=True):
+    '''
+    Calculate dependency_level in order to estimate "Effective Degrees of Freedom"
+
+    Bayley & Hammersley 1946, http://doi.org/10.2307/2983560
+    Bretherton et al. 1999, https://doi.org/10.1175/1520-0442(1999)012<1990:TENOSD>2.0.CO;2
+    Afyouni et al. 2019, https://doi.org/10.1016/j.neuroimage.2019.05.011
+    https://stats.stackexchange.com/questions/151604/what-is-bartletts-theory
+
+    '''
+    def Tukey_window(ts1):
+        '''
+        !!!! Tukey window
+        '''
+        n= len(ts1)
+        lim=4.7*n**0.5 #4.7
+        for tau in range(1,n,1):
+            if (tau<=lim):
+                ts1[tau]=ts1[tau]*(1+np.cos(np.pi*tau/lim))/2
+            else:
+                ts1[tau]=0.
+        return ts1,int(lim+1)
+
+    def ccf(ts1,ts2,nlags=None):
+        """
+        Calculate a series of cross-correlation (similar to auto-correlation)
+        ts1,ts2: 1-d time series having no missings
+        nlags: maximum number of lag to calculate auto-correlation
+        """
+        if nlags==None:
+            nlags= len(ts1)-1
+        else:
+            nlags= min(nlags,len(ts1)-1)
+        xx,cc= [],[]
+        for lag in range(nlags+1):
+            xx.append(lag)
+            if lag>0:
+                cc.append(((ts1[lag:]-ts1[lag:].mean())*(ts2[:-lag]-ts2[:-lag].mean())).sum())
+            else:
+                cc.append(((ts1-ts1.mean(axis=0))*(ts2-ts2.mean(axis=0))).sum())
+        cc,xx= np.asarray(cc), np.asarray(xx)
+        cc= cc/np.sqrt(np.sum((ts1-ts1.mean(axis=0))**2))/np.sqrt(np.sum((ts2-ts2.mean(axis=0))**2))
+        return cc,xx
+
+    ###-----------------------
+    N= len(ts1)
+    ### Case1: Considering one timeseries
+    ### if is_ts1_AR1==True:
+    ###    Neff= N*(1-r)/(1+r) if r>0 else N, by assuming ts1 as AR1
+    ### else:
+    ###    Neff= N/(1+2*sum((1-k/n)*r_k, k=1,n-1))
+    ### where r= auto-correlation
+    if len(ts2)==0:
+        ac1= acf(ts1)[0]  ## Calculate auto-correlation function
+        if is_ts1_AR1:
+            if adjust_AR1:
+                ## Fitting ts1 to AR1
+                ac0= []
+                for k in range(1,min(25,N-1),1):
+                    if ac1[k]<0.05:
+                        break
+                    else:
+                        ac0.append(ac1[k]**(1/k))
+                r= np.array(ac0).mean()
+            else:
+                r= ac1[1]
+            Neff= N*(1-r)/(1+r)
+        else:
+            ac1,M= Tukey_window(ac1)
+            vsum=0
+            for k in range(M+1):
+                vsum+= (1-k/N)*ac1[k]
+            Neff= N/(1+2*vsum)
+
+    ### Case2: Considering two timeseries
+    ### Var(r)= (1-r**2)**2/Neff  (assuming ts1 ans ts2 both white but correlated)
+    ### Also, Var(r)= complex formula in Afyouni et al. 2019
+    ### Hence, Neff= (1-r**2)**2 / complex_formula
+    else:
+        ac1, ac2= acf(ts1)[0], acf(ts2)[0]
+        cc1, cc2= ccf(ts1,ts2)[0], ccf(ts2,ts1)[0]
+        r= cc1[0]
+        ## Apply Tukey window to ac and cc
+        ac1,M= Tukey_window(ac1)
+        ac2,cc1,cc2= Tukey_window(ac2)[0],Tukey_window(cc1)[0],Tukey_window(cc2)[0]
+
+        ##-- Calculate Var(r)
+        vsum1,vsum2,vsum3= 0,0,0
+        for k in range(1,M+1):
+            vsum1+= (N-2-k)*(ac1[k]**2+ac2[k]**2+cc1[k]**2+cc2[k]**2)
+            vsum2+= (N-2-k)*(ac1[k]+ac2[k])*(cc1[k]+cc2[k])
+            vsum3+= (N-2-k)*(ac1[k]*ac2[k]+cc1[k]*cc2[k])
+        var_r= ((N-2)*(1-r**2)**2 + r**2*vsum1 - 2*r*vsum2 + 2*vsum3)/N**2
+        #print(var_r, (1-r**2)**2,vsum1,vsum2,vsum3)
+        #print(np.round(ac1[:5],3),np.round(ac2[:5],3))
+        #print(np.round(cc1[:5],3),np.round(cc2[:5],3))
+        Neff= (1-r**2)**2/var_r
+
+    print("Dependency_level= ",N/Neff)
+    return Neff
+
+def regression_stat(x,y,sl,intercept,new_x,pct_range=[5,95],Neff=0):
+    """
+    Calculate the range of slope and regression mean
+    based on given percent range.
+    If get_Neff=True, adjust DOF by dependency_level
+    """
+    ### Neff
+    n= len(x)
+    if Neff<=0:
+        Neff=n
+    ### Standard error of mean
+    SE= np.sqrt(np.sum((y-sl*x-intercept)**2,axis=0) / (Neff-2))/np.sqrt(Neff)
+    t_ppf= st.t.ppf([val/100 for val in pct_range],Neff-2)
+    ## Range of slope
+    SE_sl= SE/np.std(x)*t_ppf
+    ## Range of regression mean
+    SE_y= [SE*np.sqrt(1+(new_x-x.mean())**2/np.var(x))*tf for tf in t_ppf]
+    return SE_sl, SE_y
+
 from matplotlib.ticker import MultipleLocator, FixedLocator
 def map_common(ax,subtit,data_crs,gl_lab_locator=[True,True,False,True],yloc=30,xloc=60,lon_range=[-180,179.9]):
     """ Decorating Cartopy Map

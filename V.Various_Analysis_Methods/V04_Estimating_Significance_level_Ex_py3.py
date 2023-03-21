@@ -116,66 +116,57 @@ def llcorr_simple(ts1,ts2,tlag):
     return np.asarray(coef)
 
 def estimate_significant_corr_coef(ts1,ts2):
-    from statsmodels.tsa.stattools import acf
-    def get_dependency_level(ts1,ts2):
-        '''
-        Calculate dependency_level in order to estimate "Effective Degrees of Freedom"
-
-        Bayley & Hammersley 1946, http://doi.org/10.2307/2983560
-        Bretherton et al. 1999, https://doi.org/10.1175/1520-0442(1999)012<1990:TENOSD>2.0.CO;2
-        https://stats.stackexchange.com/questions/151604/what-is-bartletts-theory
-
-        Tend to overestimate dependency_level (underestimate dof) if two series are correlated
-        '''
-        N= len(ts1)
-        for i,(val1,val2) in enumerate(zip(acf(ts1,nlags=len(ts1)-1),acf(ts2,nlags=len(ts2)-1))):
-            if i==0:
-                vsum= 1 #val1*val2
-            else:
-                vsum+= 2*(1-i/N)*val1*val2
-
-        ### In the case of AR1 red noise
-        #r1= np.corrcoef(ts1[1:],ts1[:-1])[0,1]
-        #r2= np.corrcoef(ts2[1:],ts2[:-1])[0,1]
-        #vsum= (1+r1*r2)/(1-r1*r2)
-
-        print("Dependency_level= ",vsum)
-        return vsum
 
     N= len(ts1)
-    niter= 1000  # Number of samples used for estimating
-    dependency_level= get_dependency_level(ts1,ts2)
-    nrand= int(N/np.floor(dependency_level)*niter)
+    Neff= vf.get_Eff_DOF(ts1,ts2)
+    decorr_level= N/Neff
+    niter= 2000  # Number of samples used for estimating
 
-    ver= np.__version__  # Checn version of numpy
-    print('version= ',ver)
-    if int(ver.split('.')[1])<17:
-        np.random.seed(123)  # Set seed number in order to repeat
-        idx_pool= np.random.randint(low=0,high=N-int(dependency_level)-2,size=nrand*2)
-    else:
-        rg = np.random.default_rng(123)  # Set seed number in order to repeat
-        idx_pool= rg.integers(0, N-int(dependency_level)-2, size=nrand, endpoint=True)
+    ### Build index array
+    len_ts1, count= 0, 0
+    ts1_idx, n_samples= [0,], []
+    while len_ts1<N-np.ceil(decorr_level):
+        #nsample= np.rint(decorr_level*(count+1)-len(new_ts1)).astype(int)
+        nsample= round(decorr_level*(count+1)-len_ts1)
+        count+=1
+        len_ts1+= nsample
+        ts1_idx.append(len_ts1)
+        n_samples.append(nsample)
+    n_samples.append(N-len_ts1)
+    #print(ts1_idx, n_samples); sys.exit()
+    shuffle_idx= np.array(ts1_idx)
+
+    ### Set-up random module
+    rg = np.random.default_rng(123)  # Set seed number in order to repeat
+    rg.shuffle(shuffle_idx)
 
     corrs=[]
     idx_k=0
     for i in range(niter):
         ### Shuffle by chunk
         new_ts1=[]
-        count=0
-        while len(new_ts1)<N-dependency_level/2:
-            nsample= np.rint(dependency_level*(count+1)-len(new_ts1)).astype(int)
-            st= idx_pool[idx_k]; idx_k+=1
-            new_ts1+=list(ts1[st:st+nsample])
-            count+=1
+        for idx in shuffle_idx:
+            m= n_samples[ts1_idx.index(idx)]
+            new_ts1+=list(ts2[idx:idx+m])
 
-        sz= min(N,len(new_ts1))
-        corrs.append(np.corrcoef(np.asarray(new_ts1)[:sz],ts2[:sz])[0,1])
+        corrs.append(np.corrcoef(new_ts1,ts1)[0,1])
+        rg.shuffle(shuffle_idx)
 
     corrs= np.asarray(corrs)
-    #simple_check_distribution(corrs)
-    #sys.exit()
+    #simple_check_distribution(corrs); sys.exit()
 
-    return norm.ppf([0.9,0.95,0.975,0.99],loc=corrs.mean(),scale=corrs.std(ddof=1))
+    ### Fisher transform:
+    ### Transform pearsonr's beta distribution to normal distribution
+    ### z= atanh(r); r= tanh(z)
+    z= np.arctanh(corrs)
+    print(z.mean(), z.std(ddof=1))
+    #simple_check_distribution(z); sys.exit()
+
+    ### For two-tail [0.9,0.95,0.975,0.99],  find [0.05,0.025,0.0125,0.005]
+    z_sf= norm.ppf([0.05,0.025,0.0125,0.005],loc=z.mean(),scale=z.std(ddof=1))*-1
+    ### Back to corr space to return
+    print(z_sf, np.tanh(z_sf))
+    return np.tanh(z_sf)
 
 def simple_check_distribution(arr1d):
     fig=plt.figure()
