@@ -31,7 +31,7 @@ import V00_Functions as vf
 
 def main():
     ### Years to read data
-    yrs= [2015,2020]  # Starting year and ending year
+    yrs= [2014,2021]  # Starting year and ending year
 
     ### Get SST anomaly
     area_range= [-180,180,-60,60]  # [lon_range, lat_range]
@@ -47,14 +47,16 @@ def main():
 
     data2test= np.nanmean(sstano[:,~ms_idx,:],axis=2)  # Mean for 5x5 cells
 
-    ### Calculate dependency_level
-    dof_coef1= np.apply_along_axis(get_dof_coef_log_r1,0,data2test)
-    dof_coef2= np.apply_along_axis(get_dof_coef_e_folding,0,data2test)
-    print(dof_coef1.min(),np.median(dof_coef1))
-    print(dof_coef2.min(),np.median(dof_coef2))
+    ### Calculate N_eff
+    dof1= np.apply_along_axis(vf.get_Eff_DOF,0,data2test,is_ts1_AR1=True,adjust_AR1=True)
+    dof2= np.apply_along_axis(vf.get_Eff_DOF,0,data2test,is_ts1_AR1=False)
+    print(dof1.shape,dof1.min(),np.median(dof1))
+    print(dof2.shape,dof2.min(),np.median(dof2))
+    ## Transform to dependency_level(inversed)
+    dof_coef1, dof_coef2= dof1/data2test.shape[0], dof2/data2test.shape[0]
 
     ### Split data for t-test
-    data_prv, data_post= data2test[:36,:], data2test[36:,:]  # First 3 years and later 3 years
+    data_prv, data_post= data2test[:48,:], data2test[48:,:]  # First 3 years and later 3 years
 
     ### Calculate significance level of t-test by different dof setting
     p_vals1= get_ttest_pval_2d(dof_coef1,data_prv,data_post)
@@ -75,8 +77,8 @@ def main():
     ##-- Above bound is based on previous resolution, but it's ok since no change on area_boundary
 
     ### Prepare for plotting
-    suptit="t-test for Mean Diff., 2015-17 vs. 2018-20 [HadISST]"
-    var_names= ['DoF= -N*log(r1)','DoF= N/(2*Te)','DoF= N']
+    suptit="t-test for Mean Diff., 2014-17 vs. 2018-21 [HadISST]"
+    var_names= ['$N_{eff}$'+' based on adjusted AR1','$N_{eff}$'+' based on general formula','$N_{eff}$'+' = N']
 
     outdir= '../Pics/'
     out_fig_nm= outdir+'V08.t-test_example_5deg_box.png'
@@ -105,30 +107,6 @@ def get_ttest_pval_2d(dof_coef,data1,data2):
             p_vals.append(np.nan)
 
     return np.asarray(p_vals)
-
-def get_dof_coef_log_r1(ts1d):
-    '''
-    Estimating decorrelating time using auto-correlation, r1
-    dof_coef= -np.log(r1)  # vonStorch and Zwiers (1999)
-    '''
-    r1= np.corrcoef(ts1d[1:],ts1d[:-1])[0,1]
-    return -np.log(r1)
-
-def get_dof_coef_e_folding(ts1d):
-    '''
-    DOF= n*(dt/2/Te), Te= e-folding time; Panofsky and Brier, 1958)
-    '''
-    ac=[]
-    test=True
-    it=0
-    while test:
-        it+=1
-        ac.append(np.corrcoef(ts1d[it:],ts1d[:-it])[0,1])
-        if ac[-1]< 1/np.exp(1):  # e-folding time
-            break
-    ### Linearly interpolating
-    Te= (it*(ac[it-2]-1/np.exp(1))+(it-1)*(1/np.exp(1)-ac[it-1]))/(ac[it-2]-ac[it-1])
-    return 1/2/Te
 
 ###---
 ### Draw (semi) global map

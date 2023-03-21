@@ -83,10 +83,10 @@ def lat_formatter(x,pos):
     else:
         return "{:.0f}\u00B0".format(x)
 
-def read_sst_from_HadISST(yrs=[2015,2020],include_ice=False):
+def read_sst_from_HadISST(yrs=[2014,2021],include_ice=False):
     ###--- Parameters
     indir= '../Data/'
-    yrs0= [2015,2020]
+    yrs0= [2014,2021]
     lon0,dlon,nlon= -179.5,1.,360
     lat0,dlat,nlat=  -89.5,1.,180
     mon_per_yr= 12
@@ -113,7 +113,7 @@ def read_sst_from_HadISST(yrs=[2015,2020],include_ice=False):
     lon_info= dict(lon0=lon0,dlon=dlon,nlon=nlon)
     return sst, lat_info,lon_info
 
-def get_sst_ano_from_HadISST(area_bound,yrs=[2015,2020],remove_AC=True):
+def get_sst_ano_from_HadISST(area_bound,yrs=[2014,2021],remove_AC=True):
     '''
     area_bound= [west,east,south,north] in degrees
     '''
@@ -152,7 +152,7 @@ def get_sst_ano_from_HadISST(area_bound,yrs=[2015,2020],remove_AC=True):
 
     return sstano, lats, lons
 
-def get_sst_areamean_from_HadISST(area_bound,yrs= [2015,2020],remove_AC=True):
+def get_sst_areamean_from_HadISST(area_bound,yrs= [2014,2021],remove_AC=True):
     '''
     area_bound= [west,east,south,north] in degrees
     '''
@@ -275,7 +275,7 @@ def get_Eff_DOF(ts1,ts2=[],is_ts1_AR1=True,adjust_AR1=True):
     Calculate dependency_level in order to estimate "Effective Degrees of Freedom"
 
     Bayley & Hammersley 1946, http://doi.org/10.2307/2983560
-    Bretherton et al. 1999, https://doi.org/10.1175/1520-0442(1999)012<1990:TENOSD>2.0.CO;2
+    von Storch & Zwiers 1999, ISBN ‏ : ‎ 0521012309
     Afyouni et al. 2019, https://doi.org/10.1016/j.neuroimage.2019.05.011
     https://stats.stackexchange.com/questions/151604/what-is-bartletts-theory
 

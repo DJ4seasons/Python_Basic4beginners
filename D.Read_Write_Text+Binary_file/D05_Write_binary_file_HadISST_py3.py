@@ -29,7 +29,7 @@ from D03_Read_text_file_HadISST_py3 import read_hadisst_manually
 
 def main():
     indir= '../Data/'
-    yrs= [2015,2020]  # Starting year and ending year
+    yrs= [2014,2021]  # Starting year and ending year
     for yr in range(yrs[0],yrs[1]+1,1):
         #HadISST1_SST_YYYY.txt
         infn= indir+'HadISST1_SST_{}.txt'.format(yr)

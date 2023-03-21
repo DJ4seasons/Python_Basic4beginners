@@ -31,7 +31,7 @@ import V00_Functions as vf
 
 def main():
     ### Get Nino3.4 Index
-    yrs= [2015,2020]  # Starting year and ending year
+    yrs= [2014,2021]  # Starting year and ending year
     #Nino4 (5N-5S, 160E-150W) [160,210,-5,5]
     #Nino3.4 (5N-5S, 170W-120W) [-170,-120,-5,5]
     nn34= vf.get_sst_areamean_from_HadISST([-170,-120,-5,5],yrs,remove_AC=True)
@@ -42,48 +42,24 @@ def main():
     data= [nn34, tio, spo]
     var_names= ['Ni{}o3.4'.format('\u00F1'), 'Trop_IO', 'S_Pacific']
 
-    dof_coef1= [get_dof_coef_log_r1(ts) for ts in data]
-    dof_coef2= [get_dof_coef_e_folding(ts) for ts in data]
+    dof1= [vf.get_Eff_DOF(ts,is_ts1_AR1=True,adjust_AR1=True) for ts in data]
+    dof2= [vf.get_Eff_DOF(ts,is_ts1_AR1=False) for ts in data]
 
-    get_stat= lambda ts, dof_coef: [ts.mean(), ts.std(ddof=1), len(ts)*dof_coef]
+    get_stat= lambda ts, dof: [ts.mean(), ts.std(ddof=1), dof]
 
     print("\n{} vs. {}".format(var_names[0], var_names[1]))
-    t1,p1= stats.ttest_ind_from_stats(*get_stat(data[0],dof_coef1[0]), *get_stat(data[1],dof_coef1[1]), equal_var=False)
-    t2,p2= stats.ttest_ind_from_stats(*get_stat(data[0],dof_coef2[0]), *get_stat(data[1],dof_coef2[1]), equal_var=False)
-    print("DoF1= {:.2f}, {:.2f}: t={:.2f}, p={:.3f}".format(len(data[0])*dof_coef1[0], len(data[1])*dof_coef1[1], t1, p1))
-    print("DoF2= {:.2f}, {:.2f}: t={:.2f}, p={:.3f}".format(len(data[0])*dof_coef2[0], len(data[1])*dof_coef2[1], t2, p2))
+    t1,p1= stats.ttest_ind_from_stats(*get_stat(data[0],dof1[0]), *get_stat(data[1],dof1[1]), equal_var=False)
+    t2,p2= stats.ttest_ind_from_stats(*get_stat(data[0],dof2[0]), *get_stat(data[1],dof2[1]), equal_var=False)
+    print("DoF1= {:.2f}, {:.2f}: t={:.2f}, p={:.3f}".format(dof1[0], dof1[1], t1, p1))
+    print("DoF2= {:.2f}, {:.2f}: t={:.2f}, p={:.3f}".format(dof2[0], dof2[1], t2, p2))
 
     print("\n{} vs. {}".format(var_names[0], var_names[2]))
-    t1,p1= stats.ttest_ind_from_stats(*get_stat(data[0],dof_coef1[0]), *get_stat(data[2],dof_coef1[2]), equal_var=False)
-    t2,p2= stats.ttest_ind_from_stats(*get_stat(data[0],dof_coef2[0]), *get_stat(data[2],dof_coef2[2]), equal_var=False)
-    print("DoF1= {:.2f}, {:.2f}: t={:.2f}, p={:.3f}".format(len(data[0])*dof_coef1[0], len(data[2])*dof_coef1[2], t1, p1))
-    print("DoF2= {:.2f}, {:.2f}: t={:.2f}, p={:.3f}".format(len(data[0])*dof_coef2[0], len(data[2])*dof_coef2[2], t2, p2))
+    t1,p1= stats.ttest_ind_from_stats(*get_stat(data[0],dof1[0]), *get_stat(data[2],dof1[2]), equal_var=False)
+    t2,p2= stats.ttest_ind_from_stats(*get_stat(data[0],dof2[0]), *get_stat(data[2],dof2[2]), equal_var=False)
+    print("DoF1= {:.2f}, {:.2f}: t={:.2f}, p={:.3f}".format(dof1[0], dof1[2], t1, p1))
+    print("DoF2= {:.2f}, {:.2f}: t={:.2f}, p={:.3f}".format(dof2[0], dof2[2], t2, p2))
 
     return
-
-def get_dof_coef_log_r1(ts1d):
-    '''
-    Estimating decorrelating time using auto-correlation, r1
-    dof_coef= -np.log(r1)  # vonStorch and Zwiers (1999)
-    '''
-    r1= np.corrcoef(ts1d[1:],ts1d[:-1])[0,1]
-    return -np.log(r1)
-
-def get_dof_coef_e_folding(ts1d):
-    '''
-    DOF= n*(dt/2/Te), Te= e-folding time; Panofsky and Brier, 1958)
-    '''
-    ac=[]
-    test=True
-    it=0
-    while test:
-        it+=1
-        ac.append(np.corrcoef(ts1d[it:],ts1d[:-it])[0,1])
-        if ac[-1]< 1/np.exp(1):  # e-folding time
-            break
-    ### Linearly interpolating
-    Te= (it*(ac[it-2]-1/np.exp(1))+(it-1)*(1/np.exp(1)-ac[it-1]))/(ac[it-2]-ac[it-1])
-    return 1/2/Te
 
 if __name__ == "__main__":
     main()
