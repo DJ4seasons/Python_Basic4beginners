@@ -322,27 +322,28 @@ def get_Eff_DOF(ts1,ts2=[],is_ts1_AR1=True,adjust_AR1=True):
     ### else:
     ###    Neff= N/(1+2*sum((1-k/n)*r_k, k=1,n-1))
     ### where r= auto-correlation
+    AR1_crt= 0.05
     if len(ts2)==0:
         ac1= acf(ts1)[0]  ## Calculate auto-correlation function
         if is_ts1_AR1:
-            if adjust_AR1:
+            if if ac1[1]>=AR1_crt and adjust_AR1:
                 ## Fitting ts1 to AR1
                 ac0= []
                 for k in range(1,min(25,N-1),1):
-                    if ac1[k]<0.05:
+                    if ac1[k]<AR1_crt:
                         break
                     else:
                         ac0.append(ac1[k]**(1/k))
                 r= np.array(ac0).mean()
             else:
                 r= ac1[1]
-            Neff= N*(1-r)/(1+r)
+            Neff= N*(1-r)/(1+r) if r>=AR1_crt else N
         else:
             ac1,M= Tukey_window(ac1)
             vsum=0
             for k in range(M+1):
                 vsum+= (1-k/N)*ac1[k]
-            Neff= N/(1+2*vsum)
+            Neff= min(N,N/(1+2*vsum))
 
     ### Case2: Considering two timeseries
     ### Var(r)= (1-r**2)**2/Neff  (assuming ts1 ans ts2 both white but correlated)
@@ -367,7 +368,7 @@ def get_Eff_DOF(ts1,ts2=[],is_ts1_AR1=True,adjust_AR1=True):
         #print(np.round(ac1[:5],3),np.round(ac2[:5],3))
         #print(np.round(cc1[:5],3),np.round(cc2[:5],3))
         Neff= (1-r**2)**2/var_r
-
+        if Neff>N: Neff=N
     print("Dependency_level= ",N/Neff)
     return Neff
 
