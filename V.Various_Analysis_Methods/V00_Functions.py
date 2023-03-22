@@ -326,7 +326,7 @@ def get_Eff_DOF(ts1,ts2=[],is_ts1_AR1=True,adjust_AR1=True):
     if len(ts2)==0:
         ac1= acf(ts1)[0]  ## Calculate auto-correlation function
         if is_ts1_AR1:
-            if if ac1[1]>=AR1_crt and adjust_AR1:
+            if ac1[1]>=AR1_crt and adjust_AR1:
                 ## Fitting ts1 to AR1
                 ac0= []
                 for k in range(1,min(25,N-1),1):
@@ -337,7 +337,7 @@ def get_Eff_DOF(ts1,ts2=[],is_ts1_AR1=True,adjust_AR1=True):
                 r= np.array(ac0).mean()
             else:
                 r= ac1[1]
-            Neff= N*(1-r)/(1+r) if r>=AR1_crt else N
+            Neff= N*(1-r)/(1+r) if r>0 else N
         else:
             ac1,M= Tukey_window(ac1)
             vsum=0
