@@ -163,7 +163,7 @@ I am {age:d} years old.
 My favorite food is {food}"""
 '''
 print("Here is a multi-line example:",multi_lines)
-keywords={"name":"Dave", "age":25, "food":"choco cake"}  # This is dictionry!
+keywords={"name":"Dave", "age":25, "food":"choco cake"}  # This is dictionry! See file A03
 print("keywords=",keywords, type(keywords))
 print(">> print(multi_lines.format(**keywords))")
 print(multi_lines.format(**keywords))  # two stars: distribute items of "key:value"

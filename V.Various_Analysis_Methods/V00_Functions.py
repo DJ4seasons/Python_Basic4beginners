@@ -285,7 +285,7 @@ def get_Eff_DOF(ts1,ts2=[],is_ts1_AR1=True,adjust_AR1=True):
         !!!! Tukey window
         '''
         n= len(ts1)
-        lim=4.7*n**0.5 #4.7
+        lim= min(4.7*n**0.5,n-3) #2 or 4.7
         for tau in range(1,n,1):
             if (tau<=lim):
                 ts1[tau]=ts1[tau]*(1+np.cos(np.pi*tau/lim))/2
