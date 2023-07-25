@@ -16,7 +16,7 @@ import numpy as np
 import os.path
 
 import O00_Functions as fns
-
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator
 import cartopy.crs as ccrs
@@ -64,7 +64,7 @@ def main():
     proj_nms= ['PlateCarree', 'LambertCylindrical', 'Mollweide', 'Robinson']
     data_crs= ccrs.PlateCarree()
 
-    cm = plt.cm.get_cmap('jet').copy()
+    cm = mpl.colormaps['jet']
     cm.set_under('0.8')
     clevels= np.linspace(0,32,65)
     props_contour= dict(cmap=cm,alpha=0.9,extend='both',transform=data_crs)

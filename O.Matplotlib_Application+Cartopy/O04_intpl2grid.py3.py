@@ -15,6 +15,7 @@ import os.path
 from datetime import date
 
 import O00_Functions as fns
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 #from matplotlib.ticker import AutoMinorLocator, FixedLocator, MultipleLocator
 
@@ -63,7 +64,7 @@ def main():
     fig.suptitle(suptit,fontsize=15,y=0.98,va='bottom')  #,ha='left',x=0.,stretch='semi-condensed')
 
     abc='abcdefghijklmn'
-    cm = plt.cm.get_cmap('CMRmap_r')
+    cm = mpl.colormaps['CMRmap_r']
 
     ##-- Set up an axis1 --##
     ax1 = fig.add_subplot(1,2,1)   # (# of rows, # of columns, indicater from 1)

@@ -21,6 +21,7 @@ http://hclwizard.org/hclwizard/
 '''
 
 import numpy as np
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 import matplotlib.colors as cls
 from matplotlib.ticker import AutoMinorLocator, MultipleLocator
@@ -70,21 +71,21 @@ abc='abcdefghijklmn'
 panel_names= ['cmap="magma"','set_under/over', 'cmap_r', 'Cut a cmap',
             'Combine two cmaps', 'Add white at the end']
 
-cmap1= plt.cm.get_cmap('magma')
-cmap2= cmap1.copy()  #plt.cm.get_cmap('magma'); cmap.copy() is from ver. 3.4
+cmap1= mpl.colormaps['magma']
+cmap2= cmap1.copy()
 cmap2.set_under(color='0.8'); cmap2.set_over(color='0.2')
-cmap3= plt.cm.get_cmap('magma_r')
+cmap3= mpl.colormaps['magma_r']
 
-cmap4= plt.cm.get_cmap('magma',50)  # Pick up N samples from default list (Len=256)
+cmap4= mpl.colormaps['magma'].resampled(50)  # Pick up N samples from default list (Len=256)
 cmap4= cmap4(np.arange(50)); print(type(cmap4),cmap4.shape)  # Converted to ndarray
 cmap4= cls.LinearSegmentedColormap.from_list("newCM",cmap4[10:,:])
 
-cmap5a= plt.cm.get_cmap('plasma',100)(np.arange(100))  # Converted to ndarray
-cmap5b= plt.cm.get_cmap('viridis_r',100)(np.arange(100))  # Convert to ndarray
+cmap5a= mpl.colormaps['plasma'].resampled(100)(np.arange(100))  # Converted to ndarray
+cmap5b= mpl.colormaps['viridis_r'].resampled(100)(np.arange(100))  # Convert to ndarray
 cmap5= np.concatenate((cmap5a,cmap5b[:75,:]),axis=0)
 cmap5= cls.LinearSegmentedColormap.from_list("newCM",cmap5)
 
-cmap6= plt.cm.get_cmap('magma_r',50)(np.arange(50))   # Converted to ndarray
+cmap6= mpl.colormaps['magma_r'].resampled(50)(np.arange(50))   # Converted to ndarray
 cmap6= np.concatenate((np.array([1,1,1,1]).reshape([1,-1]),cmap6[:-1,:]),axis=0)
 cmap6= cls.LinearSegmentedColormap.from_list("newCM",cmap6)
 #cmaps= [cmap1,cmap2,cmap3,cmap4,cmap5,cmap6]

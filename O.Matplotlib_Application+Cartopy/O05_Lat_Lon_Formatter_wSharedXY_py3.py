@@ -58,6 +58,7 @@ def main():
     return
 
 ###--- Map Plot
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 from matplotlib.ticker import AutoMinorLocator, MultipleLocator, FuncFormatter
 def plot_map(pdata):
@@ -73,7 +74,7 @@ def plot_map(pdata):
     ly1= ly*0.75; ly2= ly-ly1
     ix, iy = left, top
 
-    cm = plt.cm.get_cmap('jet').copy()
+    cm = mpl.colormaps['jet']
     cm.set_bad('0.7')
 
     data= pdata['data']

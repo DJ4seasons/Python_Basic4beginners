@@ -10,7 +10,7 @@ import numpy as np
 import os.path
 
 import O00_Functions as fns
-
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator
 import cartopy.crs as ccrs
@@ -58,7 +58,7 @@ def main():
     ###--- Some parameters
     data_crs= ccrs.PlateCarree()
 
-    cm = plt.cm.get_cmap('jet').copy()
+    cm = mpl.colormaps['jet']
     cm.set_under('0.8')
     clevels= np.linspace(0,30,91)
     props_contour= dict(cmap=cm,alpha=0.9,extend='both',transform=data_crs)
@@ -154,7 +154,7 @@ def map_common(ax1,subtit,data_crs):
     gl.ylabel_style = {'size': 10}
     gl.xlocator = MultipleLocator(15)
     gl.ylocator = MultipleLocator(10)
-    
+
     ### Aspect ratio of map
     ax1.set_aspect('auto') ### 'auto' allows the map to be distorted and fill the defined axes
     return

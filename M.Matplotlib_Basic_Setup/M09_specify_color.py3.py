@@ -11,7 +11,7 @@ https://matplotlib.org/stable/tutorials/colors/colors.html
 
 import numpy as np
 import matplotlib.pyplot as plt
-
+import matplotlib as mpl
 
 ###--- Synthesizing data to be plotted ---###
 xx = yy = np.arange(4)+0.5
@@ -45,7 +45,10 @@ color4= [(0, 191/255, 1), (1,0.5,0.1),'#00ff00','#c5b0d5','crimson','aquamarine'
 
 ### Pick colors from pre-defined colormap
 ### https://matplotlib.org/stable/tutorials/colors/colormaps.html
+''' Depreciated in Matplotlib 3.7
 cmap= plt.cm.get_cmap('magma',10)  # Default: 256 RGBA list
+'''
+cmap= mpl.colormaps['magma'].resampled(10)
 cmap= cmap(np.arange(10))  # Results in np.ndarray, [10,4]
 color5= list(cmap)
 

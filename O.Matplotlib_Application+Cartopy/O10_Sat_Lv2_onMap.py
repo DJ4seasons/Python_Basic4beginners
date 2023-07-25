@@ -69,6 +69,7 @@ def main():
 ###---
 ### Show MYD04_L2 data on map
 ###---
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator
 import cartopy.crs as ccrs
@@ -84,7 +85,7 @@ def plot_map(pdata):
     fig.subplots_adjust(left=0.06,right=0.94,top=0.95,bottom=0.1,wspace=0.25) #,hspace=0.3 ### Margins, etc.
 
     data_crs= ccrs.PlateCarree()
-    cm = plt.cm.get_cmap('magma_r')
+    cm = mpl.colormaps['magma_r']
 
     ###--- Check range of map
     lats,lons= pdata['latlon']
@@ -104,18 +105,20 @@ def plot_map(pdata):
             ccrs.Orthographic(central_longitude= center[1],central_latitude= center[0]),
             ]
 
-    sct_props= dict(vmin=val_min, vmax=val_max, marker='s',s=1,
-                alpha=0.7,cmap=cm,transform=data_crs)
+    sct_props0= dict( marker='s',s=1,alpha=0.7,transform=data_crs)
+    sct_props1= sct_props0.copy()
+    sct_props1.update(dict(vmin=val_min, vmax=val_max,cmap=cm))
+
     ###--- Plot
     for i,(proj,proj_name) in enumerate(zip(mprojs,proj_nms)):
         ax1= fig.add_subplot(nrow,ncol,i+1,projection=proj)
 
         ax1.set_extent(extent_range,crs=data_crs)
-        map1= ax1.scatter(lons,lats,c=pdata['data'],**sct_props)
+        map1= ax1.scatter(lons,lats,c=pdata['data'],**sct_props1)
 
         ### If want to add missing points
         ms_idx= np.isnan(pdata['data'])
-        map2= ax1.scatter(lons[ms_idx],lats[ms_idx],c='0.85',**sct_props)
+        map2= ax1.scatter(lons[ms_idx],lats[ms_idx],c='0.85',**sct_props0)
 
         subtit= '({}) {}'.format(abc[i],proj_name)
         map_common(ax1,subtit,data_crs,xloc=5,yloc=5)

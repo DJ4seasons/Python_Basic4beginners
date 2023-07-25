@@ -51,6 +51,7 @@ def main():
 ###---
 ### Scatter and 2D_Histogram Plot
 ###---
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 from matplotlib.ticker import AutoMinorLocator, MultipleLocator, FuncFormatter
 import matplotlib.patches as mpatches
@@ -67,7 +68,7 @@ def plot_main(plot_data):
     ##-- Title for the page --##
     fig.suptitle(plot_data['suptit'],fontsize=16,va='bottom',y=0.98)  #,ha='left',x=0.,stretch='semi-condensed')
 
-    cm=plt.cm.get_cmap('plasma')
+    cm= mpl.colormaps['plasma']
     x, y= plot_data['data']
     spd= np.sqrt(x**2+y**2)  # Wind speed; set for color scale of scatter plot
 
@@ -90,7 +91,7 @@ def plot_main(plot_data):
     ##-- Set up an axis --##
     ax2 = fig.add_subplot(1,2,2)   # (# of rows, # of columns, indicater from 1)
 
-    cm=plt.cm.get_cmap('viridis').copy(); cm.set_under(color='0.8')
+    cm= mpl.colormaps['viridis']; cm.set_under(color='0.8')
     H, xedges, yedges= np.histogram2d(x,y,bins=(9,8))
     H=(H/H.sum()*100.).T; print(H.max(),H.mean())
     X,Y=np.meshgrid(xedges,yedges)

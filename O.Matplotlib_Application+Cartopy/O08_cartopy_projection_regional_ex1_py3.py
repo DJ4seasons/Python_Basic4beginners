@@ -16,7 +16,7 @@ import numpy as np
 import os.path
 
 import O00_Functions as fns
-
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator
 import cartopy.crs as ccrs
@@ -62,7 +62,7 @@ def main():
     ###--- Some parameters
     data_crs= ccrs.PlateCarree()
 
-    cm = plt.cm.get_cmap('jet').copy()
+    cm = mpl.colormaps['jet']
     cm.set_under('0.8')
     clevels= np.linspace(0,30,91)
     props_contour= dict(cmap=cm,alpha=0.9,transform=data_crs,extend='both')
@@ -112,7 +112,7 @@ def main():
     ##-- Bottom Panels for the SH
     i+=1
     for i2, (proj_name, map_proj) in enumerate(zip(proj_nms, projs)):
-        ax2=fig.add_axes([ix,iy-ly,lx,ly],projection=projs[i])  ### Now it's GeoAxes, not just Axes
+        ax2=fig.add_axes([ix,iy-ly,lx,ly],projection=projs[i2])  ### Now it's GeoAxes, not just Axes
         ax2.set_extent(map_bound,crs=data_crs)
         pic2= ax2.contourf(xlon,ylat,sstmean1,clevels,**props_contour)
 

@@ -53,10 +53,10 @@ print(f)
 print("\nPress Enter to continue... (1,2)\n")
 input("----------------------------------------\n")
 
-print("\n3. Add, change, and remove item")
+print("\n3. Add, change, remove, and update item(s)")
 print(">> g = {}  # Empty dictionry")
 g = {}
-print(">> g['brand']='kia'")
+print(">> g['brand']='Kia'")
 g['brand']='kia'
 print(">> g['model']='optima'")
 g['model']='optima'
@@ -76,6 +76,10 @@ print(">> print(g)")
 print(g)
 print("---> Use dict.copy()")
 
+print("\n>> g.update(dict(brand='Hyundai'))  # Update g by merging new dictionry into g")
+g.update(dict(brand='Hyundai'))
+print(">> print(g)")
+print(g)
 
 print("\nPress Enter to continue... (3)\n")
 input("----------------------------------------\n")

@@ -16,7 +16,7 @@ import numpy as np
 import os.path
 
 import O00_Functions as fns
-
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator
 import cartopy.crs as ccrs
@@ -66,7 +66,7 @@ def main():
                 'NorthPolarStereo','SouthPolarStereo']
     data_crs= ccrs.PlateCarree()
 
-    cm = plt.cm.get_cmap('jet').copy()
+    cm = mpl.colormaps['jet']
     cm.set_under('0.8')
     clevels= np.linspace(0,32,65)
     props_contour= dict(cmap=cm,alpha=0.9,extend='both',transform=data_crs)
@@ -92,7 +92,7 @@ def main():
             subtit= '({}) {}'.format(abc[j*2+i],proj_name)
             if center != 0: subtit+= '(ctr_lon={})'.format(center)
             ax1.set_title(subtit,fontsize=13,stretch='condensed')
-            
+
             ax1.add_feature(LAND)
             ax1.coastlines(resolution='110m',color='0.25',linewidth=1.)
             prop_gl= dict(linewidth=0.8, color='gray', alpha=0.7, linestyle='--')

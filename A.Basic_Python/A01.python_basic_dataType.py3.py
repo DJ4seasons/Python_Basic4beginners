@@ -82,6 +82,7 @@ print("El Ni\u00F1o and La Ni\u00F1a \n")
 print("Delta: {}, epsilon: {}, degree: {} \n".format('\u0394','\u03B5','\u00B0'))
 print("Subscript: x{}, x{}, x{} \n".format('\u2081','\u2082','\u2090'))
 print("Superscript: x{}, x{}, x{} \n".format('\u00B9','\u00B2','\u1D43'))
+print("Math symbols: {}, {}, {}, etc.".format('\u2264','\u2265','\u00B1'))
 print("""
 ### FYI, Matplotlib supports TeX markup for easier numerical expressions
 ### https://matplotlib.org/stable/tutorials/text/mathtext.html

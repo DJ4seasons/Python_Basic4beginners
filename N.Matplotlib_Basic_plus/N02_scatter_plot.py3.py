@@ -11,7 +11,7 @@ https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.scatter.html
 
 import numpy as np
 import matplotlib.pyplot as plt
-
+import matplotlib as mpl
 
 ###--- Synthesizing data to be plotted ---###
 xx = np.arange(5)+0.5
@@ -37,7 +37,7 @@ fig.suptitle(suptit,fontsize=15,va='bottom',y=0.975)  #,ha='left',x=0.,stretch='
 
 
 ### Pick colors from pre-defined colormap; https://matplotlib.org/stable/tutorials/colors/colormaps.html
-#cmap= plt.cm.get_cmap('magma')
+#cmap= mpl.colormaps['magma']
 
 panel_names= ['(X, Y) only','(X, Y) + Marker Size', '(X, Y) + Markersize + Colors']
 prop_settings= [dict(), dict(s=sz,marker='^'), dict(s=sz,marker='^',c=yy,vmin=0,vmax=5,cmap='magma')]
