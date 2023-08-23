@@ -17,6 +17,7 @@ if os.path.isdir(outdir):  # Check if the directory already exists
     print("{} is removed.".format(outdir))
 
 os.mkdir(outdir)  # Create a directory
+### cf. os.makedirs(): Create directories of multiple levels at once
 print("{} is created.".format(outdir))
 
 text_template = '''
